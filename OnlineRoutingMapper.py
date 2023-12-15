@@ -353,15 +353,16 @@ class OnlineRoutingMapper:
     def cargar_puntos_lista(self):
         registros = seleccionarPoints()
         i=1
-        for tupla in registros:
-            if i % 2 == 0:
-                # stop
-                stopPointExclution = tupla[2]+','+tupla[1]
-            else:
-                # start
-                startPointExclution = tupla[2]+','+tupla[1]
-            i+=1
-        self.listPointsExclution.append((startPointExclution, stopPointExclution))
+        if (len(registros) > 0) :
+            for tupla in registros:
+                if i % 2 == 0:
+                    # stop
+                    stopPointExclution = tupla[2]+','+tupla[1]
+                else:
+                    # start
+                    startPointExclution = tupla[2]+','+tupla[1]
+                i+=1
+            self.listPointsExclution.append((startPointExclution, stopPointExclution))
         
 
     def savePointsExclution(self):

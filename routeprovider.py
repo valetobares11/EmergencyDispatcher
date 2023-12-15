@@ -63,7 +63,6 @@ class RouteProvider(object):
         else:
             url = self.__hereBaseURL__ % (bingDepartureParameter, startPoint, endPoint)
         
-        print(url)
         response = urlopen(url).read().decode("utf-8")
 
         return self.__wktMaker__(response), url
