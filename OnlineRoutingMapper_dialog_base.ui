@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>450</width>
-    <height>390</height>
+    <width>487</width>
+    <height>440</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -38,34 +38,54 @@
     <bool>true</bool>
    </property>
   </widget>
-  <widget class="QComboBox" name="serviceCombo">
+  <widget class="QPushButton" name="btnModMapa">
    <property name="geometry">
     <rect>
-     <x>30</x>
-     <y>40</y>
-     <width>381</width>
-     <height>22</height>
+     <x>120</x>
+     <y>220</y>
+     <width>221</width>
+     <height>41</height>
     </rect>
    </property>
    <property name="styleSheet">
-    <string notr="true">border-radius:7px;
-border:1px solid black</string>
-   </property>
-   <property name="editable">
-    <bool>false</bool>
-   </property>
-  </widget>
-  <widget class="QLabel" name="startLlb_2">
-   <property name="geometry">
-    <rect>
-     <x>30</x>
-     <y>20</y>
-     <width>221</width>
-     <height>16</height>
-    </rect>
+    <string notr="true">QPushButton {
+font-size:14px;
+background-color:#37c871;
+border-radius: 10px;
+border: 1px solid black;
+}
+
+QPushButton:hover {
+background-color: #2CA02C;
+}</string>
    </property>
    <property name="text">
-    <string>Online Service</string>
+    <string>Modificar mapa</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="btnAgPedido">
+   <property name="geometry">
+    <rect>
+     <x>120</x>
+     <y>140</y>
+     <width>221</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton {
+font-size:14px;
+background-color:#37c871;
+border-radius: 10px;
+border: 1px solid black;
+}
+
+QPushButton:hover {
+background-color: #2CA02C;
+}</string>
+   </property>
+   <property name="text">
+    <string>Agendar pedido</string>
    </property>
   </widget>
   <widget class="QPushButton" name="runBtn">
@@ -107,29 +127,6 @@ background-color:#546AAA
      <width>30</width>
      <height>30</height>
     </size>
-   </property>
-  </widget>
-  <widget class="QLabel" name="label">
-   <property name="geometry">
-    <rect>
-     <x>40</x>
-     <y>100</y>
-     <width>101</width>
-     <height>17</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Direccion pa</string>
-   </property>
-  </widget>
-  <widget class="QLineEdit" name="lineEdit">
-   <property name="geometry">
-    <rect>
-     <x>180</x>
-     <y>100</y>
-     <width>201</width>
-     <height>25</height>
-    </rect>
    </property>
   </widget>
  </widget>

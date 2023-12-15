@@ -28,21 +28,27 @@ from PyQt5.QtWidgets import QAction, QMessageBox
 # Initialize Qt resources from file resources.py
 from .resources import *
 # Import the code for the dialog
-from .OnlineRoutingMapper_dialog import OnlineRoutingMapperDialog
+from .OnlineRoutingMapper_dialog import OnlineRoutingMapperDialog, OnlineRoutingMapperDialogAgPedido, OnlineRoutingMapperDialogModMapa
 import os.path
 from urllib.request import urlopen
 
 from .routeprovider import RouteProvider
-
+from .db import createTablePoints, insertarPoints, seleccionarPoints, borrarPoint, seleccionarPoint
+from .util import geocode_address, agregar_texto_con_saltos_de_linea
 from qgis.gui import *
 from qgis.core import *
 
-# VT
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
-import requests
+
+import platform
+
+from .config import *
+from qgis.PyQt.QtWidgets import QTableWidgetItem,QPushButton 
+
 
 class OnlineRoutingMapper:
+    
 
     def __init__(self, iface):
         # Save reference to the QGIS interface
@@ -69,6 +75,8 @@ class OnlineRoutingMapper:
         # TODO: We are going to let the user set this up in a future iteration
         self.toolbar = self.iface.addToolBar(u'OnlineRoutingMapper')
         self.toolbar.setObjectName(u'OnlineRoutingMapper')
+        self.dlg_back = None
+        self.listPointsExclution = []
 
     # noinspection PyMethodMayBeStatic
     def tr(self, message):
@@ -180,16 +188,16 @@ class OnlineRoutingMapper:
 
     def clickHandler(self, pointXY):
         if self.no == 0:
-            self.startPointXY = QgsPointXY(pointXY)
-            self.startRubberBand.removeLastPoint()
-            self.startRubberBand.removeLastPoint()
-            self.startRubberBand.addPoint(self.startPointXY)
+            startPointXY = QgsPointXY(pointXY)
+            # self.startRubberBand.removeLastPoint()
+            # self.startRubberBand.removeLastPoint()
+            self.startRubberBand.addPoint(startPointXY)
             self.dlg.startTxt.setText(str(pointXY.x()) + ',' + str(pointXY.y()))
         else:
-            self.stopPointXY = QgsPointXY(pointXY)
-            self.stopRubberBand.removeLastPoint()
-            self.stopRubberBand.removeLastPoint()
-            self.stopRubberBand.addPoint(self.stopPointXY)
+            stopPointXY = QgsPointXY(pointXY)
+            # self.stopRubberBand.removeLastPoint()
+            # self.stopRubberBand.removeLastPoint()
+            self.stopRubberBand.addPoint(stopPointXY)
             self.dlg.stopTxt.setText(str(pointXY.x()) + ',' + str(pointXY.y()))
         self.dlg.showNormal()
 
@@ -243,21 +251,21 @@ class OnlineRoutingMapper:
     def runAnalysis(self):
         # if len(self.dlg.startTxt.text()) > 0 and len(self.dlg.stopTxt.text()) > 0:
         if self.startPointXY is not None and self.stopPointXY is not None:
-            if self.checkNetConnection():
+            if self.checkNetConnection():              
                 startPoint = self.crsTransform(self.startPointXY)
                 stopPoint = self.crsTransform(self.stopPointXY)
-
-                index = self.dlg.serviceCombo.currentIndex()
-                service = self.services[list(self.services)[index]]
+                # index = self.dlg.serviceCombo.currentIndex()
                 try:
-                    wkt, url = service(startPoint, stopPoint)
+                    service = self.services[list(self.services)[0]]
+                    self.cargar_puntos_lista()
+                    wkt, url = service(startPoint, stopPoint, self.listPointsExclution)
                     self.routeMaker(wkt)
-
-                    #clear rubberbands
-                    self.startRubberBand.removeLastPoint()
-                    self.stopRubberBand.removeLastPoint()
-                    self.startRubberBand.removeLastPoint()
-                    self.stopRubberBand.removeLastPoint()
+                    # clear rubberbands
+                    # self.startRubberBand.removeLastPoint()
+                    # self.stopRubberBand.removeLastPoint()
+                    # self.startRubberBand.removeLastPoint()
+                    # self.stopRubberBand.removeLastPoint()
+                    self.listPointsExclution=[]
                 except Exception as err:
                     QgsMessageLog.logMessage(str(err))
                     QMessageBox.warning(self.dlg, 'Analysis Error',
@@ -266,37 +274,159 @@ class OnlineRoutingMapper:
                 QMessageBox.warning(self.dlg, 'Network Error!', 'There is no internet connection.')
         else:
             QMessageBox.information(self.dlg, 'Warning', 'Please choose Start Location and Stop Location.')
+    
+    def calculate_points(self):
+        self.startPointXY = QgsPointXY(-64.3451616313023,-33.12684997058952)
+        if (self.dlg.lineEdit.text() != None):
+            address = self.dlg.lineEdit.text()+ " " + CIUDAD
+            x, y = geocode_address(address)
+            self.stopPointXY = QgsPointXY(x,y)
+        else:
+            self.dlg.stopBtn.clicked.connect(lambda: self.toolActivator(1))
+        log = canvas.Canvas(PATH_REPORTE, pagesize=letter)
+        message= "Descripcion:  {}\npunto comienzo: {}\n punto final: {}\n ".format(self.dlg.descripcion.text(), self.startPointXY, self.stopPointXY)
+        agregar_texto_con_saltos_de_linea(log,100, 750, message)
+        log.save()
+
+
+    def changeScreenAgPedido(self):
+        self.dlg = OnlineRoutingMapperDialogAgPedido()
+        self.dlg.setFixedSize(self.dlg.size())
+        self.dlg.show()
+        self.dlg.volver.clicked.connect(lambda: self.backScreen())
+        self.dlg.aceptar.clicked.connect(lambda: self.savePoints())
+    
+    def add_table_item(self, row, column, text):
+        # Método para agregar un elemento a la tabla
+        item = QTableWidgetItem(text)
+        self.dlg.tableWidget.setItem(row, column, item)
+    
+    def borrar_todos_los_puntos(self):
+        # Itera sobre todos los puntos y los elimina uno por uno
+        while self.stopRubberBand.numberOfVertices() > 0:
+            self.stopRubberBand.removeLastPoint()
+        
+        while self.startRubberBand.numberOfVertices() > 0:
+            self.startRubberBand.removeLastPoint()
+
+    def remove_points(self, id, tupla):
+        # Borrar en la tabla interface
+        i=0
+        while i < self.dlg.tableWidget.rowCount():
+            if int(self.dlg.tableWidget.item(i,0).text()) == id:
+                self.dlg.tableWidget.removeRow(i)
+            i += 1
+
+        # Borrar en la BD
+        borrarPoint(id)
+        borrarPoint(id-1)
+
+    def add_point(self, id, descripcion, tupla):
+        rowPosition = self.dlg.tableWidget.rowCount()
+        self.dlg.tableWidget.insertRow(rowPosition)
+        self.dlg.tableWidget.setItem(rowPosition, 0, QTableWidgetItem(str(id)))
+        self.dlg.tableWidget.setItem(rowPosition, 1, QTableWidgetItem(descripcion))
+        delete_button = QPushButton("delete")
+        delete_button.clicked.connect(lambda: self.remove_points(id, tupla))
+        self.dlg.tableWidget.setCellWidget(rowPosition, 2, delete_button)
+
+    def changeScreenModMapa(self):
+        self.dlg = OnlineRoutingMapperDialogModMapa()
+        self.dlg.setFixedSize(self.dlg.size())
+        self.dlg.show()
+        self.dlg.tableWidget.setColumnCount(3)
+        self.dlg.tableWidget.setHorizontalHeaderLabels(["ID", "Descripcion", "Acción"])
+        registros = seleccionarPoints()
+        i=1
+        for tupla in registros:
+            if i % 2 == 0:
+                self.add_point(tupla[0], tupla[3], (tupla[1], tupla[2]))
+            i+=1
+        
+        self.canvas = self.iface.mapCanvas()
+        self.clickTool = QgsMapToolEmitPoint(self.canvas)
+        self.dlg.startBtn.clicked.connect(lambda: self.toolActivator(0))
+        self.dlg.stopBtn.clicked.connect(lambda: self.toolActivator(1))
+        self.dlg.volver.clicked.connect(lambda: self.backScreen())
+        self.dlg.aceptar.clicked.connect(lambda: self.savePointsExclution())
+    
+    def cargar_puntos_lista(self):
+        registros = seleccionarPoints()
+        i=1
+        for tupla in registros:
+            if i % 2 == 0:
+                # stop
+                stopPointExclution = tupla[2]+','+tupla[1]
+            else:
+                # start
+                startPointExclution = tupla[2]+','+tupla[1]
+            i+=1
+        self.listPointsExclution.append((startPointExclution, stopPointExclution))
+        
+
+    def savePointsExclution(self):
+        if len(self.dlg.startTxt.text()) > 0 and len(self.dlg.stopTxt.text()) > 0:
+            if platform.system() == 'Windows':
+                startPointExclution = self.dlg.startTxt.text()
+                stopPointExclution = self.dlg.stopTxt.text()
+            else:
+                pointsStart = self.dlg.startTxt.text().split(',')
+                startPointExclution = pointsStart[1]+','+pointsStart[0]
+                pointsStop = self.dlg.stopTxt.text().split(',')
+                stopPointExclution = pointsStop[1]+','+pointsStop[0]
+            
+            #Inserta los puntos en la BD 
+            startPoint = startPointExclution.split(',')
+            stopPoint = stopPointExclution.split(',')
+            insertarPoints(startPoint[1], startPoint[0], self.dlg.descripcionTxt.text())
+            insertarPoints(stopPoint[1], stopPoint[0], self.dlg.descripcionTxt.text())
+
+        self.agregar_actualizar_puntos_iniciales()
+        self.dlg = self.dlg_back
+        self.dlg.show()
+
+    def savePoints(self):
+        self.calculate_points()
+        self.dlg = self.dlg_back
+        self.dlg.show()
+
+    def backScreen(self):
+        self.dlg = self.dlg_back
+        self.dlg.show()
+
+    def agregar_actualizar_puntos_iniciales(self):
+        self.borrar_todos_los_puntos()
+        registros = seleccionarPoints()
+        i=1
+        for tupla in registros:
+            if i % 2 == 0:
+                self.stopRubberBand.addPoint(QgsPointXY(float(tupla[1]), float(tupla[2])))
+            else:
+                self.startRubberBand.addPoint(QgsPointXY(float(tupla[1]), float(tupla[2])))
+            i+=1
 
     def run(self):
         self.no = 0
-        # self.startPointXY = None
-        # self.stopPointXY = None
+        self.startPointXY = None
+        self.stopPointXY = None
+        createTablePoints()
         self.dlg = OnlineRoutingMapperDialog()
-
-        # VT
-        address = self.dlg.lineEdit.text()+ " rio cuarto"
-        x, y = geocode_address(address)
-        self.startPointXY = QgsPointXY(-64.3451616313023,-33.12684997058952)
-        self.stopPointXY = QgsPointXY(x,y)
-        log = canvas.Canvas("/home/tobares/Descargas/log.pdf", pagesize=letter)
-        
-        message= "Direccion:  {}\npunto comienzo: {}\npunto final: {}".format(address, self.startPointXY, self.stopPointXY)
-        agregar_texto_con_saltos_de_linea(log,100, 750, message)
-        log.save()
-        ########
         
         self.dlg.setFixedSize(self.dlg.size())
 
-        ##defining services and loading combo
         self.services = RouteProvider().services()
-        self.dlg.serviceCombo.addItems(list(self.services))
+        # self.dlg.serviceCombo.addItems(list(self.services))
 
         self.canvas = self.iface.mapCanvas()
         self.clickTool = QgsMapToolEmitPoint(self.canvas)  # clicktool instance generated in here.
         # self.dlg.startBtn.clicked.connect(lambda: self.toolActivator(0))
         # self.dlg.stopBtn.clicked.connect(lambda: self.toolActivator(1))
         self.dlg.runBtn.clicked.connect(self.runAnalysis)
-
+        
+        self.dlg_back = self.dlg
+        self.dlg.btnAgPedido.clicked.connect(lambda: self.changeScreenAgPedido())
+        self.dlg.btnModMapa.clicked.connect(lambda: self.changeScreenModMapa())
+        
         self.startRubberBand = QgsRubberBand(self.canvas, QgsWkbTypes.PointGeometry)
         self.startRubberBand.setColor(QColor("#000000"))
         self.startRubberBand.setIconSize(10)
@@ -305,7 +435,8 @@ class OnlineRoutingMapper:
         self.stopRubberBand.setColor(QColor("#000000"))
         self.stopRubberBand.setIconSize(10)
         self.stopRubberBand.setIcon(QgsRubberBand.ICON_FULL_BOX)
-        
+        self.agregar_actualizar_puntos_iniciales()
+
         self.dlg.show()
         self.dlg.closeEvent = self.close
 
@@ -314,26 +445,4 @@ class OnlineRoutingMapper:
         self.canvas.scene().removeItem(self.startRubberBand)
         self.canvas.scene().removeItem(self.stopRubberBand)
 
-# VT
-def geocode_address(address):
-    base_url = "https://nominatim.openstreetmap.org/search"
-    params = {
-        "q": address,
-        "format": "json",
-    }
-    response = requests.get(base_url, params=params)
-    if response.status_code == 200:
-        data = response.json()
-        if data:
-            # Extrae las coordenadas (latitud y longitud) del primer resultado
-            lat = float(data[0]["lat"])
-            lon = float(data[0]["lon"])
-            return lon, lat
-    return None
 
-
-def agregar_texto_con_saltos_de_linea(c, x, y, texto):
-    lineas = texto.split('\n')
-    for linea in lineas:
-        c.drawString(x, y, linea)
-        y -= 15  # Espacio vertical entre líneas

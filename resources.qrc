@@ -1,5 +1,5 @@
 <RCC>
-    <qresource prefix="/plugins/ejemplo" >
+    <qresource prefix="/plugins/OnlineRoutingMapper" >
         <file>icon.png</file>
     </qresource>
 </RCC>
