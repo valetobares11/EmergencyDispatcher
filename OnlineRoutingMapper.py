@@ -77,6 +77,7 @@ class OnlineRoutingMapper:
         self.toolbar.setObjectName(u'OnlineRoutingMapper')
         self.dlg_back = None
         self.listPointsExclution = []
+        self.tipoAutomovil = None
 
     # noinspection PyMethodMayBeStatic
     def tr(self, message):
@@ -258,7 +259,7 @@ class OnlineRoutingMapper:
                 try:
                     service = self.services[list(self.services)[0]]
                     self.cargar_puntos_lista()
-                    wkt, url = service(startPoint, stopPoint, self.listPointsExclution)
+                    wkt, url = service(startPoint, stopPoint, self.listPointsExclution, self.tipoAutomovil)
                     self.routeMaker(wkt)
                     # clear rubberbands
                     # self.startRubberBand.removeLastPoint()
@@ -276,7 +277,8 @@ class OnlineRoutingMapper:
             QMessageBox.information(self.dlg, 'Warning', 'Please choose Start Location and Stop Location.')
     
     def calculate_points(self):
-        self.startPointXY = QgsPointXY(-64.3451616313023,-33.12684997058952)
+        punto_part = PUNTO_PARTIDA.split(',')
+        self.startPointXY = QgsPointXY(float(punto_part[0]), float(punto_part[1]))
         if (self.dlg.lineEdit.text() != None):
             address = self.dlg.lineEdit.text()+ " " + CIUDAD
             x, y = geocode_address(address)
@@ -293,6 +295,10 @@ class OnlineRoutingMapper:
         self.dlg = OnlineRoutingMapperDialogAgPedido()
         self.dlg.setFixedSize(self.dlg.size())
         self.dlg.show()
+        
+        opciones = [CAMIONETA, CAMION_LIGERO, CAMION_PESADO]
+        self.dlg.comboBox.addItems(opciones)
+
         self.dlg.volver.clicked.connect(lambda: self.backScreen())
         self.dlg.aceptar.clicked.connect(lambda: self.savePoints())
     
@@ -388,6 +394,7 @@ class OnlineRoutingMapper:
 
     def savePoints(self):
         self.calculate_points()
+        self.tipoAutomovil = self.dlg.comboBox.currentText()
         self.dlg = self.dlg_back
         self.dlg.show()
 
