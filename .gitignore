@@ -1,2 +1,9 @@
 /__pycache__/*
 /OnlineRoutingMapper.qml
+
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
