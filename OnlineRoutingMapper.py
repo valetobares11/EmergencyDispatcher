@@ -42,7 +42,7 @@ import platform
 
 from .config import *
 from qgis.PyQt.QtWidgets import QTableWidgetItem,QPushButton 
-#import pygame
+import pygame
 
 from uu import decode
 from urllib.request import urlopen
