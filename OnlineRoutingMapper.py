@@ -45,7 +45,7 @@ import platform
 
 from .config import *
 from qgis.PyQt.QtWidgets import QTableWidgetItem,QPushButton 
-
+import pygame
 
 class OnlineRoutingMapper:
     
@@ -290,6 +290,42 @@ class OnlineRoutingMapper:
         agregar_texto_con_saltos_de_linea(log,100, 750, message)
         log.save()
 
+    def sonidoIncendio(self):    
+        pygame.init()
+
+        # Configura el sistema de sonido
+        pygame.mixer.init()
+
+        # Carga el archivo de sonido
+        sonido = pygame.mixer.Sound(SONIDO_ALARMA_INCENDIO)
+
+        # Reproduce el sonido
+        sonido.play()
+
+        # Espera a que el sonido termine antes de salir del programa
+        pygame.time.wait(int(sonido.get_length() * 1000))
+
+        # Cierra pygame
+        pygame.quit()
+
+    def sonidoRescate(self):    
+        pygame.init()
+
+        # Configura el sistema de sonido
+        pygame.mixer.init()
+
+        # Carga el archivo de sonido
+        sonido = pygame.mixer.Sound(SONIDO_ALARMA_RESCATE)
+
+        # Reproduce el sonido
+        sonido.play()
+
+        # Espera a que el sonido termine antes de salir del programa
+        pygame.time.wait(int(sonido.get_length() * 1000))
+
+        # Cierra pygame
+        pygame.quit()
+
 
     def changeScreenAgPedido(self):
         self.dlg = OnlineRoutingMapperDialogAgPedido()
@@ -299,6 +335,8 @@ class OnlineRoutingMapper:
         opciones = [CAMIONETA, CAMION_LIGERO, CAMION_PESADO]
         self.dlg.comboBox.addItems(opciones)
 
+        self.dlg.buttonIncendio.clicked.connect(lambda: self.sonidoIncendio())
+        self.dlg.buttonRescate.clicked.connect(lambda: self.sonidoRescate())
         self.dlg.volver.clicked.connect(lambda: self.backScreen())
         self.dlg.aceptar.clicked.connect(lambda: self.savePoints())
     

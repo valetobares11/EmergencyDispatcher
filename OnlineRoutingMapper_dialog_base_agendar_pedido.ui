@@ -187,7 +187,7 @@ background-color: #2CA02C;
     </rect>
    </property>
   </widget>
-  <widget class="QPushButton" name="pushButton">
+  <widget class="QPushButton" name="buttonIncendio">
    <property name="geometry">
     <rect>
      <x>390</x>
@@ -200,7 +200,7 @@ background-color: #2CA02C;
     <string>Incendio</string>
    </property>
   </widget>
-  <widget class="QPushButton" name="pushButton_2">
+  <widget class="QPushButton" name="buttonRescate">
    <property name="geometry">
     <rect>
      <x>390</x>
