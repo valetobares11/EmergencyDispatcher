@@ -38,14 +38,16 @@ from .util import geocode_address, agregar_texto_con_saltos_de_linea
 from qgis.gui import *
 from qgis.core import *
 
-from reportlab.lib.pagesizes import letter
-from reportlab.pdfgen import canvas
-
 import platform
 
 from .config import *
 from qgis.PyQt.QtWidgets import QTableWidgetItem,QPushButton 
-import pygame
+#import pygame
+
+from uu import decode
+from urllib.request import urlopen
+import json
+import re
 
 class OnlineRoutingMapper:
     
@@ -260,6 +262,15 @@ class OnlineRoutingMapper:
                     service = self.services[list(self.services)[0]]
                     self.cargar_puntos_lista()
                     wkt, url = service(startPoint, stopPoint, self.listPointsExclution, self.tipoAutomovil)
+                    response = urlopen(url).read().decode("utf-8")
+                    diccionario = json.loads(response)
+                    f = open (PATH_REPORTE,'a')
+                    for route in diccionario['response']['route']:
+                        f.write(re.sub(r"\<[^>]*\>", "",(route['summary']['text']))+'\n\n')
+                        for leg in route['leg']:
+                            for maneuver in leg['maneuver']:
+                                f.write(re.sub(r"\<[^>]*\>", "",(maneuver['instruction']))+'\n')
+                    f.close()
                     self.routeMaker(wkt)
                     # clear rubberbands
                     # self.startRubberBand.removeLastPoint()
@@ -283,13 +294,12 @@ class OnlineRoutingMapper:
             address = self.dlg.lineEdit.text()+ " " + CIUDAD
             x, y = geocode_address(address)
             self.stopPointXY = QgsPointXY(x,y)
+            f = open (PATH_REPORTE ,'w')
+            f.write('Direccion:'+address+'\n\n')
+            f.close()
         else:
             self.dlg.stopBtn.clicked.connect(lambda: self.toolActivator(1))
-        log = canvas.Canvas(PATH_REPORTE, pagesize=letter)
-        message= "Descripcion:  {}\npunto comienzo: {}\n punto final: {}\n ".format(self.dlg.descripcion.text(), self.startPointXY, self.stopPointXY)
-        agregar_texto_con_saltos_de_linea(log,100, 750, message)
-        log.save()
-
+       
     def sonidoIncendio(self):    
         pygame.init()
 
