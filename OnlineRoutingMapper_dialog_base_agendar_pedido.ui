@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>531</width>
-    <height>404</height>
+    <width>764</width>
+    <height>533</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -49,7 +49,7 @@
    <property name="geometry">
     <rect>
      <x>200</x>
-     <y>320</y>
+     <y>420</y>
      <width>93</width>
      <height>41</height>
     </rect>
@@ -97,7 +97,7 @@ background-color: #c83737;
    <property name="geometry">
     <rect>
      <x>370</x>
-     <y>320</y>
+     <y>420</y>
      <width>93</width>
      <height>41</height>
     </rect>
@@ -187,30 +187,108 @@ background-color: #2CA02C;
     </rect>
    </property>
   </widget>
-  <widget class="QPushButton" name="buttonIncendio">
+  <widget class="QPushButton" name="buttonIncendioForestal">
    <property name="geometry">
     <rect>
-     <x>390</x>
-     <y>230</y>
-     <width>71</width>
+     <x>190</x>
+     <y>270</y>
+     <width>151</width>
      <height>25</height>
     </rect>
    </property>
    <property name="text">
-    <string>Incendio</string>
+    <string>Incendio Forestal</string>
    </property>
   </widget>
-  <widget class="QPushButton" name="buttonRescate">
+  <widget class="QPushButton" name="buttonIncendioRural">
    <property name="geometry">
     <rect>
-     <x>390</x>
-     <y>260</y>
-     <width>71</width>
+     <x>190</x>
+     <y>300</y>
+     <width>151</width>
      <height>25</height>
     </rect>
    </property>
    <property name="text">
-    <string>Rescate</string>
+    <string>Incendio Rural</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="buttonIncendioEstructura">
+   <property name="geometry">
+    <rect>
+     <x>190</x>
+     <y>360</y>
+     <width>151</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Incendio Estructura</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="buttonIncendioVehicular">
+   <property name="geometry">
+    <rect>
+     <x>190</x>
+     <y>330</y>
+     <width>151</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Incendio Vehicular</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="buttonRescateDeAltura">
+   <property name="geometry">
+    <rect>
+     <x>360</x>
+     <y>360</y>
+     <width>151</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Rescate de Altura</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="buttonAccidenteVehicular">
+   <property name="geometry">
+    <rect>
+     <x>360</x>
+     <y>270</y>
+     <width>151</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Accidente Vehicular</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="buttonAccidenteMatPel">
+   <property name="geometry">
+    <rect>
+     <x>360</x>
+     <y>300</y>
+     <width>151</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Accidente Mat Pel</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="buttonEmergVarias">
+   <property name="geometry">
+    <rect>
+     <x>360</x>
+     <y>330</y>
+     <width>151</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Emerg Varias</string>
    </property>
   </widget>
  </widget>

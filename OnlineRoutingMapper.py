@@ -49,7 +49,7 @@ from urllib.request import urlopen
 import json
 import re
 #variable necesaria para saber si calcular rutas a bombas de incendio
-isIncendio = False
+is_incendio = False
 
 class OnlineRoutingMapper:
     
@@ -306,8 +306,8 @@ class OnlineRoutingMapper:
         else:
             self.dlg.stopBtn.clicked.connect(lambda: self.toolActivator(1))
        
-    def sonidoIncendio(self):
-        isIncendio = True
+    def sonido_incendio_forestal(self):
+        is_incendio = True
 
         pygame.init()
 
@@ -315,7 +315,7 @@ class OnlineRoutingMapper:
         pygame.mixer.init()
 
         # Carga el archivo de sonido
-        sonido = pygame.mixer.Sound(SONIDO_ALARMA_INCENDIO)
+        sonido = pygame.mixer.Sound(SONIDO_ALARMA_INCENDIO_FORESTAL)
 
         # Reproduce el sonido
         sonido.play()
@@ -326,24 +326,92 @@ class OnlineRoutingMapper:
         # Cierra pygame
         #pygame.quit()
 
-    def sonidoRescate(self):    
+    def sonido_incendio_rural(self):
+        is_incendio = True
         pygame.init()
 
         # Configura el sistema de sonido
         pygame.mixer.init()
 
         # Carga el archivo de sonido
-        sonido = pygame.mixer.Sound(SONIDO_ALARMA_RESCATE)
+        sonido = pygame.mixer.Sound(SONIDO_ALARMA_INCENDIO_RURAL)
 
         # Reproduce el sonido
         sonido.play()
 
-        # Espera a que el sonido termine antes de salir del programa
-        #pygame.time.wait(int(sonido.get_length() * 1000))
+    def sonido_incendio_vehicular(self):
+        is_incendio = True    
+        pygame.init()
 
-        # Cierra pygame
-        #pygame.quit()
+        # Configura el sistema de sonido
+        pygame.mixer.init()
 
+        # Carga el archivo de sonido
+        sonido = pygame.mixer.Sound(SONIDO_ALARMA_INCENDIO_VEHICULAR)
+
+        # Reproduce el sonido
+        sonido.play()
+
+    def sonido_incendio_estructura(self):
+        is_incendio = True  
+        pygame.init()
+
+        # Configura el sistema de sonido
+        pygame.mixer.init()
+
+        # Carga el archivo de sonido
+        sonido = pygame.mixer.Sound(SONIDO_ALARMA_RESCATE_ESTRUCTURA)
+
+        # Reproduce el sonido
+        sonido.play()
+
+    def sonido_accidente_vehicular(self):    
+        pygame.init()
+
+        # Configura el sistema de sonido
+        pygame.mixer.init()
+
+        # Carga el archivo de sonido
+        sonido = pygame.mixer.Sound(SONIDO_ALARMA_ACCIDENTE_VEHICULAR)
+
+        # Reproduce el sonido
+        sonido.play()
+
+    def sonido_accidente_mat_pel(self):    
+        pygame.init()
+
+        # Configura el sistema de sonido
+        pygame.mixer.init()
+
+        # Carga el archivo de sonido
+        sonido = pygame.mixer.Sound(SONIDO_ALARMA_ACCIDENTE_MAT_PEL)
+
+        # Reproduce el sonido
+        sonido.play()
+
+    def sonido_emergencias_varias(self):    
+        pygame.init()
+
+        # Configura el sistema de sonido
+        pygame.mixer.init()
+
+        # Carga el archivo de sonido
+        sonido = pygame.mixer.Sound(SONIDO_ALARMA_EMERGENCIAS_VARIAS)
+
+        # Reproduce el sonido
+        sonido.play()
+
+    def sonido_rescate_de_altura(self):    
+        pygame.init()
+
+        # Configura el sistema de sonido
+        pygame.mixer.init()
+
+        # Carga el archivo de sonido
+        sonido = pygame.mixer.Sound(SONIDO_ALARMA_RESCATE_DE_ALTURA)
+
+        # Reproduce el sonido
+        sonido.play()
 
     def changeScreenAgPedido(self):
         self.dlg = OnlineRoutingMapperDialogAgPedido()
@@ -353,8 +421,15 @@ class OnlineRoutingMapper:
         opciones = [CAMIONETA, CAMION_LIGERO, CAMION_PESADO]
         self.dlg.comboBox.addItems(opciones)
 
-        self.dlg.buttonIncendio.clicked.connect(lambda: self.sonidoIncendio())
-        self.dlg.buttonRescate.clicked.connect(lambda: self.sonidoRescate())
+        self.dlg.buttonIncendioForestal.clicked.connect(lambda: self.sonido_incendio_forestal())
+        self.dlg.buttonIncendioRural.clicked.connect(lambda: self.sonido_incendio_rural())
+        self.dlg.buttonIncendioVehicular.clicked.connect(lambda: self.sonido_incendio_vehicular())
+        self.dlg.buttonIncendioEstructura.clicked.connect(lambda: self.sonido_incendio_estructura())
+        self.dlg.buttonAccidenteVehicular.clicked.connect(lambda: self.sonido_accidente_vehicular())
+        self.dlg.buttonAccidenteMatPel.clicked.connect(lambda: self.sonido_accidente_mat_pel())
+        self.dlg.buttonEmergVarias.clicked.connect(lambda: self.sonido_emergencias_varias())
+        self.dlg.buttonRescateDeAltura.clicked.connect(lambda: self.sonido_rescate_de_altura())
+
         self.dlg.volver.clicked.connect(lambda: self.backScreen())
         self.dlg.aceptar.clicked.connect(lambda: self.savePoints())
     
