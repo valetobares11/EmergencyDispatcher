@@ -33,8 +33,8 @@ import os.path
 from urllib.request import urlopen
 
 from .routeprovider import RouteProvider
-from .db import createTablePoints, insertarPoints, seleccionarPoints, borrarPoint, seleccionarPoint
-from .util import geocode_address, agregar_texto_con_saltos_de_linea
+from .db import createTablePoints, select, delete
+from .util import geocode_address, agregar_texto_con_saltos_de_linea, insertar_punto
 from qgis.gui import *
 from qgis.core import *
 
@@ -367,8 +367,8 @@ class OnlineRoutingMapper:
             i += 1
 
         # Borrar en la BD
-        borrarPoint(id)
-        borrarPoint(id-1)
+        delete('points', id)
+        delete('points', id-1)
 
     def add_point(self, id, descripcion, tupla):
         rowPosition = self.dlg.tableWidget.rowCount()
@@ -385,7 +385,7 @@ class OnlineRoutingMapper:
         self.dlg.show()
         self.dlg.tableWidget.setColumnCount(3)
         self.dlg.tableWidget.setHorizontalHeaderLabels(["ID", "Descripcion", "Acción"])
-        registros = seleccionarPoints()
+        registros = select('points')
         i=1
         for tupla in registros:
             if i % 2 == 0:
@@ -400,7 +400,7 @@ class OnlineRoutingMapper:
         self.dlg.aceptar.clicked.connect(lambda: self.savePointsExclution())
     
     def cargar_puntos_lista(self):
-        registros = seleccionarPoints()
+        registros = select('points')
         i=1
         if (len(registros) > 0) :
             for tupla in registros:
@@ -428,8 +428,9 @@ class OnlineRoutingMapper:
             #Inserta los puntos en la BD 
             startPoint = startPointExclution.split(',')
             stopPoint = stopPointExclution.split(',')
-            insertarPoints(startPoint[1], startPoint[0], self.dlg.descripcionTxt.text())
-            insertarPoints(stopPoint[1], stopPoint[0], self.dlg.descripcionTxt.text())
+
+            insertar_punto(startPoint[1], startPoint[0], self.dlg.descripcionTxt.text())
+            insertar_punto(stopPoint[1], stopPoint[0], self.dlg.descripcionTxt.text())
 
         self.agregar_actualizar_puntos_iniciales()
         self.dlg = self.dlg_back
@@ -447,7 +448,7 @@ class OnlineRoutingMapper:
 
     def agregar_actualizar_puntos_iniciales(self):
         self.borrar_todos_los_puntos()
-        registros = seleccionarPoints()
+        registros = select('points')
         i=1
         for tupla in registros:
             if i % 2 == 0:

@@ -1,5 +1,6 @@
 
 import requests
+from .db import insert
 
 def geocode_address(address):
     base_url = "https://nominatim.openstreetmap.org/search"
@@ -24,3 +25,7 @@ def agregar_texto_con_saltos_de_linea(c, x, y, texto):
         c.drawString(x, y, linea)
         y -= 15  # Espacio vertical entre líneas
 
+
+def insertar_punto(start_point, stop_point, description):
+    valores = "{}, {}, '{}'".format(start_point, stop_point, description)
+    insert('points', 'startPoints, stopPoints, description', valores)

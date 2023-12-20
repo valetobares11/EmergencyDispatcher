@@ -32,53 +32,48 @@ def createTablePoints():
     conexion.close()
 
 
-def insertarPoints(startPoint,stopPoint, description=""):
-    conexion = connectBD()
-    cursor = conexion.cursor()
+def insert(table = '', columns = '', values = ''):
+    if table != '' and columns != '' and values != '':
+        conexion = connectBD()
+        cursor = conexion.cursor()
+        consulta_insercion = sql.SQL("INSERT INTO {} ({}) VALUES ({})".format(table, columns, values))
+        cursor.execute(consulta_insercion)
 
-    consulta_insercion_point = sql.SQL("INSERT INTO points (startPoints, stopPoints, description) VALUES (%s, %s, %s)")
-    datos_point = (startPoint, stopPoint, description)
-    cursor.execute(consulta_insercion_point, datos_point)
-
-
-    # Guardar los cambios y cerrar la conexión
-    conexion.commit()
-    conexion.close()
+        # Guardar los cambios y cerrar la conexión
+        conexion.commit()
+        conexion.close()
 
 
-def seleccionarPoints():
-    conexion = connectBD()
-    cursor = conexion.cursor()
-
-    consulta_seleccion_point = "SELECT * FROM points"
-
-    cursor.execute(consulta_seleccion_point)
-
-    resultados = cursor.fetchall()
-    conexion.close()
-
-    return resultados
-
-def seleccionarPoint(id):
-    conexion = connectBD()
-    cursor = conexion.cursor()
-
-    consulta_seleccion_point = "SELECT * FROM points WHERE id = {}".format(id)
-
-    cursor.execute(consulta_seleccion_point)
-
-    resultado = cursor.fetchall()
-    conexion.close()
+def select(table = '', id = None):
+    if (table == ''):
+        return []
     
-    return resultado[0]
-
-def borrarPoint(id):
     conexion = connectBD()
     cursor = conexion.cursor()
-    consulta_delete_point = sql.SQL("DELETE FROM points WHERE id = {}".format(id))
-    cursor.execute(consulta_delete_point)
-    conexion.commit()
+    query = "SELECT * FROM {} WHERE 1 = 1".format(table)
+    
+    if (id is not None):
+        query+= " AND id = {}".format(id)
+
+    cursor.execute(query)
+    result = cursor.fetchall()
     conexion.close()
+
+    return result[0] if id is not None else result
+
+def delete(table = '', id = None):
+    if (table != ''):
+        conexion = connectBD()
+        cursor = conexion.cursor()
+        query = "DELETE FROM {} WHERE 1 = 1".format(table)
+        
+        if (id is not None):
+            query+= " AND id = {}".format(id)
+        
+        cursor.execute(sql.SQL(query))
+        conexion.commit()
+        conexion.close()
+   
 
 #tabla para tener registro de las bombas de aguas que pueden ser utilizadas en un incendio
 def createTableBomba():
