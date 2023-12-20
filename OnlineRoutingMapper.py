@@ -406,13 +406,23 @@ class OnlineRoutingMapper:
         self.dlg.volver.clicked.connect(lambda: self.backScreen())
         self.dlg.aceptar.clicked.connect(lambda: self.savePointsExclution())
     
+    def add_pedido(self, id, direccion, solicitante, telefono, operador, coordenada_partida, coordenada_lugar, descripcion):
+        rowPosition = self.dlg.tableWidget.rowCount()
+        self.dlg.tableWidget.insertRow(rowPosition)
+        self.dlg.tableWidget.setItem(rowPosition, 0, QTableWidgetItem(str(id)))
+        self.dlg.tableWidget.setItem(rowPosition, 1, QTableWidgetItem(descripcion))
+        delete_button = QPushButton("delete")
+        delete_button.clicked.connect(lambda: self.remove_points(id, tupla))
+        self.dlg.tableWidget.setCellWidget(rowPosition, 2, delete_button)
+
+
     def changeScreenVerPedidos(self):
         self.dlg = OnlineRoutingMapperDialogVerPedidos()
         self.dlg.setFixedSize(self.dlg.size())
         self.dlg.show()
         self.dlg.tableWidget.setColumnCount(8)
         self.dlg.tableWidget.setHorizontalHeaderLabels(["Numero ID", "Direccion", "Solicitante", "Telefono", "Operador", "Coordenada de partida", "Coordenada del lugar", "Descripcion"])
-        registros = seleccionarPoints()
+        registros = seleccionarPedido()
         i=1
         for tupla in registros:
             if i % 2 == 0:

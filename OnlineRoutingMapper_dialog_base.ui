@@ -42,7 +42,7 @@
    <property name="geometry">
     <rect>
      <x>120</x>
-     <y>220</y>
+     <y>160</y>
      <width>221</width>
      <height>41</height>
     </rect>
@@ -67,7 +67,7 @@ background-color: #2CA02C;
    <property name="geometry">
     <rect>
      <x>120</x>
-     <y>140</y>
+     <y>100</y>
      <width>221</width>
      <height>41</height>
     </rect>
@@ -127,6 +127,31 @@ background-color:#546AAA
      <width>30</width>
      <height>30</height>
     </size>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="btn_ver_pedidos">
+   <property name="geometry">
+    <rect>
+     <x>120</x>
+     <y>220</y>
+     <width>221</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton {
+font-size:14px;
+background-color:#37c871;
+border-radius: 10px;
+border: 1px solid black;
+}
+
+QPushButton:hover {
+background-color: #2CA02C;
+}</string>
+   </property>
+   <property name="text">
+    <string>Ver pedidos</string>
    </property>
   </widget>
  </widget>
