@@ -274,6 +274,7 @@ class OnlineRoutingMapper:
                             for maneuver in leg['maneuver']:
                                 f.write(re.sub(r"\<[^>]*\>", "",(maneuver['instruction']))+'\n')
                     f.close()
+                    self.calculate_routes_a_bombas(stopPoint)
                     self.routeMaker(wkt)
                     # clear rubberbands
                     # self.startRubberBand.removeLastPoint()
@@ -290,8 +291,14 @@ class OnlineRoutingMapper:
         else:
             QMessageBox.information(self.dlg, 'Warning', 'Please choose Start Location and Stop Location.')
     
-    # def calculate_routes_a_bombas(self):
-        
+    def calculate_routes_a_bombas(self, startPoint):
+        bombas = select('bombas')
+        service = self.services[list(self.services)[0]]
+        for tupla in bombas:
+            wkt, url = service(startPoint, (tupla[1], tupla[2]))
+            response = urlopen(url).read().decode("utf-8")
+            # ver cual de los responses tiene la ruta mas corta y escribirlos en el reporte
+            # TODO
 
     def calculate_points(self):
         punto_part = PUNTO_PARTIDA.split(',')
