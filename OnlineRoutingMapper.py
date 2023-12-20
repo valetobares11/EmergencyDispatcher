@@ -308,8 +308,10 @@ class OnlineRoutingMapper:
        
     def call_sound(self, path_sound, fire = False):
         
+        #teniendo en cuenta esto, va a ejecutar otra parte del calculo del incendio a las bombas mas cercanas
+        #TODO
         if (fire):
-            is_fire = True
+            is_incendio = True
 
         pygame.init()
 
@@ -322,11 +324,6 @@ class OnlineRoutingMapper:
         # Reproduce el sonido
         sonido.play()
 
-        # Espera a que el sonido termine antes de salir del programa
-        #pygame.time.wait(int(sonido.get_length() * 1000))
-
-        # Cierra pygame
-        #pygame.quit()
 
     def changeScreenAgPedido(self):
         self.dlg = OnlineRoutingMapperDialogAgPedido()
