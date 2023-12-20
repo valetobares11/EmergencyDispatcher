@@ -32,12 +32,12 @@ def createTablePoints():
     conexion.close()
 
 
-def insertarPoints(startPoint,stopPoint, descripicon=""):
+def insertarPoints(startPoint,stopPoint, description=""):
     conexion = connectBD()
     cursor = conexion.cursor()
 
     consulta_insercion_point = sql.SQL("INSERT INTO points (startPoints, stopPoints, description) VALUES (%s, %s, %s)")
-    datos_point = (startPoint, stopPoint, descripicon)
+    datos_point = (startPoint, stopPoint, description)
     cursor.execute(consulta_insercion_point, datos_point)
 
 
@@ -94,20 +94,20 @@ def createTableBomba():
             description VARCHAR(255)
         )
     """
-    cursor.execute(consulta_creacion_tabla)
+    cursor.execute(consulta_creacion_tabla_bomba)
 
     # Guardar los cambios y cerrar la conexión
     conexion.commit()
     conexion.close()
 
 
-def insertarPoints(startPoint,stopPoint, descripicon=""):
+def insertarBomba(startPoint,stopPoint, description=""):
     conexion = connectBD()
     cursor = conexion.cursor()
 
     consulta_insercion_bomba = sql.SQL("INSERT INTO bomba (startPoints, stopPoints, description) VALUES (%s, %s, %s)")
-    datos_point = (startPoint, stopPoint, descripicon)
-    cursor.execute(consulta_insercion_bomba, datos_point)
+    datos_bomba = (startPoint, stopPoint, description)
+    cursor.execute(consulta_insercion_bomba, datos_bomba)
 
 
     # Guardar los cambios y cerrar la conexión
@@ -119,7 +119,7 @@ def seleccionarBomba():
     conexion = connectBD()
     cursor = conexion.cursor()
 
-    consulta_seleccion_point = "SELECT * FROM bomba"
+    consulta_seleccion_bomba = "SELECT * FROM bomba"
 
     cursor.execute(consulta_seleccion_bomba)
 
@@ -141,10 +141,82 @@ def seleccionarBomba(id):
     
     return resultado[0]
 
-def borrarPoint(id):
+def borrarBomba(id):
     conexion = connectBD()
     cursor = conexion.cursor()
     consulta_delete_bomba = sql.SQL("DELETE FROM bomba WHERE id = {}".format(id))
     cursor.execute(consulta_delete_bomba)
+    conexion.commit()
+    conexion.close()
+
+def createTablePedido():
+    conexion = connectBD()
+    cursor = conexion.cursor()
+
+    # Crear una tabla si no existe
+    consulta_creacion_tabla_pedido = """
+        CREATE TABLE IF NOT EXISTS pedido (
+            id SERIAL PRIMARY KEY,
+            dirreccion VARCHAR(40),
+            solicitante VARCHAR(40),
+            telefono VARCHAR(40),
+            operador VARCHAR(40),
+            startPoints VARCHAR(40),
+            stopPoints VARCHAR(40),
+            description VARCHAR(255)
+        )
+    """
+    cursor.execute(consulta_creacion_tabla_pedido)
+
+    # Guardar los cambios y cerrar la conexión
+    conexion.commit()
+    conexion.close()
+
+
+def insertarPedido(direccion, solicitante, telefono, operador, startPoint, stopPoint, description=""):
+    conexion = connectBD()
+    cursor = conexion.cursor()
+
+    consulta_insercion_pedido = sql.SQL("INSERT INTO pedido (direccion, solicitante, telefono, operador, startPoints, stopPoints, description) VALUES (%s, %s, %s, %s, %s, %s, %s)")
+    datos_pedido = (direccion, solicitante, telefono, operador, startPoint, stopPoint, description)
+    cursor.execute(consulta_insercion_pedido, datos_pedido)
+
+
+    # Guardar los cambios y cerrar la conexión
+    conexion.commit()
+    conexion.close()
+
+
+def seleccionarPedido():
+    conexion = connectBD()
+    cursor = conexion.cursor()
+
+    consulta_seleccion_pedido = "SELECT * FROM pedido"
+
+    cursor.execute(consulta_seleccion_pedido)
+
+    resultados = cursor.fetchall()
+    conexion.close()
+
+    return resultados
+
+def seleccionarPedido(id):
+    conexion = connectBD()
+    cursor = conexion.cursor()
+
+    consulta_seleccion_pedido = "SELECT * FROM pedido WHERE id = {}".format(id)
+
+    cursor.execute(consulta_seleccion_pedido)
+
+    resultado = cursor.fetchall()
+    conexion.close()
+    
+    return resultado[0]
+
+def borrarPedido(id):
+    conexion = connectBD()
+    cursor = conexion.cursor()
+    consulta_delete_pedido = sql.SQL("DELETE FROM pedido WHERE id = {}".format(id))
+    cursor.execute(consulta_delete_pedido)
     conexion.commit()
     conexion.close()
