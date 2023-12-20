@@ -48,6 +48,8 @@ from uu import decode
 from urllib.request import urlopen
 import json
 import re
+#variable necesaria para saber si calcular rutas a bombas de incendio
+isIncendio = False
 
 class OnlineRoutingMapper:
     
@@ -265,6 +267,7 @@ class OnlineRoutingMapper:
                     response = urlopen(url).read().decode("utf-8")
                     diccionario = json.loads(response)
                     f = open (PATH_REPORTE,'a')
+                    print(url)
                     for route in diccionario['response']['route']:
                         f.write(re.sub(r"\<[^>]*\>", "",(route['summary']['text']))+'\n\n')
                         for leg in route['leg']:
@@ -287,6 +290,9 @@ class OnlineRoutingMapper:
         else:
             QMessageBox.information(self.dlg, 'Warning', 'Please choose Start Location and Stop Location.')
     
+    # def calculate_routes_a_bombas(self):
+        
+
     def calculate_points(self):
         punto_part = PUNTO_PARTIDA.split(',')
         self.startPointXY = QgsPointXY(float(punto_part[0]), float(punto_part[1]))
@@ -300,7 +306,9 @@ class OnlineRoutingMapper:
         else:
             self.dlg.stopBtn.clicked.connect(lambda: self.toolActivator(1))
        
-    def sonidoIncendio(self):    
+    def sonidoIncendio(self):
+        isIncendio = True
+
         pygame.init()
 
         # Configura el sistema de sonido
@@ -313,10 +321,10 @@ class OnlineRoutingMapper:
         sonido.play()
 
         # Espera a que el sonido termine antes de salir del programa
-        pygame.time.wait(int(sonido.get_length() * 1000))
+        #pygame.time.wait(int(sonido.get_length() * 1000))
 
         # Cierra pygame
-        pygame.quit()
+        #pygame.quit()
 
     def sonidoRescate(self):    
         pygame.init()
@@ -331,10 +339,10 @@ class OnlineRoutingMapper:
         sonido.play()
 
         # Espera a que el sonido termine antes de salir del programa
-        pygame.time.wait(int(sonido.get_length() * 1000))
+        #pygame.time.wait(int(sonido.get_length() * 1000))
 
         # Cierra pygame
-        pygame.quit()
+        #pygame.quit()
 
 
     def changeScreenAgPedido(self):
