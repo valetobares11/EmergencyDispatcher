@@ -33,7 +33,7 @@ import os.path
 from urllib.request import urlopen
 
 from .routeprovider import RouteProvider
-from .db import createTablePoints, select, delete
+from .db import createTablePoints, createTableBomba, createTablePedido, select, delete
 from .util import geocode_address, agregar_texto_con_saltos_de_linea, insertar_punto
 from qgis.gui import *
 from qgis.core import *
@@ -274,7 +274,7 @@ class OnlineRoutingMapper:
                             for maneuver in leg['maneuver']:
                                 f.write(re.sub(r"\<[^>]*\>", "",(maneuver['instruction']))+'\n')
                     f.close()
-                    self.calculate_routes_a_bombas(stopPoint)
+                    #self.calculate_routes_a_bombas(stopPoint)
                     self.routeMaker(wkt)
                     # clear rubberbands
                     # self.startRubberBand.removeLastPoint()
@@ -291,13 +291,13 @@ class OnlineRoutingMapper:
         else:
             QMessageBox.information(self.dlg, 'Warning', 'Please choose Start Location and Stop Location.')
     
-    def calculate_routes_a_bombas(self, startPoint):
-        bombas = select('bombas')
-        service = self.services[list(self.services)[0]]
-        for tupla in bombas:
-            wkt, url = service(startPoint, (tupla[1], tupla[2]))
-            response = urlopen(url).read().decode("utf-8")
-            # ver cual de los responses tiene la ruta mas corta y escribirlos en el reporte
+    #def calculate_routes_a_bombas(self, startPoint):
+      #  bombas = select('bombas')
+        #   service = self.services[list(self.services)[0]]
+        # for tupla in bombas:
+        #    wkt, url = service(startPoint, (tupla[1], tupla[2]))
+        #    response = urlopen(url).read().decode("utf-8")
+        #    # ver cual de los responses tiene la ruta mas corta y escribirlos en el reporte
             # TODO
 
     def calculate_points(self):
@@ -422,7 +422,7 @@ class OnlineRoutingMapper:
         self.dlg.show()
         self.dlg.tableWidget.setColumnCount(8)
         self.dlg.tableWidget.setHorizontalHeaderLabels(["Numero ID", "Direccion", "Solicitante", "Telefono", "Operador", "Coordenada de partida", "Coordenada del lugar", "Descripcion"])
-        registros = seleccionarPedido()
+        registros = select("pedido")
         i=1
         for tupla in registros:
             if i % 2 == 0:
@@ -431,10 +431,8 @@ class OnlineRoutingMapper:
         
         self.canvas = self.iface.mapCanvas()
         self.clickTool = QgsMapToolEmitPoint(self.canvas)
-        self.dlg.startBtn.clicked.connect(lambda: self.toolActivator(0))
-        self.dlg.stopBtn.clicked.connect(lambda: self.toolActivator(1))
         self.dlg.volver.clicked.connect(lambda: self.backScreen())
-        self.dlg.aceptar.clicked.connect(lambda: self.savePointsExclution())
+        self.dlg.aceptar.clicked.connect(lambda: self.backScreen())
     
 
     def cargar_puntos_lista(self):
@@ -500,6 +498,8 @@ class OnlineRoutingMapper:
         self.startPointXY = None
         self.stopPointXY = None
         createTablePoints()
+        createTableBomba()
+        createTablePedido()
         self.dlg = OnlineRoutingMapperDialog()
         
         self.dlg.setFixedSize(self.dlg.size())
