@@ -28,7 +28,7 @@ from PyQt5.QtWidgets import QAction, QMessageBox
 # Initialize Qt resources from file resources.py
 from .resources import *
 # Import the code for the dialog
-from .OnlineRoutingMapper_dialog import OnlineRoutingMapperDialog, OnlineRoutingMapperDialogAgPedido, OnlineRoutingMapperDialogModMapa
+from .OnlineRoutingMapper_dialog import OnlineRoutingMapperDialog, OnlineRoutingMapperDialogAgPedido, OnlineRoutingMapperDialogModMapa, OnlineRoutingMapperDialogVerPedidos
 import os.path
 from urllib.request import urlopen
 
@@ -406,6 +406,27 @@ class OnlineRoutingMapper:
         self.dlg.volver.clicked.connect(lambda: self.backScreen())
         self.dlg.aceptar.clicked.connect(lambda: self.savePointsExclution())
     
+    def changeScreenVerPedidos(self):
+        self.dlg = OnlineRoutingMapperDialogVerPedidos()
+        self.dlg.setFixedSize(self.dlg.size())
+        self.dlg.show()
+        self.dlg.tableWidget.setColumnCount(8)
+        self.dlg.tableWidget.setHorizontalHeaderLabels(["Numero ID", "Direccion", "Solicitante", "Telefono", "Operador", "Coordenada de partida", "Coordenada del lugar", "Descripcion"])
+        registros = seleccionarPoints()
+        i=1
+        for tupla in registros:
+            if i % 2 == 0:
+                self.add_point(tupla[0], tupla[3], (tupla[1], tupla[2]))
+            i+=1
+        
+        self.canvas = self.iface.mapCanvas()
+        self.clickTool = QgsMapToolEmitPoint(self.canvas)
+        self.dlg.startBtn.clicked.connect(lambda: self.toolActivator(0))
+        self.dlg.stopBtn.clicked.connect(lambda: self.toolActivator(1))
+        self.dlg.volver.clicked.connect(lambda: self.backScreen())
+        self.dlg.aceptar.clicked.connect(lambda: self.savePointsExclution())
+    
+
     def cargar_puntos_lista(self):
         registros = select('points')
         i=1
@@ -485,7 +506,8 @@ class OnlineRoutingMapper:
         self.dlg_back = self.dlg
         self.dlg.btnAgPedido.clicked.connect(lambda: self.changeScreenAgPedido())
         self.dlg.btnModMapa.clicked.connect(lambda: self.changeScreenModMapa())
-        
+        self.dlg.btn_ver_pedidos.clicked.connect(lambda: self.changeScreenVerPedidos())
+
         self.startRubberBand = QgsRubberBand(self.canvas, QgsWkbTypes.PointGeometry)
         self.startRubberBand.setColor(QColor("#000000"))
         self.startRubberBand.setIconSize(10)
