@@ -216,13 +216,10 @@ class OnlineRoutingMapper:
 
     def clickHandlerStart(self, pointXY):
         self.stopPointXY = QgsPointXY(pointXY)
-        self.dlg.form_direccion.setText(str(pointXY.x()) + ',' + str(pointXY.y()))
-        print(self.dlg.form_direccion.text())
         self.canvas.unsetMapTool(self.clickTool)
-        self.clickTool.canvasClicked.disconnect(self.clickHandler)
+        # self.clickTool.canvasClicked.disconnect(self.clickHandler)
 
     def toolActivatorStartPoints(self):
-        print("toolActivatorStartPoints")
         self.dlg.showMinimized()
         self.clickTool.canvasClicked.connect(self.clickHandlerStart)
         self.canvas.setMapTool(self.clickTool)  # clickTool is activated
@@ -319,14 +316,13 @@ class OnlineRoutingMapper:
                     f.close()
                 except Exception as e:
                     QgsMessageLog.logMessage(str(e))
-                    QMessageBox.warning(self.dlg, 'calculate_points', "No se pudo encontrar esa direccion")
+                    QMessageBox.warning(self.dlg, 'calculate_points', "No se pudo encontrar esa direccion pruebe seleccionando un punto con el buscar punto")
             else:
                 try:
                     address = obtener_direccion(self.stopPointXY.x(),self.stopPointXY.y())
-                    print(address)
                     f = open (PATH_REPORTE ,'w')
                     f.write('Descripcion Emergencia: '+self.dlg.form_descripcion.text())
-                    f.write('\n\nDireccion: '+address)
+                    f.write('\n\nDireccion: '+self.dlg.form_direccion.text())
                     f.write('\n\nSolicitante: '+self.dlg.form_solicitante.text())
                     f.write('\n\nTelefono: '+self.dlg.form_telefono.text()+'\n\n')
                     f.close()
@@ -368,6 +364,9 @@ class OnlineRoutingMapper:
         self.dlg.buttonEmergVarias.clicked.connect(lambda: self.call_sound(SONIDO_ALARMA_EMERGENCIAS_VARIAS))
         self.dlg.buttonRescateDeAltura.clicked.connect(lambda: self.call_sound(SONIDO_ALARMA_RESCATE_DE_ALTURA))
 
+        self.canvas = self.iface.mapCanvas()
+        self.clickTool = QgsMapToolEmitPoint(self.canvas)
+        self.dlg.buscarPunto.clicked.connect(lambda: self.toolActivatorStartPoints())
         self.dlg.volver.clicked.connect(lambda: self.backScreen())
         self.dlg.aceptar.clicked.connect(lambda: self.savePoints())
     
@@ -448,9 +447,6 @@ class OnlineRoutingMapper:
                 self.add_pedido(tupla[0], tupla[3], (tupla[1], tupla[2]))
             i+=1
         
-        self.canvas = self.iface.mapCanvas()
-        self.clickTool = QgsMapToolEmitPoint(self.canvas)
-        self.dlg.buscarPunto.clicked.connect(lambda: self.toolActivatorStartPoints())
         self.dlg.volver.clicked.connect(lambda: self.backScreen())
         self.dlg.aceptar.clicked.connect(lambda: self.backScreen())
     
