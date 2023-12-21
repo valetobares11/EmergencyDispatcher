@@ -39,6 +39,20 @@ def report(url):
             f.write(str(registros[x][3]))
     f.close()
 
+def obtener_direccion(latitud, longitud):
+    url = f"https://nominatim.openstreetmap.org/search?format=json&lat={latitud}&lon={longitud}"
+    response = requests.get(url)
+    
+    if response.status_code == 200:
+        data = response.json()
+        if data:
+            direccion = data[0]["display_name"]
+            return direccion
+        else:
+            return "No se encontró ninguna dirección para las coordenadas proporcionadas."
+    else:
+        return f"Error al realizar la solicitud: {response.status_code}"
+    
 def agregar_texto_con_saltos_de_linea(c, x, y, texto):
     lineas = texto.split('\n')
     for linea in lineas:
