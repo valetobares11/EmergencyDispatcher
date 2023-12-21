@@ -33,7 +33,7 @@ import os.path
 from urllib.request import urlopen
 
 from .routeprovider import RouteProvider
-from .db import createTablePoints, createTableBomba, createTablePedido, select, delete
+from .db import createTablePoints, createTableBomba, createTablePedido, select, delete, insertarPedido
 from .util import geocode_address, agregar_texto_con_saltos_de_linea, insertar_punto
 from qgis.gui import *
 from qgis.core import *
@@ -303,8 +303,8 @@ class OnlineRoutingMapper:
     def calculate_points(self):
         punto_part = PUNTO_PARTIDA.split(',')
         self.startPointXY = QgsPointXY(float(punto_part[0]), float(punto_part[1]))
-        if (self.dlg.lineEdit.text() != None):
-            address = self.dlg.lineEdit.text()+ " " + CIUDAD
+        if (self.dlg.form_direccion.text() != None):
+            address = self.dlg.form_direccion.text()+ " " + CIUDAD
             x, y = geocode_address(address)
             self.stopPointXY = QgsPointXY(x,y)
             f = open (PATH_REPORTE ,'w')
@@ -426,7 +426,7 @@ class OnlineRoutingMapper:
         i=1
         for tupla in registros:
             if i % 2 == 0:
-                self.add_point(tupla[0], tupla[3], (tupla[1], tupla[2]))
+                self.add_pedido(tupla[0], tupla[3], (tupla[1], tupla[2]))
             i+=1
         
         self.canvas = self.iface.mapCanvas()
@@ -473,6 +473,14 @@ class OnlineRoutingMapper:
         self.dlg.show()
 
     def savePoints(self):
+        descripcion = self.dlg.form_descripcion.text()
+        direccion = self.dlg.form_direccion.text()
+        solicitante = self.dlg.form_solicitante.text()
+        telefono = self.dlg.form_telefono.text()
+        #inserta los pedidos en la DB
+        insertarPedido(direccion, solicitante, telefono, "Juan" , "" , " ", descripcion)
+    
+        print(descripcion)
         self.calculate_points()
         self.tipoAutomovil = self.dlg.comboBox.currentText()
         self.dlg = self.dlg_back

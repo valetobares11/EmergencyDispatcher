@@ -35,7 +35,7 @@
     <string>Direccion</string>
    </property>
   </widget>
-  <widget class="QLineEdit" name="lineEdit">
+  <widget class="QLineEdit" name="form_direccion">
    <property name="geometry">
     <rect>
      <x>190</x>
@@ -83,7 +83,7 @@ background-color: #c83737;
     <string>Descripcion emergencia</string>
    </property>
   </widget>
-  <widget class="QLineEdit" name="descripcion">
+  <widget class="QLineEdit" name="form_descripcion">
    <property name="geometry">
     <rect>
      <x>190</x>
@@ -167,7 +167,7 @@ background-color: #2CA02C;
     <string>Telefono</string>
    </property>
   </widget>
-  <widget class="QLineEdit" name="lineEdit_2">
+  <widget class="QLineEdit" name="form_solicitante">
    <property name="geometry">
     <rect>
      <x>190</x>
@@ -177,7 +177,7 @@ background-color: #2CA02C;
     </rect>
    </property>
   </widget>
-  <widget class="QLineEdit" name="lineEdit_3">
+  <widget class="QLineEdit" name="form_telefono">
    <property name="geometry">
     <rect>
      <x>190</x>

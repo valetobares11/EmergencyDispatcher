@@ -152,7 +152,7 @@ def createTablePedido():
     consulta_creacion_tabla_pedido = """
         CREATE TABLE IF NOT EXISTS pedido (
             id SERIAL PRIMARY KEY,
-            dirreccion VARCHAR(40),
+            direccion VARCHAR(40),
             solicitante VARCHAR(40),
             telefono VARCHAR(40),
             operador VARCHAR(40),
