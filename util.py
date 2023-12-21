@@ -1,6 +1,6 @@
 
 import requests
-from .db import insert
+from .db import insert,select
 
 def geocode_address(address):
     base_url = "https://nominatim.openstreetmap.org/search"
@@ -18,6 +18,21 @@ def geocode_address(address):
             return lon, lat
     return None
 
+def report(url):
+    response = urlopen(url).read().decode("utf-8")
+    diccionario = json.loads(response)
+    f = open (PATH_REPORTE,'a')
+    for route in diccionario['response']['route']:
+        f.write(re.sub(r"\<[^>]*\>", "",(route['summary']['text']))+'\n\n')
+        for leg in route['leg']:
+            for maneuver in leg['maneuver']:
+                f.write(re.sub(r"\<[^>]*\>", "",(maneuver['instruction']))+'\n')
+    registros = select('points')
+    if (len(registros) > 0) :
+        f.write('\nCortes\n')
+        for x in range(0,len(registros),2):
+            f.write(str(registros[x][3]))
+    f.close()
 
 def agregar_texto_con_saltos_de_linea(c, x, y, texto):
     lineas = texto.split('\n')

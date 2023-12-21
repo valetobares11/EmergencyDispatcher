@@ -34,7 +34,7 @@ from urllib.request import urlopen
 
 from .routeprovider import RouteProvider
 from .db import createTablePoints, createTableBomba, createTablePedido, select, delete, insert
-from .util import geocode_address, agregar_texto_con_saltos_de_linea, insertar_punto
+from .util import geocode_address, report, agregar_texto_con_saltos_de_linea, insertar_punto
 from qgis.gui import *
 from qgis.core import *
 
@@ -264,16 +264,7 @@ class OnlineRoutingMapper:
                     service = self.services[list(self.services)[0]]
                     self.cargar_puntos_lista()
                     wkt, url = service(startPoint, stopPoint, self.listPointsExclution, self.tipoAutomovil)
-                    response = urlopen(url).read().decode("utf-8")
-                    diccionario = json.loads(response)
-                    f = open (PATH_REPORTE,'a')
-                    print(url)
-                    for route in diccionario['response']['route']:
-                        f.write(re.sub(r"\<[^>]*\>", "",(route['summary']['text']))+'\n\n')
-                        for leg in route['leg']:
-                            for maneuver in leg['maneuver']:
-                                f.write(re.sub(r"\<[^>]*\>", "",(maneuver['instruction']))+'\n')
-                    f.close()
+                    report(url)
                     #self.calculate_routes_a_bombas(stopPoint)
                     self.routeMaker(wkt)
                     # clear rubberbands
@@ -308,7 +299,10 @@ class OnlineRoutingMapper:
             x, y = geocode_address(address)
             self.stopPointXY = QgsPointXY(x,y)
             f = open (PATH_REPORTE ,'w')
-            f.write('Direccion:'+address+'\n\n')
+            f.write('Descripcion Emergencia: '+self.dlg.form_descripcion.text())
+            f.write('\n\nDireccion: '+address)
+            f.write('\n\nSolicitante: '+self.dlg.form_solicitante.text())
+            f.write('\n\nTelefono: '+self.dlg.form_telefono.text()+'\n\n')
             f.close()
         else:
             self.dlg.stopBtn.clicked.connect(lambda: self.toolActivator(1))
