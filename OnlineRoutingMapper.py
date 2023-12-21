@@ -324,6 +324,7 @@ class OnlineRoutingMapper:
                 try:
                     address = obtener_direccion(self.stopPointXY.x(),self.stopPointXY.y())
                     print(address)
+                    f = open (PATH_REPORTE ,'w')
                     f.write('Descripcion Emergencia: '+self.dlg.form_descripcion.text())
                     f.write('\n\nDireccion: '+address)
                     f.write('\n\nSolicitante: '+self.dlg.form_solicitante.text())
