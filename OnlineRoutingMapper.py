@@ -44,10 +44,7 @@ from .config import *
 from qgis.PyQt.QtWidgets import QTableWidgetItem,QPushButton 
 import pygame
 
-from uu import decode
-from urllib.request import urlopen
-import json
-import re
+
 #variable necesaria para saber si calcular rutas a bombas de incendio
 is_incendio = False
 
