@@ -33,7 +33,7 @@ import os.path
 from urllib.request import urlopen
 
 from .routeprovider import RouteProvider
-from .db import createTablePoints, createTableBomba, createTablePedido, select, delete, insertarPedido
+from .db import createTablePoints, createTableBomba, createTablePedido, select, delete, insert
 from .util import geocode_address, agregar_texto_con_saltos_de_linea, insertar_punto
 from qgis.gui import *
 from qgis.core import *
@@ -274,8 +274,7 @@ class OnlineRoutingMapper:
                             for maneuver in leg['maneuver']:
                                 f.write(re.sub(r"\<[^>]*\>", "",(maneuver['instruction']))+'\n')
                     f.close()
-                    # if (is_incendio):
-                    #     self.calculate_routes_a_bombas(stopPoint)
+                    #self.calculate_routes_a_bombas(stopPoint)
                     self.routeMaker(wkt)
                     # clear rubberbands
                     # self.startRubberBand.removeLastPoint()
@@ -300,25 +299,24 @@ class OnlineRoutingMapper:
         #    response = urlopen(url).read().decode("utf-8")
         #    # ver cual de los responses tiene la ruta mas corta y escribirlos en el reporte
             # TODO
-    
+
     def calculate_points(self):
         punto_part = PUNTO_PARTIDA.split(',')
         self.startPointXY = QgsPointXY(float(punto_part[0]), float(punto_part[1]))
         if (self.dlg.form_direccion.text() != None):
-            address = self.dlg.form_direccion.text()+ " " + CIUDAD + " " + PROVINCIA
-            try:
-                x, y = geocode_address(address)
-                self.stopPointXY = QgsPointXY(x,y)
-                f = open (PATH_REPORTE ,'w')
-                f.write('Direccion:'+address+'\n\n')
-                f.close()
-            except Exception as e:
-                QgsMessageLog.logMessage(str(e))
-                QMessageBox.warning(self.dlg, 'calculate_points', "No se pudo encontrar esa direccion")
+            address = self.dlg.form_direccion.text()+ " " + CIUDAD
+            x, y = geocode_address(address)
+            self.stopPointXY = QgsPointXY(x,y)
+            f = open (PATH_REPORTE ,'w')
+            f.write('Direccion:'+address+'\n\n')
+            f.close()
         else:
             self.dlg.stopBtn.clicked.connect(lambda: self.toolActivator(1))
        
     def call_sound(self, path_sound, fire = False):
+        
+        #teniendo en cuenta esto, va a ejecutar otra parte del calculo del incendio a las bombas mas cercanas
+        #TODO
         if (fire):
             is_incendio = True
 
@@ -480,7 +478,9 @@ class OnlineRoutingMapper:
         solicitante = self.dlg.form_solicitante.text()
         telefono = self.dlg.form_telefono.text()
         #inserta los pedidos en la DB
-        insertarPedido(direccion, solicitante, telefono, "Juan" , "" , " ", descripcion)
+        valores = "'{}', '{}', '{}', '{}', '{}', '{}', '{}'".format(direccion, solicitante, telefono, "Pedro", " ", " ", descripcion)
+        insert('pedido', 'direccion, solicitante, telefono, operador, startPoints, stopPoints, description ', valores)
+    
         self.calculate_points()
         self.tipoAutomovil = self.dlg.comboBox.currentText()
         self.dlg = self.dlg_back
