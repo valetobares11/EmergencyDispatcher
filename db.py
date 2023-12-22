@@ -73,7 +73,20 @@ def delete(table = '', id = None):
         cursor.execute(sql.SQL(query))
         conexion.commit()
         conexion.close()
-   
+
+def update(table = '', seters = '', id = None):
+    if (table != '' and seters != ''):
+        conexion = connectBD()
+        cursor = conexion.cursor()
+        print(id)
+        query = "UPDATE {} SET {} WHERE 1 = 1 AND id = {} ;".format(table,seters,id)
+        print(query)
+        #if (id is not None):
+         #   query+=" AND id = {}".format(id)
+        
+        cursor.execute(sql.SQL(query))
+        conexion.commit()
+        conexion.close()
 
 #tabla para tener registro de las bombas de aguas que pueden ser utilizadas en un incendio
 def createTableBomba():
@@ -156,8 +169,8 @@ def createTablePedido():
             solicitante VARCHAR(40),
             telefono VARCHAR(40),
             operador VARCHAR(40),
-            startPoints VARCHAR(40),
-            stopPoints VARCHAR(40),
+            startpoint VARCHAR(40),
+            stoppoint VARCHAR(40),
             description VARCHAR(255)
         )
     """
@@ -168,11 +181,11 @@ def createTablePedido():
     conexion.close()
 
 
-def insertarPedido(direccion, solicitante, telefono, operador, startPoint, stopPoint, description=""):
+def insertarPedido(direccion, solicitante, telefono, operador, startpoint, stoppoint, description=""):
     conexion = connectBD()
     cursor = conexion.cursor()
-
-    consulta_insercion_pedido = sql.SQL("INSERT INTO pedido (direccion, solicitante, telefono, operador, startPoints, stopPoints, description) VALUES (%s, %s, %s, %s, %s, %s, %s)")
+    
+    consulta_insercion_pedido = sql.SQL("INSERT INTO pedido (direccion, solicitante, telefono, operador, startpoint, stoppoint, description) VALUES (%s, %s, %s, %s, %s, %s, %s)")
     datos_pedido = (direccion, solicitante, telefono, operador, startPoint, stopPoint, description)
     cursor.execute(consulta_insercion_pedido, datos_pedido)
 
@@ -215,3 +228,4 @@ def borrarPedido(id):
     cursor.execute(consulta_delete_pedido)
     conexion.commit()
     conexion.close()
+
