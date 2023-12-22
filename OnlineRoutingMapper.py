@@ -477,12 +477,10 @@ class OnlineRoutingMapper:
         for tupla in registros:
             self.add_pedido(tupla[0], tupla[1], tupla[2], tupla[3], tupla[4], tupla[5], tupla[6], tupla[7])
         
-<<<<<<< Updated upstream
-=======
         self.canvas = self.iface.mapCanvas()
         self.clickTool = QgsMapToolEmitPoint(self.canvas)
         #self.dlg.buscarPunto.clicked.connect(lambda: self.toolActivatorStartPoints())
->>>>>>> Stashed changes
+
         self.dlg.volver.clicked.connect(lambda: self.backScreen())
         self.dlg.aceptar.clicked.connect(lambda: self.backScreen())
     
