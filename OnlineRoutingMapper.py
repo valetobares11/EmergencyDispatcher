@@ -558,8 +558,12 @@ class OnlineRoutingMapper:
         self.borrar_todos_los_puntos()
         registros = select('points')
         i=1
+        points = []
         for tupla in registros:
+            points.append(QgsPointXY(float(tupla[1]), float(tupla[2])))
             if i % 2 == 0:
+                self.vectorRubberBand.addGeometry(QgsGeometry.fromPolygonXY([points]), None)
+                points = []
                 self.stopRubberBand.addPoint(QgsPointXY(float(tupla[1]), float(tupla[2])))
             else:
                 self.startRubberBand.addPoint(QgsPointXY(float(tupla[1]), float(tupla[2])))
@@ -590,6 +594,10 @@ class OnlineRoutingMapper:
         self.dlg.btnModMapa.clicked.connect(lambda: self.changeScreenModMapa())
         self.dlg.btn_ver_pedidos.clicked.connect(lambda: self.changeScreenVerPedidos())
 
+        self.vectorRubberBand = QgsRubberBand(self.canvas, QgsWkbTypes.PolygonGeometry)
+        self.vectorRubberBand.setColor(QColor("#000000"))
+        self.vectorRubberBand.setWidth(4)
+
         self.startRubberBand = QgsRubberBand(self.canvas, QgsWkbTypes.PointGeometry)
         self.startRubberBand.setColor(QColor("#000000"))
         self.startRubberBand.setIconSize(10)
@@ -607,5 +615,6 @@ class OnlineRoutingMapper:
         #clear the rubberbands
         self.canvas.scene().removeItem(self.startRubberBand)
         self.canvas.scene().removeItem(self.stopRubberBand)
+        self.canvas.scene().removeItem(self.vectorRubberBand)
 
 
