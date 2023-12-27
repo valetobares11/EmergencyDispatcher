@@ -370,7 +370,9 @@ class OnlineRoutingMapper:
         self.dlg.buscarPunto.clicked.connect(lambda: self.toolActivatorStartPoints())
         self.dlg.volver.clicked.connect(lambda: self.backScreen())
         self.dlg.aceptar.clicked.connect(lambda: self.savePoints())
-    
+         
+
+        
     def add_table_item(self, row, column, text):
         # Método para agregar un elemento a la tabla
         item = QTableWidgetItem(text)
@@ -428,49 +430,48 @@ class OnlineRoutingMapper:
     
     def update_pedido(self, id):
         # Borrar en la tabla interface
-        i=0
-        found = False
-        while i < self.dlg.tableWidget.rowCount() and not found:
-            if int(self.dlg.tableWidget.item(i,0).text()) == id:
-                found = True
-            i += 1
+        try:
+            i=0
+            found = False
+            while i < self.dlg.tableWidget.rowCount() and not found:
+                if int(self.dlg.tableWidget.item(i,0).text()) == id:
+                    found = True
+                i += 1
 
-        i = i-1
-        if found:
-            # Actualizar en la BD
-            direccion = self.dlg.tableWidget.item(i,1).text()
-            solicitante = self.dlg.tableWidget.item(i,2).text()
-            telefono = self.dlg.tableWidget.item(i,3).text()
-            operador = self.dlg.tableWidget.item(i,4).text()
-            startPoint = self.dlg.tableWidget.item(i,5).text()
-            stopPoint = self.dlg.tableWidget.item(i,6).text()
-            descripcion = self.dlg.tableWidget.item(i,7).text()
+            i = i-1
+            if found:
+                # Actualizar en la BD
+                direccion = self.dlg.tableWidget.item(i,1).text()
+                solicitante = self.dlg.tableWidget.item(i,2).text()
+                telefono = self.dlg.tableWidget.item(i,3).text()
+                operador = self.dlg.tableWidget.item(i,4).text()
+                startPoint = self.dlg.tableWidget.item(i,5).text()
+                stopPoint = self.dlg.tableWidget.item(i,6).text()
+                descripcion = self.dlg.tableWidget.item(i,7).text()
 
-            seters = "direccion = '{}', solicitante = '{}', telefono = '{}', operador = '{}', startPoint = '{}', stopPoint = '{}', description = '{}'".format(direccion, solicitante, telefono, operador, startPoint, stopPoint ,descripcion)
-        
-            update('pedido', seters, id)
+                seters = "direccion = '{}', solicitante = '{}', telefono = '{}', operador = '{}', startPoint = '{}', stopPoint = '{}', description = '{}'".format(direccion, solicitante, telefono, operador, startPoint, stopPoint ,descripcion)
+            
+                update('pedido', seters, id)
+        except Exception as e:
+            QgsMessageLog.logMessage(str(e))
+            QMessageBox.warning(self.dlg, 'actualizar_pedido', "No se puede modificar el valor por exceder de caracteres o tipo incorrecto")
 
     def add_pedido(self, id, direccion, solicitante, telefono, operador, coordenada_partida, coordenada_lugar, descripcion):
         rowPosition = self.dlg.tableWidget.rowCount()
         self.dlg.tableWidget.insertRow(rowPosition)
-        try:
-            # self.dlg.tableWidget.setEditTriggers(self.dlg.tableWidget.NoEditTriggers)
-            item = QTableWidgetItem(str(id))
-            item.setFlags(item.flags() & ~Qt.ItemIsEditable)
-            self.dlg.tableWidget.setItem(rowPosition, 0, item)
-            self.dlg.tableWidget.setItem(rowPosition, 1, QTableWidgetItem(str(direccion)))
-            self.dlg.tableWidget.setItem(rowPosition, 2, QTableWidgetItem(str(solicitante)))
-            self.dlg.tableWidget.setItem(rowPosition, 3, QTableWidgetItem(str(telefono)))
-            self.dlg.tableWidget.setItem(rowPosition, 4, QTableWidgetItem(str(operador)))
-            self.dlg.tableWidget.setItem(rowPosition, 5, QTableWidgetItem(coordenada_partida))
-            self.dlg.tableWidget.setItem(rowPosition, 6, QTableWidgetItem(str(coordenada_lugar)))
-            self.dlg.tableWidget.setItem(rowPosition, 7, QTableWidgetItem(descripcion))
-            update_button = QPushButton("Modificar")
-            update_button.clicked.connect(lambda: self.update_pedido(id))
-            self.dlg.tableWidget.setCellWidget(rowPosition, 8, update_button)
-        except Exception as e:
-            QgsMessageLog.logMessage(str(e))
-            QMessageBox.warning(self.dlg, 'mostrar_pedido', "No se puede modificar el valor ID")
+        item = QTableWidgetItem(str(id))
+        item.setFlags(item.flags() & ~Qt.ItemIsEditable)
+        self.dlg.tableWidget.setItem(rowPosition, 0, item)
+        self.dlg.tableWidget.setItem(rowPosition, 1, QTableWidgetItem(str(direccion)))
+        self.dlg.tableWidget.setItem(rowPosition, 2, QTableWidgetItem(str(solicitante)))
+        self.dlg.tableWidget.setItem(rowPosition, 3, QTableWidgetItem(str(telefono)))
+        self.dlg.tableWidget.setItem(rowPosition, 4, QTableWidgetItem(str(operador)))
+        self.dlg.tableWidget.setItem(rowPosition, 5, QTableWidgetItem(coordenada_partida))
+        self.dlg.tableWidget.setItem(rowPosition, 6, QTableWidgetItem(str(coordenada_lugar)))
+        self.dlg.tableWidget.setItem(rowPosition, 7, QTableWidgetItem(descripcion))
+        update_button = QPushButton("Modificar")
+        update_button.clicked.connect(lambda: self.update_pedido(id))
+        self.dlg.tableWidget.setCellWidget(rowPosition, 8, update_button)
         
 
     def changeScreenVerPedidos(self):
@@ -532,18 +533,22 @@ class OnlineRoutingMapper:
         self.dlg.show()
 
     def savePoints(self):
-        descripcion = self.dlg.form_descripcion.text()
-        direccion = self.dlg.form_direccion.text()
-        solicitante = self.dlg.form_solicitante.text()
-        telefono = self.dlg.form_telefono.text()
-        #inserta los pedidos en la DB
-        valores = "'{}', '{}', '{}', '{}', '{}', '{}', '{}'".format(direccion, solicitante, telefono, "Pedro", " ", " ", descripcion)
-        insert('pedido', 'direccion, solicitante, telefono, operador, startpoint, stoppoint, description ', valores)
-    
-        self.calculate_points()
-        self.tipoAutomovil = self.dlg.comboBox.currentText()
-        self.dlg = self.dlg_back
-        self.dlg.show()
+        try:
+            descripcion = self.dlg.form_descripcion.text()
+            direccion = self.dlg.form_direccion.text()
+            solicitante = self.dlg.form_solicitante.text()
+            telefono = self.dlg.form_telefono.text()
+            #inserta los pedidos en la DB
+            valores = "'{}', '{}', '{}', '{}', '{}', '{}', '{}'".format(direccion, solicitante, telefono, "Pedro", " ", " ", descripcion)
+            insert('pedido', 'direccion, solicitante, telefono, operador, startpoint, stoppoint, description ', valores)
+        
+            self.calculate_points()
+            self.tipoAutomovil = self.dlg.comboBox.currentText()
+            self.dlg = self.dlg_back
+            self.dlg.show()
+        except Exception as e:
+            QgsMessageLog.logMessage(str(e))
+            QMessageBox.warning(self.dlg, 'actualizar_pedido', "No se puede modificar el valor por exceder de caracteres o tipo incorrecto")
 
     def backScreen(self):
         self.dlg = self.dlg_back
