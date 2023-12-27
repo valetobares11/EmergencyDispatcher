@@ -386,6 +386,9 @@ class OnlineRoutingMapper:
         while self.startRubberBand.numberOfVertices() > 0:
             self.startRubberBand.removeLastPoint()
 
+        self.vectorRubberBand.reset()
+
+
     #tupla esta de mas?
     def remove_points(self, id, tupla):
         # Borrar en la tabla interface
