@@ -208,7 +208,6 @@ class OnlineRoutingMapper:
         self.clickTool.canvasClicked.disconnect(self.clickHandler)
 
     def toolActivator(self, no):
-        print("toolActivator")
         self.no = no
         self.dlg.showMinimized()
         self.clickTool.canvasClicked.connect(self.clickHandler)
@@ -216,6 +215,7 @@ class OnlineRoutingMapper:
 
     def clickHandlerStart(self, pointXY):
         self.stopPointXY = QgsPointXY(pointXY)
+        self.stopRubberBand.addPoint(self.stopPointXY)
         self.canvas.unsetMapTool(self.clickTool)
         # self.clickTool.canvasClicked.disconnect(self.clickHandler)
 
