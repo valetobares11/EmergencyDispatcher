@@ -20,8 +20,8 @@ def createTablePoints():
     consulta_creacion_tabla = """
         CREATE TABLE IF NOT EXISTS points (
             id SERIAL PRIMARY KEY,
-            startPoints VARCHAR(40),
-            stopPoints VARCHAR(40),
+            startPoint VARCHAR(40),
+            stopPoint VARCHAR(40),
             description VARCHAR(255)
         )
     """
@@ -99,8 +99,8 @@ def createTableBomba():
     consulta_creacion_tabla_bomba = """
         CREATE TABLE IF NOT EXISTS bomba (
             id SERIAL PRIMARY KEY,
-            startPoints VARCHAR(40),
-            stopPoints VARCHAR(40),
+            startPoint VARCHAR(40),
+            stopPoint VARCHAR(40),
             description VARCHAR(255)
         )
     """
@@ -115,7 +115,7 @@ def insertarBomba(startPoint,stopPoint, description=""):
     conexion = connectBD()
     cursor = conexion.cursor()
 
-    consulta_insercion_bomba = sql.SQL("INSERT INTO bomba (startPoints, stopPoints, description) VALUES (%s, %s, %s)")
+    consulta_insercion_bomba = sql.SQL("INSERT INTO bomba (startPoint, stopPoint, description) VALUES (%s, %s, %s)")
     datos_bomba = (startPoint, stopPoint, description)
     cursor.execute(consulta_insercion_bomba, datos_bomba)
 
