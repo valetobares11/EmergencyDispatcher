@@ -452,17 +452,22 @@ class OnlineRoutingMapper:
     def add_pedido(self, id, direccion, solicitante, telefono, operador, coordenada_partida, coordenada_lugar, descripcion):
         rowPosition = self.dlg.tableWidget.rowCount()
         self.dlg.tableWidget.insertRow(rowPosition)
-        self.dlg.tableWidget.setItem(rowPosition, 0, QTableWidgetItem(str(id)))
-        self.dlg.tableWidget.setItem(rowPosition, 1, QTableWidgetItem(str(direccion)))
-        self.dlg.tableWidget.setItem(rowPosition, 2, QTableWidgetItem(str(solicitante)))
-        self.dlg.tableWidget.setItem(rowPosition, 3, QTableWidgetItem(str(telefono)))
-        self.dlg.tableWidget.setItem(rowPosition, 4, QTableWidgetItem(str(operador)))
-        self.dlg.tableWidget.setItem(rowPosition, 5, QTableWidgetItem(coordenada_partida))
-        self.dlg.tableWidget.setItem(rowPosition, 6, QTableWidgetItem(str(coordenada_lugar)))
-        self.dlg.tableWidget.setItem(rowPosition, 7, QTableWidgetItem(descripcion))
-        update_button = QPushButton("Modificar")
-        update_button.clicked.connect(lambda: self.update_pedido(id))
-        self.dlg.tableWidget.setCellWidget(rowPosition, 8, update_button)
+        try:
+            self.dlg.tableWidget.setItem(rowPosition, 0, QTableWidgetItem(str(id)))
+            self.dlg.tableWidget.setItem(rowPosition, 1, QTableWidgetItem(str(direccion)))
+            self.dlg.tableWidget.setItem(rowPosition, 2, QTableWidgetItem(str(solicitante)))
+            self.dlg.tableWidget.setItem(rowPosition, 3, QTableWidgetItem(str(telefono)))
+            self.dlg.tableWidget.setItem(rowPosition, 4, QTableWidgetItem(str(operador)))
+            self.dlg.tableWidget.setItem(rowPosition, 5, QTableWidgetItem(coordenada_partida))
+            self.dlg.tableWidget.setItem(rowPosition, 6, QTableWidgetItem(str(coordenada_lugar)))
+            self.dlg.tableWidget.setItem(rowPosition, 7, QTableWidgetItem(descripcion))
+            update_button = QPushButton("Modificar")
+            update_button.clicked.connect(lambda: self.update_pedido(id))
+            self.dlg.tableWidget.setCellWidget(rowPosition, 8, update_button)
+        except Exception as e:
+            QgsMessageLog.logMessage(str(e))
+            QMessageBox.warning(self.dlg, 'mostrar_pedido', "No se puede modificar el valor ID")
+        
 
     def changeScreenVerPedidos(self):
         self.dlg = OnlineRoutingMapperDialogVerPedidos()
@@ -470,10 +475,10 @@ class OnlineRoutingMapper:
         self.dlg.show()
         self.dlg.tableWidget.setColumnCount(9)
         self.dlg.tableWidget.setHorizontalHeaderLabels(["Numero ID", "Direccion", "Solicitante", "Telefono", "Operador", "Coordenada de partida", "Coordenada del lugar", "Descripcion", "Modificar"])
-        self.dlg.tableWidget.sortItems(1)
+        #self.dlg.tableWidget.sortItems(0)
         
         registros = select("pedido")
-        
+        print(registros)
         for tupla in registros:
             self.add_pedido(tupla[0], tupla[1], tupla[2], tupla[3], tupla[4], tupla[5], tupla[6], tupla[7])
         

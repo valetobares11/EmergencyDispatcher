@@ -54,6 +54,8 @@ def select(table = '', id = None):
     
     if (id is not None):
         query+= " AND id = {}".format(id)
+    
+    query += "ORDER BY id"
 
     cursor.execute(query)
     result = cursor.fetchall()
