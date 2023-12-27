@@ -24,6 +24,7 @@
 from PyQt5.QtCore import QSettings, QTranslator, qVersion, QCoreApplication
 from PyQt5.QtGui import QIcon, QColor
 from PyQt5.QtWidgets import QAction, QMessageBox
+from qgis.PyQt.QtCore import Qt
 
 # Initialize Qt resources from file resources.py
 from .resources import *
@@ -453,7 +454,10 @@ class OnlineRoutingMapper:
         rowPosition = self.dlg.tableWidget.rowCount()
         self.dlg.tableWidget.insertRow(rowPosition)
         try:
-            self.dlg.tableWidget.setItem(rowPosition, 0, QTableWidgetItem(str(id)))
+            # self.dlg.tableWidget.setEditTriggers(self.dlg.tableWidget.NoEditTriggers)
+            item = QTableWidgetItem(str(id))
+            item.setFlags(item.flags() & ~Qt.ItemIsEditable)
+            self.dlg.tableWidget.setItem(rowPosition, 0, item)
             self.dlg.tableWidget.setItem(rowPosition, 1, QTableWidgetItem(str(direccion)))
             self.dlg.tableWidget.setItem(rowPosition, 2, QTableWidgetItem(str(solicitante)))
             self.dlg.tableWidget.setItem(rowPosition, 3, QTableWidgetItem(str(telefono)))
