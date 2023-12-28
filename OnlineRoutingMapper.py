@@ -40,7 +40,7 @@ from qgis.gui import *
 from qgis.core import *
 
 import platform
-
+import sys
 from .config import *
 from qgis.PyQt.QtWidgets import QTableWidgetItem,QPushButton 
 import pygame
@@ -290,7 +290,7 @@ class OnlineRoutingMapper:
                     self.cargar_puntos_lista()
                     wkt, url = service(startPoint, stopPoint, self.listPointsExclution, self.tipoAutomovil)
                     report(url)
-                    #self.calculate_routes_a_bombas(stopPoint)
+                    self.calculate_routes_a_bombas(stopPoint)
                     self.routeMaker(wkt)
                     # clear rubberbands
                     # self.startRubberBand.removeLastPoint()
@@ -307,14 +307,27 @@ class OnlineRoutingMapper:
         else:
             QMessageBox.information(self.dlg, 'Warning', 'Please choose Start Location and Stop Location.')
     
-    #def calculate_routes_a_bombas(self, startPoint):
-      #  bombas = select('bombas')
-        #   service = self.services[list(self.services)[0]]
-        # for tupla in bombas:
-        #    wkt, url = service(startPoint, (tupla[1], tupla[2]))
-        #    response = urlopen(url).read().decode("utf-8")
-        #    # ver cual de los responses tiene la ruta mas corta y escribirlos en el reporte
-            # TODO
+    def calculate_routes_a_bombas(self, startPoint):
+        try:
+            bombas = select('bomba')
+            service = self.services[list(self.services)[0]]
+            distances = []
+            for tupla in bombas:
+                wkt, url = service(startPoint, self.crsTransform(QgsPointXY(float(tupla[1]), float(tupla[2]))))
+                response = urlopen(url).read().decode("utf-8")
+                diccionario = json.loads(response)
+                d = int(diccionario['response']['route'][0]['summary']['distance'])
+                distances.append([d,tupla[3]])
+
+            list_distances = sorted(distances, key=lambda x: x[0])
+            f = open (PATH_REPORTE,'a')
+            f.write('\nLas Bombas de agua más cercanas de menor a mayor:\n')
+            for tupla in list_distances:
+                f.write(str(tupla[1])+ ", distancia :"+ str(tupla[0])+'\n')
+            f.close()
+        except Exception as err:
+            QgsMessageLog.logMessage(str(err))
+            QMessageBox.warning(self.dlg, 'Calculate routes bombas',"Hubo un error al calcular las bombas mas cercanas")
 
     def calculate_points(self):
         punto_part = PUNTO_PARTIDA.split(',')
@@ -552,7 +565,6 @@ class OnlineRoutingMapper:
         #self.dlg.tableWidget.sortItems(0)
         
         registros = select("pedido")
-        print(registros)
         for tupla in registros:
             self.add_pedido(tupla[0], tupla[1], tupla[2], tupla[3], tupla[4], tupla[5], tupla[6], tupla[7])
         
