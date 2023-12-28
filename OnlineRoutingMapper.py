@@ -29,7 +29,7 @@ from qgis.PyQt.QtCore import Qt
 # Initialize Qt resources from file resources.py
 from .resources import *
 # Import the code for the dialog
-from .OnlineRoutingMapper_dialog import OnlineRoutingMapperDialog, OnlineRoutingMapperDialogAgPedido, OnlineRoutingMapperDialogModMapa, OnlineRoutingMapperDialogVerPedidos
+from .OnlineRoutingMapper_dialog import OnlineRoutingMapperDialog, OnlineRoutingMapperDialogAgPedido, OnlineRoutingMapperDialogModMapa, OnlineRoutingMapperDialogModBombas, OnlineRoutingMapperDialogVerPedidos
 import os.path
 from urllib.request import urlopen
 
@@ -225,6 +225,22 @@ class OnlineRoutingMapper:
         self.clickTool.canvasClicked.connect(self.clickHandlerStart)
         self.canvas.setMapTool(self.clickTool)  # clickTool is activated
 
+    def clickHandlerBombas(self, pointXY):
+        pointXY = QgsPointXY(pointXY)
+        self.startRubberBand.addPoint(pointXY)
+        self.dlg.bombaTxt.setText(str(pointXY.x()) + ',' + str(pointXY.y()))
+        self.dlg.showNormal()
+
+        # free them
+        self.canvas.unsetMapTool(self.clickTool)
+        self.clickTool.canvasClicked.disconnect(self.clickHandlerBombas)
+
+    def toolActivatorBombas(self):
+        self.dlg.showMinimized()
+        self.clickTool.canvasClicked.connect(self.clickHandlerBombas)
+        self.canvas.setMapTool(self.clickTool)  # clickTool is activatedr)
+
+
     def crsTransform(self, pointXY):
         sourceCRS = self.canvas.mapSettings().destinationCrs()  # getting the project CRS
         destinationCRS = QgsCoordinateReferenceSystem(4326)  # google uses this CRS
@@ -387,7 +403,57 @@ class OnlineRoutingMapper:
             self.startRubberBand.removeLastPoint()
 
         self.vectorRubberBand.reset()
+    ####
+    def remove_bomba(self, id):
+        # Borrar en la tabla interface
+        i=0
+        while i < self.dlg.tableWidget.rowCount():
+            if int(self.dlg.tableWidget.item(i,0).text()) == id:
+                self.dlg.tableWidget.removeRow(i)
+            i += 1
 
+        # Borrar en la BD
+        delete('bomba', id)
+
+    def add_bombas(self, id, descripcion):
+        rowPosition = self.dlg.tableWidget.rowCount()
+        self.dlg.tableWidget.insertRow(rowPosition)
+        self.dlg.tableWidget.setItem(rowPosition, 0, QTableWidgetItem(str(id)))
+        self.dlg.tableWidget.setItem(rowPosition, 1, QTableWidgetItem(descripcion))
+        delete_button = QPushButton("delete")
+        delete_button.clicked.connect(lambda: self.remove_bomba(id))
+        self.dlg.tableWidget.setCellWidget(rowPosition, 2, delete_button)
+
+    def changeScreenModBombas(self):
+        self.dlg = OnlineRoutingMapperDialogModBombas()
+        self.dlg.setFixedSize(self.dlg.size())
+        self.dlg.show()
+        self.dlg.tableWidget.setColumnCount(3)
+        self.dlg.tableWidget.setHorizontalHeaderLabels(["ID", "Descripcion", "Acción"])
+        registros = select('bomba')
+        for tupla in registros:
+            self.add_bombas(tupla[0], tupla[3])
+        
+        self.canvas = self.iface.mapCanvas()
+        self.clickTool = QgsMapToolEmitPoint(self.canvas)
+        self.dlg.startBtn.clicked.connect(lambda: self.toolActivatorBombas())
+        self.dlg.volver.clicked.connect(lambda: self.backScreen())
+        self.dlg.aceptar.clicked.connect(lambda: self.saveBomba())
+
+    def saveBomba(self):
+        if len(self.dlg.bombaTxt.text()) > 0:
+            if platform.system() == 'Windows':
+                point = self.dlg.bombaTxt.text()
+            else:
+                pointsStart = self.dlg.bombaTxt.text().split(',')
+                point = pointsStart[1]+','+pointsStart[0]
+                
+            #Inserta los puntos en la BD 
+            startPoint = point.split(',')
+            valores = "{}, {}, '{}'".format(startPoint[1], startPoint[0], self.dlg.descripcionTxt.text())
+            insert('bomba', 'startPoint, stopPoint, description', valores)
+        self.dlg = self.dlg_back
+        self.dlg.show()
 
     #tupla esta de mas?
     def remove_points(self, id, tupla):
@@ -595,6 +661,7 @@ class OnlineRoutingMapper:
         self.dlg_back = self.dlg
         self.dlg.btnAgPedido.clicked.connect(lambda: self.changeScreenAgPedido())
         self.dlg.btnModMapa.clicked.connect(lambda: self.changeScreenModMapa())
+        self.dlg.btnModBombas.clicked.connect(lambda: self.changeScreenModBombas())
         self.dlg.btn_ver_pedidos.clicked.connect(lambda: self.changeScreenVerPedidos())
 
         self.vectorRubberBand = QgsRubberBand(self.canvas, QgsWkbTypes.PolygonGeometry)

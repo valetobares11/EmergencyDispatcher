@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>487</width>
-    <height>440</height>
+    <height>579</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -22,119 +22,45 @@
   <property name="windowTitle">
    <string>Online Routing Mapper</string>
   </property>
-  <widget class="QLabel" name="helpLbl">
+  <widget class="QLabel" name="startLlb">
    <property name="geometry">
     <rect>
-     <x>30</x>
-     <y>340</y>
-     <width>53</width>
+     <x>50</x>
+     <y>90</y>
+     <width>221</width>
      <height>16</height>
     </rect>
    </property>
    <property name="text">
-    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;a href=&quot;https://cbsuygulama.wordpress.com/2015/11/05/shortest-path-analysis-with-online-routing-mapper-plugin/&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Help...&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-   </property>
-   <property name="openExternalLinks">
-    <bool>true</bool>
+    <string>Bomba Location</string>
    </property>
   </widget>
-  <widget class="QPushButton" name="btnModMapa">
-   <property name="geometry">
-    <rect>
-     <x>10</x>
-     <y>160</y>
-     <width>221</width>
-     <height>41</height>
-    </rect>
-   </property>
-   <property name="styleSheet">
-    <string notr="true">QPushButton {
-font-size:14px;
-background-color:#37c871;
-border-radius: 10px;
-border: 1px solid black;
-}
-
-QPushButton:hover {
-background-color: #2CA02C;
-}</string>
-   </property>
-   <property name="text">
-    <string>Modificar mapa</string>
-   </property>
-  </widget>
-  <widget class="QPushButton" name="btnAgPedido">
-   <property name="geometry">
-    <rect>
-     <x>120</x>
-     <y>100</y>
-     <width>221</width>
-     <height>41</height>
-    </rect>
-   </property>
-   <property name="styleSheet">
-    <string notr="true">QPushButton {
-font-size:14px;
-background-color:#37c871;
-border-radius: 10px;
-border: 1px solid black;
-}
-
-QPushButton:hover {
-background-color: #2CA02C;
-}</string>
-   </property>
-   <property name="text">
-    <string>Agendar pedido</string>
-   </property>
-  </widget>
-  <widget class="QPushButton" name="runBtn">
+  <widget class="QLineEdit" name="bombaTxt">
    <property name="enabled">
     <bool>true</bool>
    </property>
    <property name="geometry">
     <rect>
-     <x>130</x>
-     <y>320</y>
-     <width>201</width>
-     <height>41</height>
+     <x>40</x>
+     <y>120</y>
+     <width>281</width>
+     <height>22</height>
     </rect>
    </property>
-   <property name="font">
-    <font>
-     <pointsize>-1</pointsize>
-     <weight>75</weight>
-     <bold>true</bold>
-    </font>
-   </property>
    <property name="styleSheet">
-    <string notr="true">QPushButton {
-font-size:20px;
-font-weight:bold;
-background-color: #7B8EC8;
-border-radius: 10px;
-border: 1px solid black;
-}
-QPushButton:hover {
-background-color:#546AAA
-}</string>
+    <string notr="true">border-radius:7px;
+border:1px solid black</string>
    </property>
-   <property name="text">
-    <string>Run</string>
-   </property>
-   <property name="iconSize">
-    <size>
-     <width>30</width>
-     <height>30</height>
-    </size>
+   <property name="readOnly">
+    <bool>true</bool>
    </property>
   </widget>
-  <widget class="QPushButton" name="btn_ver_pedidos">
+  <widget class="QPushButton" name="startBtn">
    <property name="geometry">
     <rect>
-     <x>120</x>
-     <y>220</y>
-     <width>221</width>
+     <x>370</x>
+     <y>110</y>
+     <width>93</width>
      <height>41</height>
     </rect>
    </property>
@@ -151,15 +77,40 @@ background-color: #2CA02C;
 }</string>
    </property>
    <property name="text">
-    <string>Ver pedidos</string>
+    <string>Choose</string>
    </property>
   </widget>
-  <widget class="QPushButton" name="btnModBombas">
+  <widget class="QPushButton" name="volver">
    <property name="geometry">
     <rect>
-     <x>250</x>
-     <y>160</y>
-     <width>221</width>
+     <x>50</x>
+     <y>500</y>
+     <width>93</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton {
+font-size:14px;
+background-color:#d35f5f;
+border-radius: 10px;
+border: 1px solid black;
+}
+
+QPushButton:hover {
+background-color: #c83737;
+}</string>
+   </property>
+   <property name="text">
+    <string>volver</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="aceptar">
+   <property name="geometry">
+    <rect>
+     <x>310</x>
+     <y>510</y>
+     <width>93</width>
      <height>41</height>
     </rect>
    </property>
@@ -176,7 +127,53 @@ background-color: #2CA02C;
 }</string>
    </property>
    <property name="text">
-    <string>Modificar bombas</string>
+    <string>aceptar</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="stopLbl_2">
+   <property name="geometry">
+    <rect>
+     <x>40</x>
+     <y>260</y>
+     <width>221</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>List de bomba</string>
+   </property>
+  </widget>
+  <widget class="QTableWidget" name="tableWidget">
+   <property name="geometry">
+    <rect>
+     <x>40</x>
+     <y>290</y>
+     <width>311</width>
+     <height>192</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QLabel" name="startLlb_2">
+   <property name="geometry">
+    <rect>
+     <x>40</x>
+     <y>30</y>
+     <width>101</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Descripcion</string>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="descripcionTxt">
+   <property name="geometry">
+    <rect>
+     <x>140</x>
+     <y>10</y>
+     <width>271</width>
+     <height>61</height>
+    </rect>
    </property>
   </widget>
  </widget>

@@ -115,7 +115,7 @@ def insertarBomba(startPoint,stopPoint, description=""):
     conexion = connectBD()
     cursor = conexion.cursor()
 
-    consulta_insercion_bomba = sql.SQL("INSERT INTO bomba (startPoint, stopPoint, description) VALUES (%s, %s, %s)")
+    consulta_insercion_bomba = sql.SQL("INSERT INTO bomba (startpoint, stoppoint, description) VALUES (%s, %s, %s)")
     datos_bomba = (startPoint, stopPoint, description)
     cursor.execute(consulta_insercion_bomba, datos_bomba)
 

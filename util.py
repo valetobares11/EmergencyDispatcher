@@ -62,4 +62,4 @@ def agregar_texto_con_saltos_de_linea(c, x, y, texto):
 
 def insertar_punto(start_point, stop_point, description):
     valores = "{}, {}, '{}'".format(start_point, stop_point, description)
-    insert('points', 'startPoints, stopPoints, description', valores)
+    insert('points', 'startPoint, stopPoint, description', valores)
