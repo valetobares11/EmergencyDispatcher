@@ -40,7 +40,6 @@ from qgis.gui import *
 from qgis.core import *
 
 import platform
-import sys
 from .config import *
 from qgis.PyQt.QtWidgets import QTableWidgetItem,QPushButton 
 import pygame
@@ -310,21 +309,23 @@ class OnlineRoutingMapper:
     def calculate_routes_a_bombas(self, startPoint):
         try:
             bombas = select('bomba')
-            service = self.services[list(self.services)[0]]
-            distances = []
-            for tupla in bombas:
-                wkt, url = service(startPoint, self.crsTransform(QgsPointXY(float(tupla[1]), float(tupla[2]))))
-                response = urlopen(url).read().decode("utf-8")
-                diccionario = json.loads(response)
-                d = int(diccionario['response']['route'][0]['summary']['distance'])
-                distances.append([d,tupla[3]])
+            if (len(bombas)):
+                service = self.services[list(self.services)[0]]
+                distances = []
+                for tupla in bombas:
+                    if (tupla[4] == 'A'):
+                        wkt, url = service(startPoint, self.crsTransform(QgsPointXY(float(tupla[1]), float(tupla[2]))))
+                        response = urlopen(url).read().decode("utf-8")
+                        diccionario = json.loads(response)
+                        d = int(diccionario['response']['route'][0]['summary']['distance'])
+                        distances.append([d,tupla[3]])
 
-            list_distances = sorted(distances, key=lambda x: x[0])
-            f = open (PATH_REPORTE,'a')
-            f.write('\nLas Bombas de agua más cercanas de menor a mayor:\n')
-            for tupla in list_distances:
-                f.write(str(tupla[1])+ ", distancia :"+ str(tupla[0])+'\n')
-            f.close()
+                list_distances = sorted(distances, key=lambda x: x[0])
+                f = open (PATH_REPORTE,'a')
+                f.write('\nLas Bombas de agua más cercanas de menor a mayor:\n')
+                for tupla in list_distances:
+                    f.write(str(tupla[1])+ ", distancia :"+ str(tupla[0])+'\n')
+                f.close()
         except Exception as err:
             QgsMessageLog.logMessage(str(err))
             QMessageBox.warning(self.dlg, 'Calculate routes bombas',"Hubo un error al calcular las bombas mas cercanas")
@@ -428,24 +429,50 @@ class OnlineRoutingMapper:
         # Borrar en la BD
         delete('bomba', id)
 
-    def add_bombas(self, id, descripcion):
+    def update_bomba(self, id):
+        try:
+            i=0
+            found = False
+            while i < self.dlg.tableWidget.rowCount() and not found:
+                if int(self.dlg.tableWidget.item(i,0).text()) == id:
+                    found = True
+                i += 1
+
+            i = i-1
+            if found:
+                # Actualizar en la BD
+                descripcion = self.dlg.tableWidget.item(i,1).text()
+                estado = self.dlg.tableWidget.item(i,2).text()
+                seters = " description = '{}', estado = '{}'".format(descripcion, estado)
+                update('bomba', seters, id)
+                QMessageBox.information(self.dlg, 'actualizar_bomba', "Actualizacion exitosa")
+        except Exception as e:
+            QgsMessageLog.logMessage(str(e))
+            QMessageBox.warning(self.dlg, 'actualizar_bomba', "No se puede modificar el valor")
+
+    def add_bombas(self, id, descripcion, estado):
         rowPosition = self.dlg.tableWidget.rowCount()
         self.dlg.tableWidget.insertRow(rowPosition)
         self.dlg.tableWidget.setItem(rowPosition, 0, QTableWidgetItem(str(id)))
         self.dlg.tableWidget.setItem(rowPosition, 1, QTableWidgetItem(descripcion))
+        self.dlg.tableWidget.setItem(rowPosition, 2, QTableWidgetItem(estado))
         delete_button = QPushButton("delete")
         delete_button.clicked.connect(lambda: self.remove_bomba(id))
-        self.dlg.tableWidget.setCellWidget(rowPosition, 2, delete_button)
+        self.dlg.tableWidget.setCellWidget(rowPosition, 3, delete_button)
+        update_bomba = QPushButton("update")
+        update_bomba.clicked.connect(lambda: self.update_bomba(id))
+        self.dlg.tableWidget.setCellWidget(rowPosition, 4, update_bomba)
 
     def changeScreenModBombas(self):
         self.dlg = OnlineRoutingMapperDialogModBombas()
         self.dlg.setFixedSize(self.dlg.size())
         self.dlg.show()
-        self.dlg.tableWidget.setColumnCount(3)
-        self.dlg.tableWidget.setHorizontalHeaderLabels(["ID", "Descripcion", "Acción"])
+        self.dlg.tableWidget.setColumnCount(5)
+        self.dlg.tableWidget.setHorizontalHeaderLabels(["ID", "Descripcion", "Estado", "Borrar", "Modificar"])
         registros = select('bomba')
         for tupla in registros:
-            self.add_bombas(tupla[0], tupla[3])
+            print(tupla)
+            self.add_bombas(tupla[0], tupla[3], tupla[4])
         
         self.canvas = self.iface.mapCanvas()
         self.clickTool = QgsMapToolEmitPoint(self.canvas)
@@ -511,7 +538,6 @@ class OnlineRoutingMapper:
         self.dlg.aceptar.clicked.connect(lambda: self.savePointsExclution())
     
     def update_pedido(self, id):
-        # Borrar en la tabla interface
         try:
             i=0
             found = False

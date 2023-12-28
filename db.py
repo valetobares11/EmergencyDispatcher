@@ -101,7 +101,8 @@ def createTableBomba():
             id SERIAL PRIMARY KEY,
             startPoint VARCHAR(40),
             stopPoint VARCHAR(40),
-            description VARCHAR(255)
+            description VARCHAR(255),
+            estado CHAR(1) CHECK (estado IN ('I', 'A')) DEFAULT 'A'
         )
     """
     cursor.execute(consulta_creacion_tabla_bomba)

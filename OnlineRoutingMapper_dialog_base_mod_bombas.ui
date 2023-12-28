@@ -9,7 +9,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>487</width>
+    <width>606</width>
     <height>579</height>
    </rect>
   </property>
@@ -108,8 +108,8 @@ background-color: #c83737;
   <widget class="QPushButton" name="aceptar">
    <property name="geometry">
     <rect>
-     <x>310</x>
-     <y>510</y>
+     <x>450</x>
+     <y>500</y>
      <width>93</width>
      <height>41</height>
     </rect>
@@ -148,7 +148,7 @@ background-color: #2CA02C;
     <rect>
      <x>40</x>
      <y>290</y>
-     <width>311</width>
+     <width>521</width>
      <height>192</height>
     </rect>
    </property>
