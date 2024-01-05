@@ -3,3 +3,14 @@ Hacer el mapa de los kms de la ruta
 Reubicar las distitnas vistas
 Calcular los tiempos promedios de rutas, Tipo de vehiculo, hora de salida, hora de llegada, 
 Mapear las bombas
+
+Area De Servicio
+Buscar ruta de los complementos propios de qgis
+Ver lo del area de servicio, que modificaciones servirian para emergencias. Listarlas para elegir
+
+Routing
+Pensar nombre para la herramienta
+Poner imagenes en las alarmas
+Volver a la ventana una vez que se marque el punto
+Que algoritmo usa por debajo el online routing mapper para escribir en el doc
+En el reporte, pensar que mas datos dar o cambiar su descripcion
