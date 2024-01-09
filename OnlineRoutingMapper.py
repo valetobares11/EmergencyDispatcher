@@ -201,8 +201,9 @@ class OnlineRoutingMapper:
             # self.stopRubberBand.removeLastPoint()
             self.stopRubberBand.addPoint(stopPointXY)
             self.dlg.stopTxt.setText(str(pointXY.x()) + ',' + str(pointXY.y()))
+        
         self.dlg.showNormal()
-
+        
         # free them
         self.canvas.unsetMapTool(self.clickTool)
         self.clickTool.canvasClicked.disconnect(self.clickHandler)
@@ -210,6 +211,7 @@ class OnlineRoutingMapper:
     def toolActivator(self, no):
         self.no = no
         self.dlg.showMinimized()
+        self.dlg_back.showMinimized()
         self.clickTool.canvasClicked.connect(self.clickHandler)
         self.canvas.setMapTool(self.clickTool)  # clickTool is activated
 
@@ -221,6 +223,7 @@ class OnlineRoutingMapper:
 
     def toolActivatorStartPoints(self):
         self.dlg.showMinimized()
+        self.dlg_back.showMinimized()
         self.clickTool.canvasClicked.connect(self.clickHandlerStart)
         self.canvas.setMapTool(self.clickTool)  # clickTool is activated
 
@@ -536,6 +539,7 @@ class OnlineRoutingMapper:
         self.dlg.stopBtn.clicked.connect(lambda: self.toolActivator(1))
         self.dlg.volver.clicked.connect(lambda: self.backScreen())
         self.dlg.aceptar.clicked.connect(lambda: self.savePointsExclution())
+        self.dlg.closeEvent = self.closeUpdate
     
     def update_pedido(self, id):
         try:
@@ -660,6 +664,7 @@ class OnlineRoutingMapper:
     def backScreen(self):
         self.dlg = self.dlg_back
         self.dlg.show()
+        self.agregar_actualizar_puntos_iniciales()
 
     def agregar_actualizar_puntos_iniciales(self):
         self.borrar_todos_los_puntos()
@@ -725,4 +730,6 @@ class OnlineRoutingMapper:
         self.canvas.scene().removeItem(self.stopRubberBand)
         self.canvas.scene().removeItem(self.vectorRubberBand)
 
-
+    def closeUpdate(self, event):
+        self.dlg_back.closeEvent = self.close
+        self.agregar_actualizar_puntos_iniciales()
