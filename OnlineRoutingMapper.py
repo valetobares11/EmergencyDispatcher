@@ -232,7 +232,9 @@ class OnlineRoutingMapper:
         pointXY = QgsPointXY(pointXY)
         self.startRubberBand.addPoint(pointXY)
         self.dlg.bombaTxt.setText(str(pointXY.x()) + ',' + str(pointXY.y()))
-        self.dlg.showNormal()
+        
+        if (self.dlg.close()):
+            self.dlg.showNormal()
 
         # free them
         self.canvas.unsetMapTool(self.clickTool)
@@ -240,6 +242,7 @@ class OnlineRoutingMapper:
 
     def toolActivatorBombas(self):
         self.dlg.showMinimized()
+        self.dlg_back.showMinimized()
         self.clickTool.canvasClicked.connect(self.clickHandlerBombas)
         self.canvas.setMapTool(self.clickTool)  # clickTool is activatedr)
 
@@ -284,6 +287,9 @@ class OnlineRoutingMapper:
     def runAnalysis(self):
         # if len(self.dlg.startTxt.text()) > 0 and len(self.dlg.stopTxt.text()) > 0:
         if self.startPointXY is not None and self.stopPointXY is not None:
+            polygon = QgsProject.instance().mapLayersByName('Jurisdicción')[0]
+            if not polygon.getFeature(1).geometry().contains(self.stopPointXY):
+                QMessageBox.warning(self.dlg, 'Calculate routes bombas',"El punto esta fuera de la juridiccion")
             if self.checkNetConnection():              
                 startPoint = self.crsTransform(self.startPointXY)
                 stopPoint = self.crsTransform(self.stopPointXY)
@@ -498,9 +504,13 @@ class OnlineRoutingMapper:
             insert('bomba', 'startPoint, stopPoint, description', valores)
         self.dlg = self.dlg_back
         self.dlg.show()
+        if (self.dlg.close()):
+            self.dlg.showNormal()
+        self.agregar_actualizar_puntos_iniciales()
+
 
     #tupla esta de mas?
-    def remove_points(self, id, tupla):
+    def remove_points(self, id):
         # Borrar en la tabla interface
         i=0
         while i < self.dlg.tableWidget.rowCount():
@@ -511,14 +521,15 @@ class OnlineRoutingMapper:
         # Borrar en la BD
         delete('points', id)
         delete('points', id-1)
+        self.agregar_actualizar_puntos_iniciales()
 
-    def add_point(self, id, descripcion, tupla):
+    def add_point(self, id, descripcion):
         rowPosition = self.dlg.tableWidget.rowCount()
         self.dlg.tableWidget.insertRow(rowPosition)
         self.dlg.tableWidget.setItem(rowPosition, 0, QTableWidgetItem(str(id)))
         self.dlg.tableWidget.setItem(rowPosition, 1, QTableWidgetItem(descripcion))
         delete_button = QPushButton("delete")
-        delete_button.clicked.connect(lambda: self.remove_points(id, tupla))
+        delete_button.clicked.connect(lambda: self.remove_points(id))
         self.dlg.tableWidget.setCellWidget(rowPosition, 2, delete_button)
 
     def changeScreenModMapa(self):
@@ -531,7 +542,7 @@ class OnlineRoutingMapper:
         i=1
         for tupla in registros:
             if i % 2 == 0:
-                self.add_point(tupla[0], tupla[3], (tupla[1], tupla[2]))
+                self.add_point(tupla[0], tupla[3])
             i+=1
         
         self.canvas = self.iface.mapCanvas()
@@ -659,6 +670,8 @@ class OnlineRoutingMapper:
             self.tipoAutomovil = self.dlg.comboBox.currentText()
             self.dlg = self.dlg_back
             self.dlg.show()
+            if(self.dlg.close()):
+                self.dlg.showNormal()
         except Exception as e:
             QgsMessageLog.logMessage(str(e))
             QMessageBox.warning(self.dlg, 'actualizar_pedido', "No se puede modificar el valor por exceder de caracteres o tipo incorrecto")
@@ -666,6 +679,8 @@ class OnlineRoutingMapper:
     def backScreen(self):
         self.dlg = self.dlg_back
         self.dlg.show()
+        if (self.dlg.close()):
+            self.dlg.showNormal()
         self.agregar_actualizar_puntos_iniciales()
 
     def agregar_actualizar_puntos_iniciales(self):
