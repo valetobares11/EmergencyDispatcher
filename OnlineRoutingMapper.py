@@ -347,7 +347,7 @@ class OnlineRoutingMapper:
             if (self.stopPointXY is None):
                 address = self.dlg.form_direccion.text()+ " " + CIUDAD + " " + PROVINCIA
                 try:
-                    x, y = geocode_address(address)
+                    x, y = obtener_coordenada(address)
                     self.stopPointXY = QgsPointXY(x,y)
                     f = open (PATH_REPORTE ,'w')
                     f.write('Descripcion Emergencia: '+self.dlg.form_descripcion.text())

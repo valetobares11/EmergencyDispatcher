@@ -63,3 +63,21 @@ def agregar_texto_con_saltos_de_linea(c, x, y, texto):
 def insertar_punto(start_point, stop_point, description):
     valores = "{}, {}, '{}'".format(start_point, stop_point, description)
     insert('points', 'startPoint, stopPoint, description', valores)
+
+
+def obtener_coordenada(address):
+    base_url = "https://maps.googleapis.com/maps/api/geocode/json?"
+    params = {
+        "address": address,
+        "key" : "cambiar_api_key",
+    }
+    
+    response = requests.get(base_url, params=params)
+    if response.status_code == 200:
+        data = response.json()
+        if data:
+            # Extrae las coordenadas (latitud y longitud) del primer resultado
+            lat = float(data["results"][0]["geometry"]["location"]["lat"])
+            lon = float(data["results"][0]["geometry"]["location"]["lng"])
+            return lon, lat
+    return None
