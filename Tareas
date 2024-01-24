@@ -14,3 +14,16 @@ Poner imagenes en las alarmas
 Volver a la ventana una vez que se marque el punto
 Que algoritmo usa por debajo el online routing mapper para escribir en el doc
 En el reporte, pensar que mas datos dar o cambiar su descripcion
+
+Tareas a corto plazo:
+Reemplazar el icono por una bomba
+Tema camion ligero y pesado
+Tema tiempo segun las estadisticas
+Como investigar el algoritmo que usa HERE, geocode de Google (consultar con marcelo)
+funcionalidad para cargar automaticamente pedidos desde un excel
+empezar con el frontend
+poner las imagenes en los botones
+agregar una columna mas para ver quien esta de telefonista en Agendar pedidos
+agregar numero al reporte para que genere distintos
+ver como persistir los reportes en la bd.
+
