@@ -202,8 +202,7 @@ class OnlineRoutingMapper:
             self.stopRubberBand.addPoint(stopPointXY)
             self.dlg.stopTxt.setText(str(pointXY.x()) + ',' + str(pointXY.y()))
         
-        if (self.dlg.close()):
-            self.dlg.showNormal()
+        self.dlg.showNormal()
         
         # free them
         self.canvas.unsetMapTool(self.clickTool)
@@ -551,7 +550,7 @@ class OnlineRoutingMapper:
         self.dlg.stopBtn.clicked.connect(lambda: self.toolActivator(1))
         self.dlg.volver.clicked.connect(lambda: self.backScreen())
         self.dlg.aceptar.clicked.connect(lambda: self.savePointsExclution())
-        
+        self.dlg.closeEvent = self.closeUpdate
     
     def update_pedido(self, id):
         try:
@@ -653,8 +652,7 @@ class OnlineRoutingMapper:
 
         self.agregar_actualizar_puntos_iniciales()
         self.dlg = self.dlg_back
-        if (self.dlg.close()):
-            self.dlg.showNormal()
+        self.dlg.show()
 
     def savePoints(self):
         try:
@@ -746,3 +744,7 @@ class OnlineRoutingMapper:
         self.canvas.scene().removeItem(self.startRubberBand)
         self.canvas.scene().removeItem(self.stopRubberBand)
         self.canvas.scene().removeItem(self.vectorRubberBand)
+
+    def closeUpdate(self, event):
+        self.dlg_back.closeEvent = self.close
+        self.agregar_actualizar_puntos_iniciales()
