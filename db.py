@@ -44,18 +44,21 @@ def insert(table = '', columns = '', values = ''):
         conexion.close()
 
 
-def select(table = '', id = None):
+def select(table = '', id = None, limit = None):
     if (table == ''):
         return []
     
     conexion = connectBD()
     cursor = conexion.cursor()
-    query = "SELECT * FROM {} WHERE 1 = 1".format(table)
+    query = "SELECT * FROM {} WHERE 1 = 1 ".format(table)
     
     if (id is not None):
-        query+= " AND id = {}".format(id)
+        query+= " AND id = {} ".format(id)
     
     query += "ORDER BY id"
+
+    if (limit is not None):
+        query+= " DESC LIMIT {}".format(limit)
 
     cursor.execute(query)
     result = cursor.fetchall()
@@ -80,15 +83,28 @@ def update(table = '', seters = '', id = None):
     if (table != '' and seters != ''):
         conexion = connectBD()
         cursor = conexion.cursor()
-        print(id)
         query = "UPDATE {} SET {} WHERE 1 = 1 AND id = {} ;".format(table,seters,id)
-        print(query)
-        #if (id is not None):
-         #   query+=" AND id = {}".format(id)
-        
+
         cursor.execute(sql.SQL(query))
         conexion.commit()
         conexion.close()
+
+def update_file(table = '',nombre='', contenido = '', id = None):
+    if (table != '' and contenido != ''):
+        conexion = connectBD()
+        cursor = conexion.cursor()
+        
+        # Prepara la consulta SQL con un parámetro para el contenido binario
+        query = sql.SQL("UPDATE archivo SET nombre_archivo = %s, contenido = %s WHERE id = %s")
+    
+        # Ejecuta la consulta SQL pasando los datos binarios como parámetros
+        cursor.execute(query, (nombre, psycopg2.Binary(contenido), id))
+        
+        conexion.commit()
+        conexion.close()
+
+
+
 
 #tabla para tener registro de las bombas de aguas que pueden ser utilizadas en un incendio
 def createTableBomba():
@@ -166,6 +182,12 @@ def createTablePedido():
 
     # Crear una tabla si no existe
     consulta_creacion_tabla_pedido = """
+        CREATE TABLE IF NOT EXISTS archivo (
+            id SERIAL PRIMARY KEY,
+            nombre_archivo TEXT,
+            contenido BYTEA
+        );
+
         CREATE TABLE IF NOT EXISTS pedido (
             id SERIAL PRIMARY KEY,
             direccion VARCHAR(40),
@@ -174,8 +196,11 @@ def createTablePedido():
             operador VARCHAR(40),
             startpoint VARCHAR(40),
             stoppoint VARCHAR(40),
-            description VARCHAR(255)
-        )
+            description VARCHAR(255),
+            tiempo TIMESTAMP,
+            id_archivo INT,
+            FOREIGN KEY (id_archivo) REFERENCES archivo(id)
+        );
     """
     cursor.execute(consulta_creacion_tabla_pedido)
 
@@ -189,7 +214,7 @@ def insertarPedido(direccion, solicitante, telefono, operador, startpoint, stopp
     cursor = conexion.cursor()
     
     consulta_insercion_pedido = sql.SQL("INSERT INTO pedido (direccion, solicitante, telefono, operador, startpoint, stoppoint, description) VALUES (%s, %s, %s, %s, %s, %s, %s)")
-    datos_pedido = (direccion, solicitante, telefono, operador, startPoint, stopPoint, description)
+    datos_pedido = (direccion, solicitante, telefono, operador, startpoint, stoppoint, description)
     cursor.execute(consulta_insercion_pedido, datos_pedido)
 
 

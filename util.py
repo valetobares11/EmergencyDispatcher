@@ -87,13 +87,12 @@ def obtener_coordenada(address):
     
     params = {
         "address": address,
-        "key": 'poner_clave',
+        "key": '',
     }
     
     response = requests.get(base_url, params=params)
     if response.status_code == 200:
         data = response.json()
-        print(data)
         if data:
             # Extrae las coordenadas (latitud y longitud) del primer resultado
             lat = float(data["results"][0]["geometry"]["location"]["lat"])
