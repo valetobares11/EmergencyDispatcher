@@ -646,6 +646,9 @@ class OnlineRoutingMapper:
             self.cargar_pedidos_tabla()
             self.path_planilla_carga = None
             self.dlg.cargar_planilla.setText("Seleccionar archivo")
+        else:
+            QMessageBox.warning(self.dlg, 'cargar_pedidos', "Seleccione un archio .ods para cargar los pedidos")
+
 
 
     def cargar_puntos_lista(self):
