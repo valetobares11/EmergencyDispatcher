@@ -21,6 +21,7 @@
  *                                                                         *
  ***************************************************************************/
 """
+
 from PyQt5.QtCore import QSettings, QTranslator, qVersion, QCoreApplication
 from PyQt5.QtGui import QIcon, QColor
 from PyQt5.QtWidgets import QAction, QMessageBox
@@ -49,7 +50,7 @@ import pygame
 
 #variable necesaria para saber si calcular rutas a bombas de incendio
 is_incendio = False
-
+path_planilla_carga = None
 class OnlineRoutingMapper:
     
 
@@ -620,14 +621,15 @@ class OnlineRoutingMapper:
 
         self.dlg.volver.clicked.connect(lambda: self.backScreen())
         self.dlg.aceptar.clicked.connect(lambda: self.backScreen())
-        self.dlg.cargar_planilla.clicked.connect(lambda: self.cargar_pedidos())
+        self.dlg.cargar_planilla.clicked.connect(lambda: self.seleccionar_pedidos())
+        self.dlg.cargar.clicked.connect(lambda: self.cargar_pedidos())
     
     def cargar_pedidos_tabla(self):
         registros = select("pedido")
         for tupla in registros:
             self.add_pedido(tupla[0], tupla[1], tupla[2], tupla[3], tupla[4], tupla[5], tupla[6], tupla[7])
 
-    def cargar_pedidos(self):
+    def seleccionar_pedidos(self):
         file_dialog = QFileDialog()
         file_dialog.setNameFilter("Archivos ODS (*.ods)")
         file_dialog.setFileMode(QFileDialog.ExistingFile)
@@ -635,9 +637,15 @@ class OnlineRoutingMapper:
             file_paths = file_dialog.selectedFiles()
             selected_file_path = file_paths[0]
             self.dlg.cargar_planilla.setText(selected_file_path)
-            cargar_pedidos(selected_file_path)
-            self.cargar_pedidos_tabla()
+            path_planilla_carga = selected_file_path
             
+            
+    def cargar_pedidos(self):
+        if path_planilla_carga is not None:
+            cargar_pedidos(path_planilla_carga)
+            self.cargar_pedidos_tabla()
+            path_planilla_carga = None
+            self.dlg.cargar_planilla.setText("Seleccionar archivo")
 
 
     def cargar_puntos_lista(self):
