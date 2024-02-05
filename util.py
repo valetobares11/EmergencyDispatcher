@@ -13,6 +13,8 @@ from pyexcel_ods import get_data
 import psycopg2
 from psycopg2 import sql
 
+from .apikey import *
+
 
 def geocode_address(address):
     base_url = "https://nominatim.openstreetmap.org/search"
@@ -71,23 +73,13 @@ def insertar_punto(start_point, stop_point, description):
     valores = "{}, {}, '{}'".format(start_point, stop_point, description)
     insert('points', 'startPoint, stopPoint, description', valores)
 
-def get_api_key_google():
-    try:
-        with open(API_KEY_GOOGLE, 'r') as f:
-            clave_api = f.read().strip()
-            return clave_api
-    except FileNotFoundError:
-        print(f"El archivo '{API_KEY_GOOGLE}' no fue encontrado.")
-    except Exception as e:
-        print(f"Ocurrió un error: {e}")
 
 def obtener_coordenada(address):
     base_url = "https://maps.googleapis.com/maps/api/geocode/json?"
-    api_key = get_api_key_google()
     
     params = {
         "address": address,
-        "key": '',
+        "key": APIKEY,
     }
     
     response = requests.get(base_url, params=params)

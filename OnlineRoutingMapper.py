@@ -41,8 +41,10 @@ from qgis.core import *
 
 import platform
 from .config import *
+from .apikey import *
 from qgis.PyQt.QtWidgets import QTableWidgetItem,QPushButton 
 import pygame
+
 
 
 #variable necesaria para saber si calcular rutas a bombas de incendio
@@ -79,7 +81,6 @@ class OnlineRoutingMapper:
         self.dlg_back = None
         self.listPointsExclution = []
         self.tipoAutomovil = None
-        self.id_archivo = None
 
     # noinspection PyMethodMayBeStatic
     def tr(self, message):
@@ -307,10 +308,7 @@ class OnlineRoutingMapper:
                     # self.startRubberBand.removeLastPoint()
                     # self.stopRubberBand.removeLastPoint()
                     self.listPointsExclution=[]
-                    self.agregar_contenido_archivo()
-                    self.mostrar_contenido_archivo()
                 except Exception as err:
-                    print(str(err))
                     QgsMessageLog.logMessage(str(err))
                     QMessageBox.warning(self.dlg, 'Analysis Error',
                                         "Cannot calculate the route between the start and stop locations that you entered. Please use other Service APIs.")
@@ -412,7 +410,13 @@ class OnlineRoutingMapper:
         self.clickTool = QgsMapToolEmitPoint(self.canvas)
         self.dlg.buscarPunto.clicked.connect(lambda: self.toolActivatorStartPoints())
         self.dlg.volver.clicked.connect(lambda: self.backScreen())
-        self.dlg.aceptar.clicked.connect(lambda: self.savePoints())
+        self.dlg.aceptar.clicked.connect(lambda: self.press_btn_acept())
+
+
+    def press_btn_acept(self):
+        self.savePoints()
+        self.runAnalysis()
+
          
 
         
@@ -663,14 +667,9 @@ class OnlineRoutingMapper:
             direccion = self.dlg.form_direccion.text()
             solicitante = self.dlg.form_solicitante.text()
             telefono = self.dlg.form_telefono.text()
-            # crear archivo en BD
-            insert('archivo', 'nombre_archivo, contenido', 'null, null')
-            registros = select('archivo', None, 1)
-            for tupla in registros:
-                self.id_archivo = tupla[0]
             #inserta los pedidos en la DB
-            valores = "'{}', '{}', '{}', '{}', '{}', '{}', '{}',{},{}".format(direccion, solicitante, telefono, "Pedro", " ", " ", descripcion,'null',self.id_archivo)
-            insert('pedido', 'direccion, solicitante, telefono, operador, startpoint, stoppoint, description, tiempo, id_archivo ', valores)
+            valores = "'{}', '{}', '{}', '{}', '{}', '{}', '{}'".format(direccion, solicitante, telefono, "Pedro", " ", " ", descripcion)
+            insert('pedido', 'direccion, solicitante, telefono, operador, startpoint, stoppoint, description ', valores)
         
             self.calculate_points()
             self.tipoAutomovil = self.dlg.comboBox.currentText()
@@ -704,21 +703,6 @@ class OnlineRoutingMapper:
                 self.startRubberBand.addPoint(QgsPointXY(float(tupla[1]), float(tupla[2])))
             i+=1
 
-    def agregar_contenido_archivo(self):
-        if (self.id_archivo is not None):
-            file = open(PATH_REPORTE, 'rb')
-            contenido = file.read()
-            nombre = "reporte"+str(self.id_archivo)
-            update_file('archivo', nombre, contenido, self.id_archivo)
-            file.close()
-    
-    def mostrar_contenido_archivo(self):
-        if (self.id_archivo is not None):
-            registros = select('archivo',self.id_archivo)
-            contenido_memoryview = registros[2]
-            contenido_bytes = bytes(contenido_memoryview)
-            contenido_texto = contenido_bytes.decode('utf-8')
-
     def run(self):
         self.no = 0
         self.startPointXY = None
@@ -737,7 +721,7 @@ class OnlineRoutingMapper:
         self.clickTool = QgsMapToolEmitPoint(self.canvas)  # clicktool instance generated in here.
         # self.dlg.startBtn.clicked.connect(lambda: self.toolActivator(0))
         # self.dlg.stopBtn.clicked.connect(lambda: self.toolActivator(1))
-        self.dlg.runBtn.clicked.connect(self.runAnalysis)
+       
         
         self.dlg_back = self.dlg
         self.dlg.btnAgPedido.clicked.connect(lambda: self.changeScreenAgPedido())
@@ -758,6 +742,7 @@ class OnlineRoutingMapper:
         self.stopRubberBand.setIconSize(10)
         self.stopRubberBand.setIcon(QgsRubberBand.ICON_FULL_BOX)
         self.agregar_actualizar_puntos_iniciales()
+
         self.dlg.show()
         self.dlg.closeEvent = self.close
 

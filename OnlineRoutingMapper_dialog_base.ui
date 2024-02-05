@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>487</width>
-    <height>440</height>
+    <width>555</width>
+    <height>800</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -19,166 +19,304 @@
     <verstretch>0</verstretch>
    </sizepolicy>
   </property>
+  <property name="minimumSize">
+   <size>
+    <width>550</width>
+    <height>800</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>555</width>
+    <height>800</height>
+   </size>
+  </property>
+  <property name="cursor">
+   <cursorShape>ArrowCursor</cursorShape>
+  </property>
   <property name="windowTitle">
    <string>Online Routing Mapper</string>
   </property>
-  <widget class="QLabel" name="helpLbl">
-   <property name="geometry">
-    <rect>
-     <x>30</x>
-     <y>340</y>
-     <width>53</width>
-     <height>16</height>
-    </rect>
+  <layout class="QGridLayout" name="gridLayout">
+   <property name="leftMargin">
+    <number>0</number>
    </property>
-   <property name="text">
-    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;a href=&quot;https://cbsuygulama.wordpress.com/2015/11/05/shortest-path-analysis-with-online-routing-mapper-plugin/&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Help...&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   <property name="topMargin">
+    <number>0</number>
    </property>
-   <property name="openExternalLinks">
-    <bool>true</bool>
+   <property name="rightMargin">
+    <number>0</number>
    </property>
-  </widget>
-  <widget class="QPushButton" name="btnModMapa">
-   <property name="geometry">
-    <rect>
-     <x>10</x>
-     <y>160</y>
-     <width>221</width>
-     <height>41</height>
-    </rect>
+   <property name="bottomMargin">
+    <number>0</number>
    </property>
-   <property name="styleSheet">
-    <string notr="true">QPushButton {
+   <property name="spacing">
+    <number>0</number>
+   </property>
+   <item row="0" column="0">
+    <widget class="QFrame" name="frame_2">
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(55, 70, 91);</string>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
+     <widget class="QFrame" name="frame">
+      <property name="geometry">
+       <rect>
+        <x>-10</x>
+        <y>130</y>
+        <width>681</width>
+        <height>671</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background-color: rgb(33, 43, 56);</string>
+      </property>
+      <property name="frameShape">
+       <enum>QFrame::NoFrame</enum>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Raised</enum>
+      </property>
+      <widget class="QPushButton" name="btnAgPedido">
+       <property name="geometry">
+        <rect>
+         <x>90</x>
+         <y>50</y>
+         <width>391</width>
+         <height>80</height>
+        </rect>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>200</width>
+         <height>80</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>600</width>
+         <height>80</height>
+        </size>
+       </property>
+       <property name="font">
+        <font>
+         <family>URW Gothic [urw]</family>
+         <pointsize>-1</pointsize>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton {
 font-size:14px;
-background-color:#37c871;
+background-color:#ffcb3a;
 border-radius: 10px;
 border: 1px solid black;
 }
 
 QPushButton:hover {
-background-color: #2CA02C;
+background-color: #FF0000;
 }</string>
-   </property>
-   <property name="text">
-    <string>Modificar mapa</string>
-   </property>
-  </widget>
-  <widget class="QPushButton" name="btnAgPedido">
-   <property name="geometry">
-    <rect>
-     <x>120</x>
-     <y>100</y>
-     <width>221</width>
-     <height>41</height>
-    </rect>
-   </property>
-   <property name="styleSheet">
-    <string notr="true">QPushButton {
+       </property>
+       <property name="text">
+        <string>Agendar pedido</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="btnModMapa">
+       <property name="geometry">
+        <rect>
+         <x>90</x>
+         <y>320</y>
+         <width>391</width>
+         <height>80</height>
+        </rect>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>150</width>
+         <height>80</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>600</width>
+         <height>80</height>
+        </size>
+       </property>
+       <property name="font">
+        <font>
+         <family>URW Gothic [urw]</family>
+         <pointsize>-1</pointsize>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton {
 font-size:14px;
-background-color:#37c871;
+background-color:#ffcb3a;
 border-radius: 10px;
 border: 1px solid black;
 }
 
 QPushButton:hover {
-background-color: #2CA02C;
+background-color: #FF0000;
 }</string>
-   </property>
-   <property name="text">
-    <string>Agendar pedido</string>
-   </property>
-  </widget>
-  <widget class="QPushButton" name="runBtn">
-   <property name="enabled">
-    <bool>true</bool>
-   </property>
-   <property name="geometry">
-    <rect>
-     <x>130</x>
-     <y>320</y>
-     <width>201</width>
-     <height>41</height>
-    </rect>
-   </property>
-   <property name="font">
-    <font>
-     <pointsize>-1</pointsize>
-     <weight>75</weight>
-     <bold>true</bold>
-    </font>
-   </property>
-   <property name="styleSheet">
-    <string notr="true">QPushButton {
-font-size:20px;
-font-weight:bold;
-background-color: #7B8EC8;
-border-radius: 10px;
-border: 1px solid black;
-}
-QPushButton:hover {
-background-color:#546AAA
-}</string>
-   </property>
-   <property name="text">
-    <string>Run</string>
-   </property>
-   <property name="iconSize">
-    <size>
-     <width>30</width>
-     <height>30</height>
-    </size>
-   </property>
-  </widget>
-  <widget class="QPushButton" name="btn_ver_pedidos">
-   <property name="geometry">
-    <rect>
-     <x>120</x>
-     <y>220</y>
-     <width>221</width>
-     <height>41</height>
-    </rect>
-   </property>
-   <property name="styleSheet">
-    <string notr="true">QPushButton {
+       </property>
+       <property name="text">
+        <string>Modificar mapa</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="btnModBombas">
+       <property name="geometry">
+        <rect>
+         <x>90</x>
+         <y>230</y>
+         <width>391</width>
+         <height>80</height>
+        </rect>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>150</width>
+         <height>80</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>600</width>
+         <height>80</height>
+        </size>
+       </property>
+       <property name="font">
+        <font>
+         <family>URW Gothic [urw]</family>
+         <pointsize>-1</pointsize>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton {
 font-size:14px;
-background-color:#37c871;
+background-color:#ffcb3a;
 border-radius: 10px;
 border: 1px solid black;
 }
 
 QPushButton:hover {
-background-color: #2CA02C;
+background-color: #FF0000;
 }</string>
-   </property>
-   <property name="text">
-    <string>Ver pedidos</string>
-   </property>
-  </widget>
-  <widget class="QPushButton" name="btnModBombas">
-   <property name="geometry">
-    <rect>
-     <x>250</x>
-     <y>160</y>
-     <width>221</width>
-     <height>41</height>
-    </rect>
-   </property>
-   <property name="styleSheet">
-    <string notr="true">QPushButton {
+       </property>
+       <property name="text">
+        <string>Modificar bombas</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="btn_ver_pedidos">
+       <property name="geometry">
+        <rect>
+         <x>90</x>
+         <y>140</y>
+         <width>391</width>
+         <height>80</height>
+        </rect>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>200</width>
+         <height>80</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>600</width>
+         <height>80</height>
+        </size>
+       </property>
+       <property name="font">
+        <font>
+         <family>URW Gothic [urw]</family>
+         <pointsize>-1</pointsize>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton {
 font-size:14px;
-background-color:#37c871;
+background-color:#ffcb3a;
 border-radius: 10px;
 border: 1px solid black;
 }
 
 QPushButton:hover {
-background-color: #2CA02C;
+background-color: #FF0000;
 }</string>
-   </property>
-   <property name="text">
-    <string>Modificar bombas</string>
-   </property>
-  </widget>
+       </property>
+       <property name="text">
+        <string>Ver pedidos</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="helpLbl">
+       <property name="geometry">
+        <rect>
+         <x>30</x>
+         <y>440</y>
+         <width>111</width>
+         <height>338</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;a href=&quot;https://cbsuygulama.wordpress.com/2015/11/05/shortest-path-analysis-with-online-routing-mapper-plugin/&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Help...&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
+       <property name="openExternalLinks">
+        <bool>true</bool>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="btnModMapa_2">
+       <property name="geometry">
+        <rect>
+         <x>90</x>
+         <y>410</y>
+         <width>391</width>
+         <height>80</height>
+        </rect>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>150</width>
+         <height>80</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>600</width>
+         <height>80</height>
+        </size>
+       </property>
+       <property name="font">
+        <font>
+         <family>URW Gothic [urw]</family>
+         <pointsize>-1</pointsize>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton {
+font-size:14px;
+background-color:#ffcb3a;
+border-radius: 10px;
+border: 1px solid black;
+}
+
+QPushButton:hover {
+background-color: #FF0000;
+}</string>
+       </property>
+       <property name="text">
+        <string>Estadisticas</string>
+       </property>
+      </widget>
+     </widget>
+    </widget>
+   </item>
+  </layout>
  </widget>
  <resources/>
  <connections/>
