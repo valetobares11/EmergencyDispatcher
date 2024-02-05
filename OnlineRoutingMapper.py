@@ -21,7 +21,6 @@
  *                                                                         *
  ***************************************************************************/
 """
-
 from PyQt5.QtCore import QSettings, QTranslator, qVersion, QCoreApplication
 from PyQt5.QtGui import QIcon, QColor
 from PyQt5.QtWidgets import QAction, QMessageBox
@@ -50,7 +49,7 @@ import pygame
 
 #variable necesaria para saber si calcular rutas a bombas de incendio
 is_incendio = False
-path_planilla_carga = None
+
 class OnlineRoutingMapper:
     
 
@@ -82,6 +81,7 @@ class OnlineRoutingMapper:
         self.dlg_back = None
         self.listPointsExclution = []
         self.tipoAutomovil = None
+        self.path_planilla_carga = None
 
     # noinspection PyMethodMayBeStatic
     def tr(self, message):
@@ -637,14 +637,14 @@ class OnlineRoutingMapper:
             file_paths = file_dialog.selectedFiles()
             selected_file_path = file_paths[0]
             self.dlg.cargar_planilla.setText(selected_file_path)
-            path_planilla_carga = selected_file_path
+            self.path_planilla_carga = selected_file_path
             
             
     def cargar_pedidos(self):
-        if path_planilla_carga is not None:
-            cargar_pedidos(path_planilla_carga)
+        if self.path_planilla_carga is not None:
+            cargar_pedidos(self.path_planilla_carga)
             self.cargar_pedidos_tabla()
-            path_planilla_carga = None
+            self.path_planilla_carga = None
             self.dlg.cargar_planilla.setText("Seleccionar archivo")
 
 
