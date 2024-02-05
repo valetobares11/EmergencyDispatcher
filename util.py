@@ -92,10 +92,10 @@ def obtener_coordenada(address):
             return lon, lat
     return None
 
-def cargar_pedidos():
+def cargar_pedidos(archivo_ods):
     try:
         # Lee el archivo ODS
-        data = get_data(PEDIDOS)
+        data = get_data(archivo_ods)
         
         # Extrae los datos de la primera hoja del archivo ODS
         sheet_name = list(data.keys())[0]
@@ -118,7 +118,7 @@ def cargar_pedidos():
                 if (columna == 'stoppoint'): stoppoint = valor
                 if (columna == 'direccion'): direccion = valor
                 if (columna == 'tiempo'): tiempo = valor
-            x,y = obtener_coordenada(direccion+' ' +CIUDAD + ' '+PROVINCIA)
+            x,y = obtener_coordenada(direccion+' rio cuarto cordoba')
             stoppoint = '{},{}'.format(x,y)
             consulta_insercion += ("INSERT INTO pedido (direccion, startpoint, stoppoint, tiempo) VALUES ('{}', '{}', '{}', CURRENT_DATE + INTERVAL '{}' HOUR TO MINUTE); \n".format(direccion, startpoint, stoppoint,tiempo))
 
@@ -128,6 +128,6 @@ def cargar_pedidos():
         conexion.close()
 
     except FileNotFoundError:
-        print(f"El archivo {PEDIDOS} no fue encontrado.")
+        print(f"El archivo {archivo_ods} no fue encontrado.")
     except Exception as e:
-        print(f"Error al procesar el archivo {PEDIDOS}: {str(e)}")
+        print(f"Error al procesar el archivo {archivo_ods}: {str(e)}")

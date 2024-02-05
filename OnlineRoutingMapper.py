@@ -42,7 +42,7 @@ from qgis.core import *
 import platform
 from .config import *
 from .apikey import *
-from qgis.PyQt.QtWidgets import QTableWidgetItem,QPushButton 
+from qgis.PyQt.QtWidgets import QTableWidgetItem,QPushButton,QFileDialog
 import pygame
 
 
@@ -612,9 +612,7 @@ class OnlineRoutingMapper:
         self.dlg.tableWidget.setHorizontalHeaderLabels(["Numero ID", "Direccion", "Solicitante", "Telefono", "Operador", "Coordenada de partida", "Coordenada del lugar", "Descripcion", "Modificar"])
         #self.dlg.tableWidget.sortItems(0)
         
-        registros = select("pedido")
-        for tupla in registros:
-            self.add_pedido(tupla[0], tupla[1], tupla[2], tupla[3], tupla[4], tupla[5], tupla[6], tupla[7])
+        self.cargar_pedidos_tabla()
         
         self.canvas = self.iface.mapCanvas()
         self.clickTool = QgsMapToolEmitPoint(self.canvas)
@@ -622,7 +620,25 @@ class OnlineRoutingMapper:
 
         self.dlg.volver.clicked.connect(lambda: self.backScreen())
         self.dlg.aceptar.clicked.connect(lambda: self.backScreen())
+        self.dlg.cargar_planilla.clicked.connect(lambda: self.cargar_pedidos())
     
+    def cargar_pedidos_tabla(self):
+        registros = select("pedido")
+        for tupla in registros:
+            self.add_pedido(tupla[0], tupla[1], tupla[2], tupla[3], tupla[4], tupla[5], tupla[6], tupla[7])
+
+    def cargar_pedidos(self):
+        file_dialog = QFileDialog()
+        file_dialog.setNameFilter("Archivos ODS (*.ods)")
+        file_dialog.setFileMode(QFileDialog.ExistingFile)
+        if file_dialog.exec_():
+            file_paths = file_dialog.selectedFiles()
+            selected_file_path = file_paths[0]
+            self.dlg.cargar_planilla.setText(selected_file_path)
+            cargar_pedidos(selected_file_path)
+            self.cargar_pedidos_tabla()
+            
+
 
     def cargar_puntos_lista(self):
         registros = select('points')

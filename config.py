@@ -27,7 +27,3 @@ SONIDO_ALARMA_RESCATE_DE_ALTURA = f"/home/{nombre_usuario}/.local/share/QGIS/QGI
 CAMIONETA = "Camioneta"
 CAMION_LIGERO = "Camion ligero"
 CAMION_PESADO = "Camion pesado"
-
-# Carga pedidos
-PEDIDOS = f"/home/{nombre_usuario}/Descargas/pedidos.ods"
-API_KEY_GOOGLE = f"/home/{nombre_usuario}/Descargas/api_key.txt"
