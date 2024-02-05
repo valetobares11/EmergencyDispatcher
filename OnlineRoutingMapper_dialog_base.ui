@@ -318,6 +318,13 @@ background-color: #FF0000;
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>btnAgPedido</tabstop>
+  <tabstop>btn_ver_pedidos</tabstop>
+  <tabstop>btnModBombas</tabstop>
+  <tabstop>btnModMapa</tabstop>
+  <tabstop>btnModMapa_2</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

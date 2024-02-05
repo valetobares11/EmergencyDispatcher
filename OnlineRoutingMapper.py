@@ -41,8 +41,12 @@ from qgis.core import *
 
 import platform
 from .config import *
+<<<<<<< Updated upstream
 from .apikey import *
 from qgis.PyQt.QtWidgets import QTableWidgetItem,QPushButton,QFileDialog
+=======
+from qgis.PyQt.QtWidgets import QTableWidgetItem,QPushButton 
+>>>>>>> Stashed changes
 import pygame
 
 
@@ -392,8 +396,12 @@ class OnlineRoutingMapper:
 
     def changeScreenAgPedido(self):
         self.dlg = OnlineRoutingMapperDialogAgPedido()
+        #hace que el cursor aparezca en el primer linea del form
+        self.dlg.form_descripcion.setFocus()
+        
         self.dlg.setFixedSize(self.dlg.size())
         self.dlg.show()
+        
         
         opciones = [CAMIONETA, CAMION_LIGERO, CAMION_PESADO]
         self.dlg.comboBox.addItems(opciones)

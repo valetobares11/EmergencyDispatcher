@@ -40,8 +40,8 @@
   <widget class="QFrame" name="frame">
    <property name="geometry">
     <rect>
-     <x>-10</x>
-     <y>-10</y>
+     <x>60</x>
+     <y>60</y>
      <width>791</width>
      <height>811</height>
     </rect>
@@ -102,15 +102,34 @@
      <rect>
       <x>250</x>
       <y>420</y>
-      <width>111</width>
-      <height>91</height>
+      <width>110</width>
+      <height>110</height>
      </rect>
     </property>
-    <property name="styleSheet">
-     <string notr="true">background-color: rgb(255, 255, 255);</string>
+    <property name="minimumSize">
+     <size>
+      <width>110</width>
+      <height>110</height>
+     </size>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>110</width>
+      <height>110</height>
+     </size>
     </property>
     <property name="text">
-     <string>Incendio Estructura</string>
+     <string/>
+    </property>
+    <property name="icon">
+     <iconset>
+      <normaloff>sonidos/Logos/Logo_Incendio_Estructural.png</normaloff>sonidos/Logos/Logo_Incendio_Estructural.png</iconset>
+    </property>
+    <property name="iconSize">
+     <size>
+      <width>150</width>
+      <height>150</height>
+     </size>
     </property>
    </widget>
    <widget class="QPushButton" name="volver">
@@ -194,17 +213,45 @@ background-color: #c83737;
      <rect>
       <x>130</x>
       <y>420</y>
-      <width>111</width>
-      <height>91</height>
+      <width>110</width>
+      <height>110</height>
      </rect>
     </property>
+    <property name="minimumSize">
+     <size>
+      <width>110</width>
+      <height>110</height>
+     </size>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>110</width>
+      <height>110</height>
+     </size>
+    </property>
     <property name="styleSheet">
-     <string notr="true">background-color: rgb(255, 255, 255);
-
-</string>
+     <string notr="true">color: rgb(0,0,0);</string>
     </property>
     <property name="text">
-     <string>Incendio Forestal</string>
+     <string/>
+    </property>
+    <property name="icon">
+     <iconset>
+      <normaloff>sonidos/Logos/Logo_Incendio_Forestal.png</normaloff>
+      <normalon>sonidos/Logos/Logo_Incendio_Forestal.png</normalon>
+      <activeoff>sonidos/Logos/Logo_Incendio_Forestal.png</activeoff>
+      <activeon>sonidos/Logos/Logo_Incendio_Forestal.png</activeon>
+      <selectedoff>sonidos/Logos/Logo_Incendio_Forestal.png</selectedoff>
+      <selectedon>sonidos/Logos/Logo_Incendio_Forestal.png</selectedon>sonidos/Logos/Logo_Incendio_Forestal.png</iconset>
+    </property>
+    <property name="iconSize">
+     <size>
+      <width>150</width>
+      <height>150</height>
+     </size>
+    </property>
+    <property name="autoDefault">
+     <bool>true</bool>
     </property>
    </widget>
    <widget class="QLabel" name="label">
@@ -227,16 +274,35 @@ background-color: #c83737;
     <property name="geometry">
      <rect>
       <x>250</x>
-      <y>520</y>
-      <width>111</width>
-      <height>91</height>
+      <y>540</y>
+      <width>110</width>
+      <height>110</height>
      </rect>
     </property>
-    <property name="styleSheet">
-     <string notr="true">background-color: rgb(255, 255, 255);</string>
+    <property name="minimumSize">
+     <size>
+      <width>110</width>
+      <height>110</height>
+     </size>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>110</width>
+      <height>110</height>
+     </size>
     </property>
     <property name="text">
-     <string>Incendio Rural</string>
+     <string/>
+    </property>
+    <property name="icon">
+     <iconset>
+      <normaloff>sonidos/Logos/Logo_Incendio_Rural.png</normaloff>sonidos/Logos/Logo_Incendio_Rural.png</iconset>
+    </property>
+    <property name="iconSize">
+     <size>
+      <width>170</width>
+      <height>170</height>
+     </size>
     </property>
    </widget>
    <widget class="QComboBox" name="comboBox">
@@ -256,16 +322,35 @@ background-color: #c83737;
     <property name="geometry">
      <rect>
       <x>490</x>
-      <y>520</y>
-      <width>101</width>
-      <height>91</height>
+      <y>540</y>
+      <width>110</width>
+      <height>110</height>
      </rect>
     </property>
-    <property name="styleSheet">
-     <string notr="true">background-color: rgb(255, 255, 255);</string>
+    <property name="minimumSize">
+     <size>
+      <width>110</width>
+      <height>110</height>
+     </size>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>110</width>
+      <height>110</height>
+     </size>
     </property>
     <property name="text">
-     <string>Emerg Varias</string>
+     <string/>
+    </property>
+    <property name="icon">
+     <iconset>
+      <normaloff>sonidos/Logos/Logo_emergencias_varias.png</normaloff>sonidos/Logos/Logo_emergencias_varias.png</iconset>
+    </property>
+    <property name="iconSize">
+     <size>
+      <width>150</width>
+      <height>150</height>
+     </size>
     </property>
    </widget>
    <widget class="QLabel" name="label_2">
@@ -282,29 +367,6 @@ background-color: #c83737;
     </property>
     <property name="text">
      <string>Descripcion emergencia</string>
-    </property>
-   </widget>
-   <widget class="QToolButton" name="buttonRescateDeAltura">
-    <property name="geometry">
-     <rect>
-      <x>370</x>
-      <y>420</y>
-      <width>111</width>
-      <height>91</height>
-     </rect>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">background-color: rgb(255, 255, 255);</string>
-    </property>
-    <property name="text">
-     <string>Rescate de Altura </string>
-    </property>
-    <property name="icon">
-     <iconset theme="rescateAltura">
-      <normaloff>.</normaloff>.</iconset>
-    </property>
-    <property name="checkable">
-     <bool>false</bool>
     </property>
    </widget>
    <widget class="QLineEdit" name="form_direccion">
@@ -324,32 +386,70 @@ background-color: #c83737;
     <property name="geometry">
      <rect>
       <x>130</x>
-      <y>520</y>
-      <width>111</width>
-      <height>91</height>
+      <y>540</y>
+      <width>110</width>
+      <height>110</height>
      </rect>
     </property>
-    <property name="styleSheet">
-     <string notr="true">background-color: rgb(255, 255, 255);</string>
+    <property name="minimumSize">
+     <size>
+      <width>110</width>
+      <height>110</height>
+     </size>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>110</width>
+      <height>110</height>
+     </size>
     </property>
     <property name="text">
-     <string>Incendio Vehicular</string>
+     <string/>
+    </property>
+    <property name="icon">
+     <iconset>
+      <normaloff>sonidos/Logos/Logo_Incendio_Vehicular.png</normaloff>sonidos/Logos/Logo_Incendio_Vehicular.png</iconset>
+    </property>
+    <property name="iconSize">
+     <size>
+      <width>150</width>
+      <height>150</height>
+     </size>
     </property>
    </widget>
    <widget class="QPushButton" name="buttonAccidenteVehicular">
     <property name="geometry">
      <rect>
       <x>370</x>
-      <y>520</y>
-      <width>111</width>
-      <height>91</height>
+      <y>540</y>
+      <width>110</width>
+      <height>110</height>
      </rect>
     </property>
-    <property name="styleSheet">
-     <string notr="true">background-color: rgb(255, 255, 255);</string>
+    <property name="minimumSize">
+     <size>
+      <width>110</width>
+      <height>110</height>
+     </size>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>110</width>
+      <height>110</height>
+     </size>
     </property>
     <property name="text">
-     <string>Accidente Vehicular</string>
+     <string/>
+    </property>
+    <property name="icon">
+     <iconset>
+      <normaloff>sonidos/Logos/Logo_Accidente_Vehicular.png</normaloff>sonidos/Logos/Logo_Accidente_Vehicular.png</iconset>
+    </property>
+    <property name="iconSize">
+     <size>
+      <width>160</width>
+      <height>160</height>
+     </size>
     </property>
    </widget>
    <widget class="QLineEdit" name="form_telefono">
@@ -395,15 +495,34 @@ background-color: #2CA02C;
      <rect>
       <x>490</x>
       <y>420</y>
-      <width>101</width>
-      <height>91</height>
+      <width>110</width>
+      <height>110</height>
      </rect>
     </property>
-    <property name="styleSheet">
-     <string notr="true">background-color: rgb(255, 255, 255);</string>
+    <property name="minimumSize">
+     <size>
+      <width>110</width>
+      <height>110</height>
+     </size>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>110</width>
+      <height>110</height>
+     </size>
     </property>
     <property name="text">
-     <string>Accidente Mat Pel</string>
+     <string/>
+    </property>
+    <property name="icon">
+     <iconset>
+      <normaloff>sonidos/Logos/Logo_mat_pel.png</normaloff>sonidos/Logos/Logo_mat_pel.png</iconset>
+    </property>
+    <property name="iconSize">
+     <size>
+      <width>140</width>
+      <height>140</height>
+     </size>
     </property>
    </widget>
    <widget class="QPushButton" name="buscarPunto">
@@ -477,8 +596,62 @@ background-color: #2CA02C;
      <string notr="true">background-color: rgb(255, 255, 255);</string>
     </property>
    </widget>
+   <widget class="QPushButton" name="buttonRescateDeAltura">
+    <property name="geometry">
+     <rect>
+      <x>370</x>
+      <y>420</y>
+      <width>110</width>
+      <height>110</height>
+     </rect>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>110</width>
+      <height>110</height>
+     </size>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>110</width>
+      <height>110</height>
+     </size>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="icon">
+     <iconset>
+      <normaloff>sonidos/Logos/Logo_rescate_cuerdas.png</normaloff>sonidos/Logos/Logo_rescate_cuerdas.png</iconset>
+    </property>
+    <property name="iconSize">
+     <size>
+      <width>150</width>
+      <height>150</height>
+     </size>
+    </property>
+   </widget>
   </widget>
  </widget>
+ <tabstops>
+  <tabstop>form_descripcion</tabstop>
+  <tabstop>form_direccion</tabstop>
+  <tabstop>form_solicitante</tabstop>
+  <tabstop>form_telefono</tabstop>
+  <tabstop>comboBox</tabstop>
+  <tabstop>comboBox_2</tabstop>
+  <tabstop>buttonIncendioForestal</tabstop>
+  <tabstop>buttonIncendioEstructura</tabstop>
+  <tabstop>buttonRescateDeAltura</tabstop>
+  <tabstop>buttonAccidenteMatPel</tabstop>
+  <tabstop>buttonIncendioVehicular</tabstop>
+  <tabstop>buttonIncendioRural</tabstop>
+  <tabstop>buttonAccidenteVehicular</tabstop>
+  <tabstop>buttonEmergVarias</tabstop>
+  <tabstop>volver</tabstop>
+  <tabstop>aceptar</tabstop>
+  <tabstop>buscarPunto</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>
