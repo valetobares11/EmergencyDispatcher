@@ -73,6 +73,9 @@
         <height>671</height>
        </rect>
       </property>
+      <property name="tabletTracking">
+       <bool>true</bool>
+      </property>
       <property name="styleSheet">
        <string notr="true">background-color: rgb(33, 43, 56);</string>
       </property>

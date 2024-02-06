@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>606</width>
-    <height>579</height>
+    <width>761</width>
+    <height>811</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -22,161 +22,225 @@
   <property name="windowTitle">
    <string>Online Routing Mapper</string>
   </property>
-  <widget class="QLabel" name="startLlb">
+  <property name="styleSheet">
+   <string notr="true">background-color: rgb(33, 43, 56);
+</string>
+  </property>
+  <widget class="QFrame" name="frame">
    <property name="geometry">
     <rect>
-     <x>50</x>
-     <y>90</y>
-     <width>221</width>
-     <height>16</height>
+     <x>0</x>
+     <y>0</y>
+     <width>761</width>
+     <height>811</height>
     </rect>
    </property>
-   <property name="text">
-    <string>Bomba Location</string>
+   <property name="frameShape">
+    <enum>QFrame::StyledPanel</enum>
    </property>
-  </widget>
-  <widget class="QLineEdit" name="bombaTxt">
-   <property name="enabled">
-    <bool>true</bool>
+   <property name="frameShadow">
+    <enum>QFrame::Raised</enum>
    </property>
-   <property name="geometry">
-    <rect>
-     <x>40</x>
-     <y>120</y>
-     <width>281</width>
-     <height>22</height>
-    </rect>
-   </property>
-   <property name="styleSheet">
-    <string notr="true">border-radius:7px;
-border:1px solid black</string>
-   </property>
-   <property name="readOnly">
-    <bool>true</bool>
-   </property>
-  </widget>
-  <widget class="QPushButton" name="startBtn">
-   <property name="geometry">
-    <rect>
-     <x>370</x>
-     <y>110</y>
-     <width>93</width>
-     <height>41</height>
-    </rect>
-   </property>
-   <property name="styleSheet">
-    <string notr="true">QPushButton {
+   <widget class="QLineEdit" name="bombaTxt">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>140</x>
+      <y>230</y>
+      <width>551</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(255, 255, 255);</string>
+    </property>
+    <property name="readOnly">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QLabel" name="startLlb_2">
+    <property name="geometry">
+     <rect>
+      <x>70</x>
+      <y>120</y>
+      <width>101</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>14</pointsize>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color: rgb(255, 255, 255);</string>
+    </property>
+    <property name="text">
+     <string>Descripción</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="startLlb">
+    <property name="geometry">
+     <rect>
+      <x>70</x>
+      <y>200</y>
+      <width>221</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>14</pointsize>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color: rgb(255, 255, 255);</string>
+    </property>
+    <property name="text">
+     <string>Ubicación de la bomba</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="descripcionTxt">
+    <property name="geometry">
+     <rect>
+      <x>70</x>
+      <y>150</y>
+      <width>621</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(255, 255, 255);</string>
+    </property>
+    <property name="inputMethodHints">
+     <set>Qt::ImhNone</set>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="startBtn">
+    <property name="geometry">
+     <rect>
+      <x>70</x>
+      <y>230</y>
+      <width>51</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton {
 font-size:14px;
-background-color:#37c871;
+background-color:#ffcb3a;
 border-radius: 10px;
 border: 1px solid black;
 }
 
 QPushButton:hover {
-background-color: #2CA02C;
+background-color: #FF0000;
 }</string>
-   </property>
-   <property name="text">
-    <string>Choose</string>
-   </property>
-  </widget>
-  <widget class="QPushButton" name="volver">
-   <property name="geometry">
-    <rect>
-     <x>50</x>
-     <y>500</y>
-     <width>93</width>
-     <height>41</height>
-    </rect>
-   </property>
-   <property name="styleSheet">
-    <string notr="true">QPushButton {
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="icon">
+     <iconset>
+      <normaloff>sonidos/Logos/coordenada.png</normaloff>sonidos/Logos/coordenada.png</iconset>
+    </property>
+   </widget>
+   <widget class="QLabel" name="stopLbl_2">
+    <property name="geometry">
+     <rect>
+      <x>70</x>
+      <y>280</y>
+      <width>221</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>14</pointsize>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color: rgb(255, 255, 255);</string>
+    </property>
+    <property name="text">
+     <string>Listado de bombas</string>
+    </property>
+   </widget>
+   <widget class="QTableWidget" name="tableWidget">
+    <property name="geometry">
+     <rect>
+      <x>70</x>
+      <y>310</y>
+      <width>621</width>
+      <height>361</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(255, 255, 255);</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="volver">
+    <property name="geometry">
+     <rect>
+      <x>270</x>
+      <y>710</y>
+      <width>111</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton {
 font-size:14px;
-background-color:#d35f5f;
+background-color:#ffcb3a;
 border-radius: 10px;
 border: 1px solid black;
 }
 
 QPushButton:hover {
-background-color: #c83737;
+background-color: #FF0000;
 }</string>
-   </property>
-   <property name="text">
-    <string>volver</string>
-   </property>
-  </widget>
-  <widget class="QPushButton" name="aceptar">
-   <property name="geometry">
-    <rect>
-     <x>450</x>
-     <y>500</y>
-     <width>93</width>
-     <height>41</height>
-    </rect>
-   </property>
-   <property name="styleSheet">
-    <string notr="true">QPushButton {
+    </property>
+    <property name="text">
+     <string>Volver</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="aceptar">
+    <property name="geometry">
+     <rect>
+      <x>390</x>
+      <y>710</y>
+      <width>111</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton {
 font-size:14px;
-background-color:#37c871;
+background-color:#ffcb3a;
 border-radius: 10px;
 border: 1px solid black;
 }
 
 QPushButton:hover {
-background-color: #2CA02C;
+background-color: #FF0000;
 }</string>
-   </property>
-   <property name="text">
-    <string>aceptar</string>
-   </property>
-  </widget>
-  <widget class="QLabel" name="stopLbl_2">
-   <property name="geometry">
-    <rect>
-     <x>40</x>
-     <y>260</y>
-     <width>221</width>
-     <height>16</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>List de bomba</string>
-   </property>
-  </widget>
-  <widget class="QTableWidget" name="tableWidget">
-   <property name="geometry">
-    <rect>
-     <x>40</x>
-     <y>290</y>
-     <width>521</width>
-     <height>192</height>
-    </rect>
-   </property>
-  </widget>
-  <widget class="QLabel" name="startLlb_2">
-   <property name="geometry">
-    <rect>
-     <x>40</x>
-     <y>30</y>
-     <width>101</width>
-     <height>16</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Descripcion</string>
-   </property>
-  </widget>
-  <widget class="QLineEdit" name="descripcionTxt">
-   <property name="geometry">
-    <rect>
-     <x>140</x>
-     <y>10</y>
-     <width>271</width>
-     <height>61</height>
-    </rect>
-   </property>
+    </property>
+    <property name="text">
+     <string>Guardar</string>
+    </property>
+   </widget>
   </widget>
  </widget>
+ <tabstops>
+  <tabstop>descripcionTxt</tabstop>
+  <tabstop>startBtn</tabstop>
+  <tabstop>bombaTxt</tabstop>
+  <tabstop>tableWidget</tabstop>
+  <tabstop>volver</tabstop>
+  <tabstop>aceptar</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

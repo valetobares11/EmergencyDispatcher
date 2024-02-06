@@ -41,12 +41,8 @@ from qgis.core import *
 
 import platform
 from .config import *
-<<<<<<< Updated upstream
 from .apikey import *
 from qgis.PyQt.QtWidgets import QTableWidgetItem,QPushButton,QFileDialog
-=======
-from qgis.PyQt.QtWidgets import QTableWidgetItem,QPushButton 
->>>>>>> Stashed changes
 import pygame
 
 
@@ -479,13 +475,23 @@ class OnlineRoutingMapper:
     def add_bombas(self, id, descripcion, estado):
         rowPosition = self.dlg.tableWidget.rowCount()
         self.dlg.tableWidget.insertRow(rowPosition)
-        self.dlg.tableWidget.setItem(rowPosition, 0, QTableWidgetItem(str(id)))
-        self.dlg.tableWidget.setItem(rowPosition, 1, QTableWidgetItem(descripcion))
-        self.dlg.tableWidget.setItem(rowPosition, 2, QTableWidgetItem(estado))
-        delete_button = QPushButton("delete")
+
+        id_row = QTableWidgetItem(str(id))
+        id_row.setTextAlignment(Qt.AlignCenter)  # Centrar el contenido
+        self.dlg.tableWidget.setItem(rowPosition, 0, id_row)
+
+        descripcion_row =  QTableWidgetItem(descripcion)
+        descripcion_row.setTextAlignment(Qt.AlignCenter)  # Centrar el contenido
+        self.dlg.tableWidget.setItem(rowPosition, 1, descripcion_row)
+        
+        estado_row =  QTableWidgetItem(estado)
+        estado_row.setTextAlignment(Qt.AlignCenter)  # Centrar el contenido
+        self.dlg.tableWidget.setItem(rowPosition, 2, estado_row)
+
+        delete_button = QPushButton("X")
         delete_button.clicked.connect(lambda: self.remove_bomba(id))
         self.dlg.tableWidget.setCellWidget(rowPosition, 3, delete_button)
-        update_bomba = QPushButton("update")
+        update_bomba = QPushButton("Actualizar")
         update_bomba.clicked.connect(lambda: self.update_bomba(id))
         self.dlg.tableWidget.setCellWidget(rowPosition, 4, update_bomba)
 
@@ -494,7 +500,7 @@ class OnlineRoutingMapper:
         self.dlg.setFixedSize(self.dlg.size())
         self.dlg.show()
         self.dlg.tableWidget.setColumnCount(5)
-        self.dlg.tableWidget.setHorizontalHeaderLabels(["ID", "Descripcion", "Estado", "Borrar", "Modificar"])
+        self.dlg.tableWidget.setHorizontalHeaderLabels(["ID", "Descripción", "Estado", "Borrar", "Modificar"])
         registros = select('bomba')
         for tupla in registros:
             self.add_bombas(tupla[0], tupla[3], tupla[4])
@@ -543,7 +549,7 @@ class OnlineRoutingMapper:
         self.dlg.tableWidget.insertRow(rowPosition)
         self.dlg.tableWidget.setItem(rowPosition, 0, QTableWidgetItem(str(id)))
         self.dlg.tableWidget.setItem(rowPosition, 1, QTableWidgetItem(descripcion))
-        delete_button = QPushButton("delete")
+        delete_button = QPushButton("Eliminar")
         delete_button.clicked.connect(lambda: self.remove_points(id))
         self.dlg.tableWidget.setCellWidget(rowPosition, 2, delete_button)
 
