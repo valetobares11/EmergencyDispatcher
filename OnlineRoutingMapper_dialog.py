@@ -39,7 +39,9 @@ class OnlineRoutingMapperDialog(QtWidgets.QDialog, FORM_CLASS):
         # self.<objectname>, and you can use autoconnect slots - see
         # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
         # #widgets-and-dialogs-with-auto-connect
+        
         self.setupUi(self)
+        
 
 FORM_CLASS_AG_PEDIDO, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'OnlineRoutingMapper_dialog_base_agendar_pedido.ui'))
