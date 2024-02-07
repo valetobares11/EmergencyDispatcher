@@ -21,7 +21,7 @@
  *                                                                         *
  ***************************************************************************/
 """
-from PyQt5.QtCore import QSettings, QTranslator, qVersion, QCoreApplication
+from PyQt5.QtCore import QSettings, QTranslator, qVersion, QCoreApplication, QPoint, QVariant
 from PyQt5.QtGui import QIcon, QColor
 from PyQt5.QtWidgets import QAction, QMessageBox
 from qgis.PyQt.QtCore import Qt
@@ -232,15 +232,13 @@ class OnlineRoutingMapper:
 
     def clickHandlerBombas(self, pointXY):
         pointXY = QgsPointXY(pointXY)
-        self.startRubberBand.addPoint(pointXY)
+        self.bombasRubberBand.addPoint(pointXY)
         self.dlg.bombaTxt.setText(str(pointXY.x()) + ',' + str(pointXY.y()))
-        
-        if (self.dlg.close()):
-            self.dlg.showNormal()
+        self.dlg.showNormal()
 
         # free them
         self.canvas.unsetMapTool(self.clickTool)
-        self.clickTool.canvasClicked.disconnect(self.clickHandlerBombas)
+        #self.clickTool.canvasClicked.disconnect(self.clickHandlerBombas)
 
     def toolActivatorBombas(self):
         self.dlg.showMinimized()
@@ -438,6 +436,9 @@ class OnlineRoutingMapper:
         while self.startRubberBand.numberOfVertices() > 0:
             self.startRubberBand.removeLastPoint()
 
+        while self.bombasRubberBand.numberOfVertices() > 0:
+            self.bombasRubberBand.removeLastPoint()
+
         self.vectorRubberBand.reset()
     ####
     def remove_bomba(self, id):
@@ -450,6 +451,7 @@ class OnlineRoutingMapper:
 
         # Borrar en la BD
         delete('bomba', id)
+        self.agregar_actualizar_puntos_iniciales()
 
     def update_bomba(self, id):
         try:
@@ -510,7 +512,8 @@ class OnlineRoutingMapper:
         self.dlg.startBtn.clicked.connect(lambda: self.toolActivatorBombas())
         self.dlg.volver.clicked.connect(lambda: self.backScreen())
         self.dlg.aceptar.clicked.connect(lambda: self.saveBomba())
-
+        self.dlg.closeEvent = self.closeUpdate
+        
     def saveBomba(self):
         if len(self.dlg.bombaTxt.text()) > 0:
             if platform.system() == 'Windows':
@@ -525,8 +528,7 @@ class OnlineRoutingMapper:
             insert('bomba', 'startPoint, stopPoint, description', valores)
         self.dlg = self.dlg_back
         self.dlg.show()
-        if (self.dlg.close()):
-            self.dlg.showNormal()
+        self.dlg.showNormal()
         self.agregar_actualizar_puntos_iniciales()
 
 
@@ -743,7 +745,10 @@ class OnlineRoutingMapper:
             else:
                 self.startRubberBand.addPoint(QgsPointXY(float(tupla[1]), float(tupla[2])))
             i+=1
-
+        registros=select('bomba')
+        for tupla in registros:
+            self.bombasRubberBand.addPoint(QgsPointXY(float(tupla[1]), float(tupla[2])))
+      
     def run(self):
         self.no = 0
         self.startPointXY = None
@@ -782,6 +787,11 @@ class OnlineRoutingMapper:
         self.stopRubberBand.setColor(QColor("#000000"))
         self.stopRubberBand.setIconSize(10)
         self.stopRubberBand.setIcon(QgsRubberBand.ICON_FULL_BOX)
+        self.bombasRubberBand = QgsRubberBand(self.canvas, QgsWkbTypes.PointGeometry)
+        self.bombasRubberBand.setColor(QColor("#ff000"))
+        self.bombasRubberBand.setIconSize(10)
+        self.bombasRubberBand.setIcon(QgsRubberBand.ICON_FULL_BOX)
+        
         self.agregar_actualizar_puntos_iniciales()
 
         self.dlg.show()
@@ -791,6 +801,7 @@ class OnlineRoutingMapper:
         #clear the rubberbands
         self.canvas.scene().removeItem(self.startRubberBand)
         self.canvas.scene().removeItem(self.stopRubberBand)
+        self.canvas.scene().removeItem(self.bombasRubberBand)
         self.canvas.scene().removeItem(self.vectorRubberBand)
 
     def closeUpdate(self, event):
