@@ -12,6 +12,9 @@ import pandas as pd
 from pyexcel_ods import get_data
 import psycopg2
 from psycopg2 import sql
+import pyexcel as pe
+from datetime import datetime
+
 
 from .apikey import *
 
@@ -131,3 +134,18 @@ def cargar_pedidos(archivo_ods):
         print(f"El archivo {archivo_ods} no fue encontrado.")
     except Exception as e:
         print(f"Error al procesar el archivo {archivo_ods}: {str(e)}")
+
+def create_and_download_ods():
+    data = [
+        ["direccion", "solicitante", "telefono", "operador", "startpoint", "stoppoint", "descripcion", "tiempo"]
+    ]
+    registros = select("pedido")
+    for tupla in registros:
+        data.append([tupla[1], tupla[2], tupla[3], tupla[4], tupla[5], tupla[6], tupla[7],tupla[8].strftime("%Y-%m-%d %H:%M:%S")])
+
+    # Crear un libro de trabajo con pyexcel
+    sheet = pe.Sheet(data)
+
+    # Guardar el libro de trabajo como un archivo ODS
+    sheet.save_as(PATH_RUTA_EXPORT)
+    

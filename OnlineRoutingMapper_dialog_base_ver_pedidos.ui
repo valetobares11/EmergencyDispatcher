@@ -91,7 +91,7 @@ background-color: #2CA02C;
      <x>40</x>
      <y>51</y>
      <width>1011</width>
-     <height>631</height>
+     <height>621</height>
     </rect>
    </property>
   </widget>
@@ -125,7 +125,7 @@ background-color: #2CA02C;
     <rect>
      <x>240</x>
      <y>720</y>
-     <width>91</width>
+     <width>71</width>
      <height>31</height>
     </rect>
    </property>
@@ -143,6 +143,31 @@ background-color: #2CA02C;
    </property>
    <property name="text">
     <string>Cargar</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="exportar">
+   <property name="geometry">
+    <rect>
+     <x>340</x>
+     <y>720</y>
+     <width>71</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton {
+font-size:14px;
+background-color:#37c871;
+border-radius: 10px;
+border: 1px solid black;
+}
+
+QPushButton:hover {
+background-color: #2CA02C;
+}</string>
+   </property>
+   <property name="text">
+    <string>Exportar</string>
    </property>
   </widget>
  </widget>

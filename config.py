@@ -27,3 +27,6 @@ SONIDO_ALARMA_RESCATE_DE_ALTURA = f"/home/{nombre_usuario}/.local/share/QGIS/QGI
 CAMIONETA = "Camioneta"
 CAMION_LIGERO = "Camion ligero"
 CAMION_PESADO = "Camion pesado"
+
+
+PATH_RUTA_EXPORT = "/home/tobares/Descargas/archivo.ods"

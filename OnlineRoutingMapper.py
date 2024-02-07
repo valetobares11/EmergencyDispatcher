@@ -639,11 +639,20 @@ class OnlineRoutingMapper:
         self.dlg.aceptar.clicked.connect(lambda: self.backScreen())
         self.dlg.cargar_planilla.clicked.connect(lambda: self.seleccionar_pedidos())
         self.dlg.cargar.clicked.connect(lambda: self.cargar_pedidos())
+        self.dlg.exportar.clicked.connect(lambda: self.exportar_pedidos_tabla())
     
     def cargar_pedidos_tabla(self):
         registros = select("pedido")
         for tupla in registros:
             self.add_pedido(tupla[0], tupla[1], tupla[2], tupla[3], tupla[4], tupla[5], tupla[6], tupla[7])
+
+    def exportar_pedidos_tabla(self):
+        try:
+            create_and_download_ods()
+            QMessageBox.information(self.dlg, 'exportar_pedidos_tabla', "Se exportó el archivo en "+PATH_RUTA_EXPORT)
+        except Exception as e:
+            QgsMessageLog.logMessage(str(e))
+            QMessageBox.warning(self.dlg, 'exportar_pedidos_tabla', "Ocurrio un error al exportar el archivo.")
 
     def seleccionar_pedidos(self):
         file_dialog = QFileDialog()
