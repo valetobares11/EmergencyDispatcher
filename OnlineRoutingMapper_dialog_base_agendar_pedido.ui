@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1000</width>
-    <height>910</height>
+    <width>700</width>
+    <height>800</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -21,14 +21,14 @@
   </property>
   <property name="minimumSize">
    <size>
-    <width>857</width>
+    <width>700</width>
     <height>500</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
-    <width>1000</width>
-    <height>1000</height>
+    <width>700</width>
+    <height>800</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -40,11 +40,17 @@
   <widget class="QFrame" name="frame">
    <property name="geometry">
     <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>1031</width>
-     <height>911</height>
+     <x>30</x>
+     <y>-40</y>
+     <width>700</width>
+     <height>831</height>
     </rect>
+   </property>
+   <property name="maximumSize">
+    <size>
+     <width>700</width>
+     <height>16777215</height>
+    </size>
    </property>
    <property name="frameShape">
     <enum>QFrame::StyledPanel</enum>
@@ -55,8 +61,8 @@
    <widget class="QLabel" name="label_6">
     <property name="geometry">
      <rect>
-      <x>140</x>
-      <y>393</y>
+      <x>30</x>
+      <y>386</y>
       <width>91</width>
       <height>31</height>
      </rect>
@@ -76,8 +82,8 @@
    <widget class="QLineEdit" name="form_solicitante">
     <property name="geometry">
      <rect>
-      <x>270</x>
-      <y>317</y>
+      <x>160</x>
+      <y>310</y>
       <width>471</width>
       <height>25</height>
      </rect>
@@ -89,8 +95,8 @@
    <widget class="QLabel" name="label_5">
     <property name="geometry">
      <rect>
-      <x>140</x>
-      <y>356</y>
+      <x>30</x>
+      <y>349</y>
       <width>91</width>
       <height>17</height>
      </rect>
@@ -111,8 +117,8 @@
    <widget class="QPushButton" name="buttonIncendioEstructura">
     <property name="geometry">
      <rect>
-      <x>390</x>
-      <y>467</y>
+      <x>280</x>
+      <y>460</y>
       <width>110</width>
       <height>110</height>
      </rect>
@@ -151,8 +157,8 @@ background-color: #FF0000;
    <widget class="QPushButton" name="volver">
     <property name="geometry">
      <rect>
-      <x>340</x>
-      <y>767</y>
+      <x>220</x>
+      <y>760</y>
       <width>81</width>
       <height>41</height>
      </rect>
@@ -184,8 +190,8 @@ background-color: #c83737;
    <widget class="QLineEdit" name="form_descripcion">
     <property name="geometry">
      <rect>
-      <x>270</x>
-      <y>167</y>
+      <x>160</x>
+      <y>160</y>
       <width>471</width>
       <height>91</height>
      </rect>
@@ -230,8 +236,8 @@ background-color: #c83737;
    <widget class="QPushButton" name="buttonIncendioForestal">
     <property name="geometry">
      <rect>
-      <x>270</x>
-      <y>467</y>
+      <x>160</x>
+      <y>460</y>
       <width>110</width>
       <height>110</height>
      </rect>
@@ -278,8 +284,8 @@ background-color: #FF0000;
    <widget class="QLabel" name="label">
     <property name="geometry">
      <rect>
-      <x>140</x>
-      <y>277</y>
+      <x>30</x>
+      <y>270</y>
       <width>101</width>
       <height>17</height>
      </rect>
@@ -300,8 +306,8 @@ background-color: #FF0000;
    <widget class="QPushButton" name="buttonIncendioRural">
     <property name="geometry">
      <rect>
-      <x>390</x>
-      <y>587</y>
+      <x>280</x>
+      <y>580</y>
       <width>110</width>
       <height>110</height>
      </rect>
@@ -340,8 +346,8 @@ background-color: #FF0000;
    <widget class="QComboBox" name="comboBox">
     <property name="geometry">
      <rect>
-      <x>530</x>
-      <y>397</y>
+      <x>420</x>
+      <y>390</y>
       <width>211</width>
       <height>25</height>
      </rect>
@@ -353,8 +359,8 @@ background-color: #FF0000;
    <widget class="QPushButton" name="buttonEmergVarias">
     <property name="geometry">
      <rect>
-      <x>630</x>
-      <y>587</y>
+      <x>520</x>
+      <y>580</y>
       <width>110</width>
       <height>110</height>
      </rect>
@@ -393,8 +399,8 @@ background-color: #FF0000;
    <widget class="QLabel" name="label_2">
     <property name="geometry">
      <rect>
-      <x>140</x>
-      <y>159</y>
+      <x>30</x>
+      <y>152</y>
       <width>101</width>
       <height>31</height>
      </rect>
@@ -415,8 +421,8 @@ background-color: #FF0000;
    <widget class="QLineEdit" name="form_direccion">
     <property name="geometry">
      <rect>
-      <x>270</x>
-      <y>277</y>
+      <x>160</x>
+      <y>270</y>
       <width>411</width>
       <height>25</height>
      </rect>
@@ -428,8 +434,8 @@ background-color: #FF0000;
    <widget class="QPushButton" name="buttonIncendioVehicular">
     <property name="geometry">
      <rect>
-      <x>270</x>
-      <y>587</y>
+      <x>160</x>
+      <y>580</y>
       <width>110</width>
       <height>110</height>
      </rect>
@@ -468,8 +474,8 @@ background-color: #FF0000;
    <widget class="QPushButton" name="buttonAccidenteVehicular">
     <property name="geometry">
      <rect>
-      <x>510</x>
-      <y>587</y>
+      <x>400</x>
+      <y>580</y>
       <width>110</width>
       <height>110</height>
      </rect>
@@ -508,8 +514,8 @@ background-color: #FF0000;
    <widget class="QLineEdit" name="form_telefono">
     <property name="geometry">
      <rect>
-      <x>270</x>
-      <y>357</y>
+      <x>160</x>
+      <y>350</y>
       <width>471</width>
       <height>25</height>
      </rect>
@@ -521,8 +527,8 @@ background-color: #FF0000;
    <widget class="QPushButton" name="aceptar">
     <property name="geometry">
      <rect>
-      <x>430</x>
-      <y>767</y>
+      <x>310</x>
+      <y>760</y>
       <width>251</width>
       <height>41</height>
      </rect>
@@ -546,8 +552,8 @@ background-color: #2CA02C;
    <widget class="QPushButton" name="buttonAccidenteMatPel">
     <property name="geometry">
      <rect>
-      <x>630</x>
-      <y>467</y>
+      <x>520</x>
+      <y>460</y>
       <width>110</width>
       <height>110</height>
      </rect>
@@ -586,8 +592,8 @@ background-color: #FF0000;
    <widget class="QPushButton" name="buscarPunto">
     <property name="geometry">
      <rect>
-      <x>690</x>
-      <y>274</y>
+      <x>580</x>
+      <y>267</y>
       <width>51</width>
       <height>31</height>
      </rect>
@@ -622,8 +628,8 @@ background-color: #2CA02C;
    <widget class="QLabel" name="label_4">
     <property name="geometry">
      <rect>
-      <x>140</x>
-      <y>318</y>
+      <x>30</x>
+      <y>311</y>
       <width>101</width>
       <height>17</height>
      </rect>
@@ -644,8 +650,8 @@ background-color: #2CA02C;
    <widget class="QLabel" name="label_3">
     <property name="geometry">
      <rect>
-      <x>460</x>
-      <y>400</y>
+      <x>350</x>
+      <y>393</y>
       <width>67</width>
       <height>17</height>
      </rect>
@@ -665,8 +671,8 @@ background-color: #2CA02C;
    <widget class="QComboBox" name="comboBox_2">
     <property name="geometry">
      <rect>
-      <x>270</x>
-      <y>397</y>
+      <x>160</x>
+      <y>390</y>
       <width>171</width>
       <height>25</height>
      </rect>
@@ -678,8 +684,8 @@ background-color: #2CA02C;
    <widget class="QPushButton" name="buttonRescateDeAltura">
     <property name="geometry">
      <rect>
-      <x>510</x>
-      <y>467</y>
+      <x>400</x>
+      <y>460</y>
       <width>110</width>
       <height>110</height>
      </rect>
