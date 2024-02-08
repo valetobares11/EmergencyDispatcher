@@ -47,6 +47,7 @@ class RouteProvider(object):
     def google(self, startPoint=str, endPoint=str):
         self.__serviceType__ = 0
         url = self.__googleBaseURL__ % (startPoint, endPoint, APIKEY)
+        print(url)
         response = urlopen(url).read().decode("utf-8")
         return self.__wktMaker__(response), url
     

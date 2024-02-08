@@ -290,9 +290,9 @@ class OnlineRoutingMapper:
             polygon = QgsProject.instance().mapLayersByName('Jurisdicción')[0]
             if not polygon.getFeature(1).geometry().contains(self.stopPointXY):
                 QMessageBox.warning(self.dlg, 'Calculate routes bombas',"El punto esta fuera de la juridiccion")
-            if self.checkNetConnection():              
+            if self.checkNetConnection():  
                 startPoint = self.crsTransform(self.startPointXY)
-                stopPoint = self.crsTransform(self.stopPointXY)
+                stopPoint = self.crsTransform(self.stopPointXY)   
                 # index = self.dlg.serviceCombo.currentIndex()
                 try:
                     service = self.services[list(self.services)[6]]
@@ -313,7 +313,7 @@ class OnlineRoutingMapper:
                     print(err)
                     QgsMessageLog.logMessage(str(err))
                     QMessageBox.warning(self.dlg, 'Analysis Error',
-                                        "Cannot calculate the route between the start and stop locations that you entered. Please use other Service APIs.")
+                                        "Verificar que el sistema de coordenadas sea EPSG:4326. \nCannot calculate the route between the start and stop locations that you entered. Please use other Service APIs.")
             else:
                 QMessageBox.warning(self.dlg, 'Network Error!', 'There is no internet connection.')
         else:
@@ -322,7 +322,7 @@ class OnlineRoutingMapper:
     def calculate_routes_a_bombas(self, startPoint):
         try:
             bombas = select('bomba')
-            if (len(bombas)):
+            if (len(bombas)!=0):
                 service = self.services[list(self.services)[6]]
                 distances = []
                 for tupla in bombas:
@@ -730,8 +730,8 @@ class OnlineRoutingMapper:
             self.tipoAutomovil = self.dlg.comboBox.currentText()
             self.dlg = self.dlg_back
             self.dlg.show()
-            if(self.dlg.close()):
-                self.dlg.showNormal()
+            # if(self.dlg.close()):
+            #     self.dlg.showNormal()
         except Exception as e:
             QgsMessageLog.logMessage(str(e))
             QMessageBox.warning(self.dlg, 'actualizar_pedido', "No se puede modificar el valor por exceder de caracteres o tipo incorrecto")
@@ -739,8 +739,8 @@ class OnlineRoutingMapper:
     def backScreen(self):
         self.dlg = self.dlg_back
         self.dlg.show()
-        if (self.dlg.close()):
-            self.dlg.showNormal()
+        # if (self.dlg.close()):
+        #     self.dlg.showNormal()
         self.agregar_actualizar_puntos_iniciales()
 
     def agregar_actualizar_puntos_iniciales(self):

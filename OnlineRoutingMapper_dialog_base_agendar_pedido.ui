@@ -743,7 +743,7 @@ background-color: #2CA02C;
   <tabstop>volver</tabstop>
   <tabstop>aceptar</tabstop>
   <tabstop>buscarPunto</tabstop>
-  <tabstop>form_solicitante_2</tabstop>
+  <!-- <tabstop>form_solicitante_2</tabstop>
   <tabstop>buttonIncendioEstructura_2</tabstop>
   <tabstop>volver_2</tabstop>
   <tabstop>form_descripcion_2</tabstop>
@@ -759,7 +759,7 @@ background-color: #2CA02C;
   <tabstop>buttonAccidenteMatPel_2</tabstop>
   <tabstop>buscarPunto_2</tabstop>
   <tabstop>comboBox_4</tabstop>
-  <tabstop>buttonRescateDeAltura_2</tabstop>
+  <tabstop>buttonRescateDeAltura_2</tabstop> -->
  </tabstops>
  <resources/>
  <connections/>
