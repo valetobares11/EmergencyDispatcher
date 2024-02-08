@@ -295,19 +295,22 @@ class OnlineRoutingMapper:
                 stopPoint = self.crsTransform(self.stopPointXY)
                 # index = self.dlg.serviceCombo.currentIndex()
                 try:
-                    service = self.services[list(self.services)[0]]
+                    service = self.services[list(self.services)[6]]
                     self.cargar_puntos_lista()
-                    wkt, url = service(startPoint, stopPoint, self.listPointsExclution, self.tipoAutomovil)
-                    report(url)
-                    self.calculate_routes_a_bombas(stopPoint)
+                    # wkt, url = service(startPoint, stopPoint, self.listPointsExclution, self.tipoAutomovil)
+                    wkt, url = service(startPoint, stopPoint)
+                    # report(url)
+                    # self.calculate_routes_a_bombas(stopPoint)
                     self.routeMaker(wkt)
-                    # clear rubberbands
+
+                    # clear rubberbands Esto ver si se saca
                     # self.startRubberBand.removeLastPoint()
                     # self.stopRubberBand.removeLastPoint()
                     # self.startRubberBand.removeLastPoint()
                     # self.stopRubberBand.removeLastPoint()
                     self.listPointsExclution=[]
                 except Exception as err:
+                    print(err)
                     QgsMessageLog.logMessage(str(err))
                     QMessageBox.warning(self.dlg, 'Analysis Error',
                                         "Cannot calculate the route between the start and stop locations that you entered. Please use other Service APIs.")
@@ -320,7 +323,7 @@ class OnlineRoutingMapper:
         try:
             bombas = select('bomba')
             if (len(bombas)):
-                service = self.services[list(self.services)[0]]
+                service = self.services[list(self.services)[6]]
                 distances = []
                 for tupla in bombas:
                     if (tupla[4] == 'A'):

@@ -30,18 +30,26 @@ from xml.dom import minidom
 from urllib.request import urlopen
 from urllib.parse import quote
 from .config import *
+from .apikey import APIKEY
 
 class RouteProvider(object):
     def __init__(self):
         self.__yourNavigationBaseURL__ = 'http://www.yournavigation.org/api/dev/route.php?flat=%s&flon=%s&tlat=%s&tlon=%s&v=motorcar&fast=0&layer=mapnik&instructions=0'
         self.__hereBaseURLExclusion__ = 'https://route.api.here.com/routing/7.2/calculateroute.json?alternatives=0&app_code=djPZyynKsbTjIUDOBcHZ2g&app_id=xWVIueSv6JL0aJ5xqTxb&departure=%s&jsonAttributes=41&language=es&legattributes=all&linkattributes=none,sh,ds,rn,ro,nl,pt,ns,le&maneuverattributes=all&metricSystem=metric&mode=fastest;%s;traffic:enabled;&routeattributes=none,sh,wp,sm,bb,lg,no,li,tx&avoidareas=%s&transportModeType=%s&waypoint0=geo!%s&waypoint1=geo!%s'
         self.__hereBaseURL__ = 'https://route.api.here.com/routing/7.2/calculateroute.json?alternatives=0&app_code=djPZyynKsbTjIUDOBcHZ2g&app_id=xWVIueSv6JL0aJ5xqTxb&departure=%s&jsonAttributes=41&language=es&legattributes=all&linkattributes=none,sh,ds,rn,ro,nl,pt,ns,le&maneuverattributes=all&metricSystem=metric&mode=fastest;%s;traffic:enabled;&routeattributes=none,sh,wp,sm,bb,lg,no,li,tx&transportModeType=%s&waypoint0=geo!%s&waypoint1=geo!%s'
+        self.__googleBaseURL__ = 'https://maps.googleapis.com/maps/api/directions/json?origin=%s&destination=%s&key=%s'
         self.__graphHopperBaseURL__ = 'https://graphhopper.com/api/1/route?point=%s&point=%s&type=json&key=28cffa38-92cf-4404-8fa1-5a19717bac74&locale=en-US&vehicle=car&weighting=fastest&elevation=false'
         self.__tomtomBaseURL__ = 'https://api.tomtom.com/routing/1/calculateRoute/%s:%s/jsonp?key=hpygzp67548xfpk69qsfwqng&traffic=false'
         self.__mapQuestBaseURL__ = 'http://www.mapquest.com/alternateroutes?key=Cmjtd%7Cluur2108n1%2C7w%3Do5-gz8a&json={"locations":[{"latLng":{"lat":%s,"lng":%s}},{"latLng":{"lat":%s,"lng":%s}}],"maxRoutes":3,"timeOverage":99,"options":{"doReverseGeocode":false,"routeType":"fastest","enhancedNarrative":true,"narrativeType":"microformat","avoids":[],"conditionsAheadDistance":"200.00","generalize":0,"shapeFormat":"cmp6"}}'
         self.__mapBoxBaseURL__ = 'https://api.mapbox.com/directions/v5/mapbox/driving/%s;%s?overview=false&alternatives=true&steps=true&access_token=pk.eyJ1IjoibGllZG1hbiIsImEiOiJjamR3dW5zODgwNXN3MndqcmFiODdraTlvIn0.g_YeCZxrdh3vkzrsNN-Diw'
         self.__serviceType__ = -1  # holds service type (google,here etc...)
 
+    def google(self, startPoint=str, endPoint=str):
+        self.__serviceType__ = 0
+        url = self.__googleBaseURL__ % (startPoint, endPoint, APIKEY)
+        response = urlopen(url).read().decode("utf-8")
+        return self.__wktMaker__(response), url
+    
     def here(self, startPoint=str, endPoint=str, listPointsExclusion=[], tipoAutomovil = None):
         self.__serviceType__ = 1
         now = datetime.datetime.now()
@@ -118,7 +126,8 @@ class RouteProvider(object):
             'GraphHopper API': self.graphHopper,
             'TomTom API': self.tomtom,
             'MapQuest API': self.mapQuest,
-            'Mapbox API': self.mapBox
+            'Mapbox API': self.mapBox,
+            'Google API': self.google
         }
 
         return serviceDict
@@ -182,7 +191,21 @@ class RouteProvider(object):
 
     def __wktMaker__(self, response=str):
         # this function generates route as WKT LineString from web service's response
-        if self.__serviceType__ == 1:  # here JSON
+        if self.__serviceType__ == 0:  # google JSON
+            responseData = json.loads(response)
+            coors = responseData['routes'][0]['legs'][0]['steps']
+            polylines = []
+            usefulCoorList = []
+            for i in coors:
+                decodedPoly = self.__gPolyDecode__(i["polyline"]["points"], 5)
+                polylines.extend(decodedPoly)
+
+            for j in polylines:
+                usefulCoorList.extend(j)
+
+            return self.__coorOrganizer__(usefulCoorList)
+        
+        elif self.__serviceType__ == 1:  # here JSON
             responseData = json.loads(response)
             coors = responseData['response']['route'][0]['shape']
             coorPair = [coors[i:i + 2] for i in range(0, len(coors), 2)]
