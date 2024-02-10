@@ -9,12 +9,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>761</width>
-    <height>811</height>
+    <width>700</width>
+    <height>594</height>
    </rect>
   </property>
   <property name="sizePolicy">
-   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+   <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
@@ -26,109 +26,109 @@
    <string notr="true">background-color: rgb(33, 43, 56);
 </string>
   </property>
-  <widget class="QFrame" name="frame">
-   <property name="geometry">
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>761</width>
-     <height>811</height>
-    </rect>
+  <property name="sizeGripEnabled">
+   <bool>true</bool>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="spacing">
+    <number>0</number>
    </property>
-   <property name="frameShape">
-    <enum>QFrame::StyledPanel</enum>
+   <property name="sizeConstraint">
+    <enum>QLayout::SetMinAndMaxSize</enum>
    </property>
-   <property name="frameShadow">
-    <enum>QFrame::Raised</enum>
+   <property name="leftMargin">
+    <number>0</number>
    </property>
-   <widget class="QLineEdit" name="bombaTxt">
-    <property name="enabled">
-     <bool>true</bool>
-    </property>
-    <property name="geometry">
-     <rect>
-      <x>140</x>
-      <y>230</y>
-      <width>551</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">background-color: rgb(255, 255, 255);</string>
-    </property>
-    <property name="readOnly">
-     <bool>true</bool>
-    </property>
-   </widget>
-   <widget class="QLabel" name="startLlb_2">
-    <property name="geometry">
-     <rect>
-      <x>70</x>
-      <y>120</y>
-      <width>101</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>14</pointsize>
-     </font>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">color: rgb(255, 255, 255);</string>
-    </property>
-    <property name="text">
-     <string>Descripción</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="startLlb">
-    <property name="geometry">
-     <rect>
-      <x>70</x>
-      <y>200</y>
-      <width>221</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>14</pointsize>
-     </font>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">color: rgb(255, 255, 255);</string>
-    </property>
-    <property name="text">
-     <string>Ubicación de la bomba</string>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="descripcionTxt">
-    <property name="geometry">
-     <rect>
-      <x>70</x>
-      <y>150</y>
-      <width>621</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">background-color: rgb(255, 255, 255);</string>
-    </property>
-    <property name="inputMethodHints">
-     <set>Qt::ImhNone</set>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="startBtn">
-    <property name="geometry">
-     <rect>
-      <x>70</x>
-      <y>230</y>
-      <width>51</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">QPushButton {
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
+    <number>0</number>
+   </property>
+   <item>
+    <widget class="QFrame" name="frame_2">
+     <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_2">
+      <item>
+       <widget class="QFrame" name="frame">
+        <property name="frameShape">
+         <enum>QFrame::StyledPanel</enum>
+        </property>
+        <property name="frameShadow">
+         <enum>QFrame::Raised</enum>
+        </property>
+        <layout class="QGridLayout" name="gridLayout">
+         <item row="3" column="1" colspan="3">
+          <widget class="QLineEdit" name="bombaTxt">
+           <property name="enabled">
+            <bool>true</bool>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">background-color: rgb(255, 255, 255);</string>
+           </property>
+           <property name="readOnly">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0" colspan="4">
+          <widget class="QLineEdit" name="descripcionTxt">
+           <property name="styleSheet">
+            <string notr="true">background-color: rgb(255, 255, 255);</string>
+           </property>
+           <property name="inputMethodHints">
+            <set>Qt::ImhNone</set>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0" colspan="3">
+          <widget class="QLabel" name="startLlb">
+           <property name="font">
+            <font>
+             <pointsize>14</pointsize>
+            </font>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">color: rgb(255, 255, 255);</string>
+           </property>
+           <property name="text">
+            <string>Ubicación de la bomba</string>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="0" colspan="3">
+          <widget class="QLabel" name="stopLbl_2">
+           <property name="font">
+            <font>
+             <pointsize>14</pointsize>
+            </font>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">color: rgb(255, 255, 255);</string>
+           </property>
+           <property name="text">
+            <string>Listado de bombas</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="0">
+          <widget class="QPushButton" name="startBtn">
+           <property name="maximumSize">
+            <size>
+             <width>50</width>
+             <height>40</height>
+            </size>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">QPushButton {
 font-size:14px;
 background-color:#ffcb3a;
 border-radius: 10px;
@@ -138,60 +138,72 @@ border: 1px solid black;
 QPushButton:hover {
 background-color: #FF0000;
 }</string>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-    <property name="icon">
-     <iconset>
-      <normaloff>sonidos/Logos/coordenada.png</normaloff>sonidos/Logos/coordenada.png</iconset>
-    </property>
-   </widget>
-   <widget class="QLabel" name="stopLbl_2">
-    <property name="geometry">
-     <rect>
-      <x>70</x>
-      <y>280</y>
-      <width>221</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>14</pointsize>
-     </font>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">color: rgb(255, 255, 255);</string>
-    </property>
-    <property name="text">
-     <string>Listado de bombas</string>
-    </property>
-   </widget>
-   <widget class="QTableWidget" name="tableWidget">
-    <property name="geometry">
-     <rect>
-      <x>70</x>
-      <y>310</y>
-      <width>621</width>
-      <height>361</height>
-     </rect>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">background-color: rgb(255, 255, 255);</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="volver">
-    <property name="geometry">
-     <rect>
-      <x>270</x>
-      <y>710</y>
-      <width>111</width>
-      <height>41</height>
-     </rect>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">QPushButton {
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset>
+             <normaloff>sonidos/Logos/coordenada.png</normaloff>sonidos/Logos/coordenada.png</iconset>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="0" colspan="2">
+          <widget class="QLabel" name="startLlb_2">
+           <property name="font">
+            <font>
+             <pointsize>14</pointsize>
+            </font>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">color: rgb(255, 255, 255);</string>
+           </property>
+           <property name="text">
+            <string>Descripción</string>
+           </property>
+          </widget>
+         </item>
+         <item row="5" column="0" colspan="4">
+          <widget class="QTableWidget" name="tableWidget">
+           <property name="styleSheet">
+            <string notr="true">background-color: rgb(255, 255, 255);</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
+       <widget class="QFrame" name="frame_3">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>40</height>
+         </size>
+        </property>
+        <property name="frameShape">
+         <enum>QFrame::StyledPanel</enum>
+        </property>
+        <property name="frameShadow">
+         <enum>QFrame::Raised</enum>
+        </property>
+        <widget class="QPushButton" name="aceptar">
+         <property name="geometry">
+          <rect>
+           <x>350</x>
+           <y>0</y>
+           <width>185</width>
+           <height>19</height>
+          </rect>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">QPushButton {
 font-size:14px;
 background-color:#ffcb3a;
 border-radius: 10px;
@@ -201,22 +213,28 @@ border: 1px solid black;
 QPushButton:hover {
 background-color: #FF0000;
 }</string>
-    </property>
-    <property name="text">
-     <string>Volver</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="aceptar">
-    <property name="geometry">
-     <rect>
-      <x>390</x>
-      <y>710</y>
-      <width>111</width>
-      <height>41</height>
-     </rect>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">QPushButton {
+         </property>
+         <property name="text">
+          <string>Guardar</string>
+         </property>
+        </widget>
+        <widget class="QPushButton" name="volver">
+         <property name="geometry">
+          <rect>
+           <x>160</x>
+           <y>0</y>
+           <width>184</width>
+           <height>50</height>
+          </rect>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>30</width>
+           <height>40</height>
+          </size>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">QPushButton {
 font-size:14px;
 background-color:#ffcb3a;
 border-radius: 10px;
@@ -226,20 +244,23 @@ border: 1px solid black;
 QPushButton:hover {
 background-color: #FF0000;
 }</string>
-    </property>
-    <property name="text">
-     <string>Guardar</string>
-    </property>
-   </widget>
-  </widget>
+         </property>
+         <property name="text">
+          <string>Volver</string>
+         </property>
+        </widget>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+  </layout>
  </widget>
  <tabstops>
   <tabstop>descripcionTxt</tabstop>
   <tabstop>startBtn</tabstop>
   <tabstop>bombaTxt</tabstop>
   <tabstop>tableWidget</tabstop>
-  <tabstop>volver</tabstop>
-  <tabstop>aceptar</tabstop>
  </tabstops>
  <resources/>
  <connections/>

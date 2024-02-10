@@ -37,6 +37,7 @@ class RouteProvider(object):
         self.__yourNavigationBaseURL__ = 'http://www.yournavigation.org/api/dev/route.php?flat=%s&flon=%s&tlat=%s&tlon=%s&v=motorcar&fast=0&layer=mapnik&instructions=0'
         self.__hereBaseURLExclusion__ = 'https://route.api.here.com/routing/7.2/calculateroute.json?alternatives=0&app_code=djPZyynKsbTjIUDOBcHZ2g&app_id=xWVIueSv6JL0aJ5xqTxb&departure=%s&jsonAttributes=41&language=es&legattributes=all&linkattributes=none,sh,ds,rn,ro,nl,pt,ns,le&maneuverattributes=all&metricSystem=metric&mode=fastest;%s;traffic:enabled;&routeattributes=none,sh,wp,sm,bb,lg,no,li,tx&avoidareas=%s&transportModeType=%s&waypoint0=geo!%s&waypoint1=geo!%s'
         self.__hereBaseURL__ = 'https://route.api.here.com/routing/7.2/calculateroute.json?alternatives=0&app_code=djPZyynKsbTjIUDOBcHZ2g&app_id=xWVIueSv6JL0aJ5xqTxb&departure=%s&jsonAttributes=41&language=es&legattributes=all&linkattributes=none,sh,ds,rn,ro,nl,pt,ns,le&maneuverattributes=all&metricSystem=metric&mode=fastest;%s;traffic:enabled;&routeattributes=none,sh,wp,sm,bb,lg,no,li,tx&transportModeType=%s&waypoint0=geo!%s&waypoint1=geo!%s'
+        self.__hereBaseURL_V8 = 'https://router.hereapi.com/v8/routes?origin=-33.12984,-64.37108&destination=-33.13102,-64.36555&transportMode=car&return=polyline,actions,instructions&apiKey=-6TPfGCvBhDHZ_vZk_0imaWU9SoepybXz5kw9vZlDT0'
         self.__googleBaseURL__ = 'https://maps.googleapis.com/maps/api/directions/json?origin=%s&destination=%s&key=%s'
         self.__graphHopperBaseURL__ = 'https://graphhopper.com/api/1/route?point=%s&point=%s&type=json&key=28cffa38-92cf-4404-8fa1-5a19717bac74&locale=en-US&vehicle=car&weighting=fastest&elevation=false'
         self.__tomtomBaseURL__ = 'https://api.tomtom.com/routing/1/calculateRoute/%s:%s/jsonp?key=hpygzp67548xfpk69qsfwqng&traffic=false'
@@ -57,6 +58,7 @@ class RouteProvider(object):
         bingDepartureParameter = str(now.year) + '-' + str('%02d' % now.month) + '-' + str(
             '%02d' % now.day) + 'T' + str('%02d' % now.hour) + ':' + str('%02d' % now.minute) + ':' + str(
             '%02d' % now.second)
+            
         
         parameter_movil = "car"
         if (tipoAutomovil is not None):
@@ -83,6 +85,41 @@ class RouteProvider(object):
             url = self.__hereBaseURL__ % (bingDepartureParameter, parameter_movil, parameter_movil,startPoint, endPoint)
         response = urlopen(url).read().decode("utf-8")
         
+        return self.__wktMaker__(response), url
+    
+    def here_v8(self, startPoint=str, endPoint=str, listPointsExclusion=[], tipoAutomovil = None):
+        self.__serviceType__ = 7
+        now = datetime.datetime.now()
+        bingDepartureParameter = str(now.year) + '-' + str('%02d' % now.month) + '-' + str(
+            '%02d' % now.day) + 'T' + str('%02d' % now.hour) + ':' + str('%02d' % now.minute) + ':' + str(
+            '%02d' % now.second)
+            
+        
+        # parameter_movil = "car"
+        # if (tipoAutomovil is not None):
+        #     if (tipoAutomovil == CAMIONETA):
+        #         parameter_movil = "car"
+        #     if (tipoAutomovil == CAMION_LIGERO):
+        #         parameter_movil = "truck"
+        #     if (tipoAutomovil == CAMION_PESADO):
+        #         parameter_movil = "truck"
+
+        # if (len(listPointsExclusion) > 0):
+        #     points = ""
+        #     for i, elemento in enumerate(listPointsExclusion):
+        #         p = str(elemento[0]).split(',')
+        #         x = str(elemento[1]).split(',')
+        #         if (p[1] > x[1]):
+        #             points+= str(elemento[1])+';'+str(elemento[0])
+        #         else:
+        #             points+= str(elemento[0])+';'+str(elemento[1])
+        #         if(i+1 < len(listPointsExclusion)):
+        #             points+='!'
+        #     url = self.__hereBaseURLExclusion__ % (bingDepartureParameter,parameter_movil, points,parameter_movil, startPoint, endPoint)
+        # else:
+        #     url = self.__hereBaseURL__ % (bingDepartureParameter, parameter_movil, parameter_movil,startPoint, endPoint)
+        url = self.__hereBaseURL_V8 
+        response = urlopen(url).read().decode("utf-8")
         return self.__wktMaker__(response), url
 
     def yourNavigation(self, startPoint=str, endPoint=str):
@@ -128,7 +165,8 @@ class RouteProvider(object):
             'TomTom API': self.tomtom,
             'MapQuest API': self.mapQuest,
             'Mapbox API': self.mapBox,
-            'Google API': self.google
+            'Google API': self.google,
+            'HERE V8': self.here_v8
         }
 
         return serviceDict
@@ -189,6 +227,7 @@ class RouteProvider(object):
             usefulPoly.append(" ".join(map(str, i)))
         wkt = 'LineString(%s)' % (','.join(usefulPoly))
         return wkt
+        
 
     def __wktMaker__(self, response=str):
         # this function generates route as WKT LineString from web service's response
@@ -205,6 +244,7 @@ class RouteProvider(object):
                 usefulCoorList.extend(j)
 
             return self.__coorOrganizer__(usefulCoorList)
+        
         
         elif self.__serviceType__ == 1:  # here JSON
             responseData = json.loads(response)
@@ -273,3 +313,23 @@ class RouteProvider(object):
                 usefulCoorList.extend(i)
 
             return self.__coorOrganizer__(usefulCoorList)
+        
+        elif self.__serviceType__ == 7:  # here V8 JSON
+            print("entre")
+            responseData = json.loads(response)
+            print(responseData)
+            encodePolyline = responseData['routes'][0]['sections'][0]['polyline']
+            print("ACA DECODIFICO")
+            deco = self.__gPolyDecode__(encodePolyline, 5)
+            print(deco)
+            polylines = []
+            polylines.extend(self.__gPolyDecode__(encodePolyline, 5))
+
+            usefulCoorList = []
+            for i in polylines:
+                print(i)
+                usefulCoorList.extend(i)
+            print(usefulCoorList)
+            return self.__coorOrganizer__(usefulCoorList)
+
+        

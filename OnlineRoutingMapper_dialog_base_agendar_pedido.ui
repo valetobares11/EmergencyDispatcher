@@ -743,23 +743,6 @@ background-color: #2CA02C;
   <tabstop>volver</tabstop>
   <tabstop>aceptar</tabstop>
   <tabstop>buscarPunto</tabstop>
-  <!-- <tabstop>form_solicitante_2</tabstop>
-  <tabstop>buttonIncendioEstructura_2</tabstop>
-  <tabstop>volver_2</tabstop>
-  <tabstop>form_descripcion_2</tabstop>
-  <tabstop>buttonIncendioForestal_2</tabstop>
-  <tabstop>buttonIncendioRural_2</tabstop>
-  <tabstop>comboBox_3</tabstop>
-  <tabstop>buttonEmergVarias_2</tabstop>
-  <tabstop>form_direccion_2</tabstop>
-  <tabstop>buttonIncendioVehicular_2</tabstop>
-  <tabstop>buttonAccidenteVehicular_2</tabstop>
-  <tabstop>form_telefono_2</tabstop>
-  <tabstop>aceptar_2</tabstop>
-  <tabstop>buttonAccidenteMatPel_2</tabstop>
-  <tabstop>buscarPunto_2</tabstop>
-  <tabstop>comboBox_4</tabstop>
-  <tabstop>buttonRescateDeAltura_2</tabstop> -->
  </tabstops>
  <resources/>
  <connections/>
