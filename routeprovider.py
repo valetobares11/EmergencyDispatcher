@@ -31,13 +31,15 @@ from urllib.request import urlopen
 from urllib.parse import quote
 from .config import *
 from .apikey import APIKEY
+import flexpolyline
+from datetime import datetime
 
 class RouteProvider(object):
     def __init__(self):
         self.__yourNavigationBaseURL__ = 'http://www.yournavigation.org/api/dev/route.php?flat=%s&flon=%s&tlat=%s&tlon=%s&v=motorcar&fast=0&layer=mapnik&instructions=0'
         self.__hereBaseURLExclusion__ = 'https://route.api.here.com/routing/7.2/calculateroute.json?alternatives=0&app_code=djPZyynKsbTjIUDOBcHZ2g&app_id=xWVIueSv6JL0aJ5xqTxb&departure=%s&jsonAttributes=41&language=es&legattributes=all&linkattributes=none,sh,ds,rn,ro,nl,pt,ns,le&maneuverattributes=all&metricSystem=metric&mode=fastest;%s;traffic:enabled;&routeattributes=none,sh,wp,sm,bb,lg,no,li,tx&avoidareas=%s&transportModeType=%s&waypoint0=geo!%s&waypoint1=geo!%s'
         self.__hereBaseURL__ = 'https://route.api.here.com/routing/7.2/calculateroute.json?alternatives=0&app_code=djPZyynKsbTjIUDOBcHZ2g&app_id=xWVIueSv6JL0aJ5xqTxb&departure=%s&jsonAttributes=41&language=es&legattributes=all&linkattributes=none,sh,ds,rn,ro,nl,pt,ns,le&maneuverattributes=all&metricSystem=metric&mode=fastest;%s;traffic:enabled;&routeattributes=none,sh,wp,sm,bb,lg,no,li,tx&transportModeType=%s&waypoint0=geo!%s&waypoint1=geo!%s'
-        self.__hereBaseURL_V8 = 'https://router.hereapi.com/v8/routes?origin=-33.12984,-64.37108&destination=-33.13102,-64.36555&transportMode=car&return=polyline,actions,instructions&apiKey=-6TPfGCvBhDHZ_vZk_0imaWU9SoepybXz5kw9vZlDT0'
+        self.__hereBaseURL_V8 = 'https://router.hereapi.com/v8/routes?origin=%s&destination=%s&transportMode=car&return=polyline,actions,instructions&apiKey=-6TPfGCvBhDHZ_vZk_0imaWU9SoepybXz5kw9vZlDT0'
         self.__googleBaseURL__ = 'https://maps.googleapis.com/maps/api/directions/json?origin=%s&destination=%s&key=%s'
         self.__graphHopperBaseURL__ = 'https://graphhopper.com/api/1/route?point=%s&point=%s&type=json&key=28cffa38-92cf-4404-8fa1-5a19717bac74&locale=en-US&vehicle=car&weighting=fastest&elevation=false'
         self.__tomtomBaseURL__ = 'https://api.tomtom.com/routing/1/calculateRoute/%s:%s/jsonp?key=hpygzp67548xfpk69qsfwqng&traffic=false'
@@ -89,10 +91,10 @@ class RouteProvider(object):
     
     def here_v8(self, startPoint=str, endPoint=str, listPointsExclusion=[], tipoAutomovil = None):
         self.__serviceType__ = 7
-        now = datetime.datetime.now()
-        bingDepartureParameter = str(now.year) + '-' + str('%02d' % now.month) + '-' + str(
-            '%02d' % now.day) + 'T' + str('%02d' % now.hour) + ':' + str('%02d' % now.minute) + ':' + str(
-            '%02d' % now.second)
+        # now = datetime.datetime.now()
+        # bingDepartureParameter = str(now.year) + '-' + str('%02d' % now.month) + '-' + str(
+        #     '%02d' % now.day) + 'T' + str('%02d' % now.hour) + ':' + str('%02d' % now.minute) + ':' + str(
+        #     '%02d' % now.second)
             
         
         # parameter_movil = "car"
@@ -118,7 +120,8 @@ class RouteProvider(object):
         #     url = self.__hereBaseURLExclusion__ % (bingDepartureParameter,parameter_movil, points,parameter_movil, startPoint, endPoint)
         # else:
         #     url = self.__hereBaseURL__ % (bingDepartureParameter, parameter_movil, parameter_movil,startPoint, endPoint)
-        url = self.__hereBaseURL_V8 
+        url = self.__hereBaseURL_V8 %(startPoint, endPoint)
+        print(url)
         response = urlopen(url).read().decode("utf-8")
         return self.__wktMaker__(response), url
 
@@ -315,19 +318,14 @@ class RouteProvider(object):
             return self.__coorOrganizer__(usefulCoorList)
         
         elif self.__serviceType__ == 7:  # here V8 JSON
-            print("entre")
             responseData = json.loads(response)
-            print(responseData)
-            encodePolyline = responseData['routes'][0]['sections'][0]['polyline']
-            print("ACA DECODIFICO")
-            deco = self.__gPolyDecode__(encodePolyline, 5)
-            print(deco)
+            encodePolyline = responseData['routes'][0]['sections'][0]['polyline']            
             polylines = []
-            polylines.extend(self.__gPolyDecode__(encodePolyline, 5))
-
+            polylines.extend(flexpolyline.decode(encodePolyline))
+        
+            polylines = [(y, x) for x, y in polylines]
             usefulCoorList = []
             for i in polylines:
-                print(i)
                 usefulCoorList.extend(i)
             print(usefulCoorList)
             return self.__coorOrganizer__(usefulCoorList)
