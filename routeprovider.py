@@ -30,7 +30,7 @@ from xml.dom import minidom
 from urllib.request import urlopen
 from urllib.parse import quote
 from .config import *
-from .apikey import APIKEY
+from .apikey import *
 import flexpolyline
 from datetime import datetime
 
@@ -39,7 +39,8 @@ class RouteProvider(object):
         self.__yourNavigationBaseURL__ = 'http://www.yournavigation.org/api/dev/route.php?flat=%s&flon=%s&tlat=%s&tlon=%s&v=motorcar&fast=0&layer=mapnik&instructions=0'
         self.__hereBaseURLExclusion__ = 'https://route.api.here.com/routing/7.2/calculateroute.json?alternatives=0&app_code=djPZyynKsbTjIUDOBcHZ2g&app_id=xWVIueSv6JL0aJ5xqTxb&departure=%s&jsonAttributes=41&language=es&legattributes=all&linkattributes=none,sh,ds,rn,ro,nl,pt,ns,le&maneuverattributes=all&metricSystem=metric&mode=fastest;%s;traffic:enabled;&routeattributes=none,sh,wp,sm,bb,lg,no,li,tx&avoidareas=%s&transportModeType=%s&waypoint0=geo!%s&waypoint1=geo!%s'
         self.__hereBaseURL__ = 'https://route.api.here.com/routing/7.2/calculateroute.json?alternatives=0&app_code=djPZyynKsbTjIUDOBcHZ2g&app_id=xWVIueSv6JL0aJ5xqTxb&departure=%s&jsonAttributes=41&language=es&legattributes=all&linkattributes=none,sh,ds,rn,ro,nl,pt,ns,le&maneuverattributes=all&metricSystem=metric&mode=fastest;%s;traffic:enabled;&routeattributes=none,sh,wp,sm,bb,lg,no,li,tx&transportModeType=%s&waypoint0=geo!%s&waypoint1=geo!%s'
-        self.__hereBaseURL_V8 = 'https://router.hereapi.com/v8/routes?origin=%s&destination=%s&transportMode=car&return=polyline,actions,instructions&apiKey=-6TPfGCvBhDHZ_vZk_0imaWU9SoepybXz5kw9vZlDT0'
+        self.__hereBaseURL_V8_Exclusion = 'https://router.hereapi.com/v8/routes?origin=%s&destination=%s&transportMode=%s&avoid[areas]=polygon:%s&return=polyline,actions,instructions,summary,typicalDuration&apiKey=%s'
+        self.__hereBaseURL_V8 = 'https://router.hereapi.com/v8/routes?origin=%s&destination=%s&transportMode=%s&return=polyline,actions,instructions,summary,typicalDuration&apiKey=%s'
         self.__googleBaseURL__ = 'https://maps.googleapis.com/maps/api/directions/json?origin=%s&destination=%s&key=%s'
         self.__graphHopperBaseURL__ = 'https://graphhopper.com/api/1/route?point=%s&point=%s&type=json&key=28cffa38-92cf-4404-8fa1-5a19717bac74&locale=en-US&vehicle=car&weighting=fastest&elevation=false'
         self.__tomtomBaseURL__ = 'https://api.tomtom.com/routing/1/calculateRoute/%s:%s/jsonp?key=hpygzp67548xfpk69qsfwqng&traffic=false'
@@ -50,7 +51,6 @@ class RouteProvider(object):
     def google(self, startPoint=str, endPoint=str):
         self.__serviceType__ = 0
         url = self.__googleBaseURL__ % (startPoint, endPoint, APIKEY)
-        print(url)
         response = urlopen(url).read().decode("utf-8")
         return self.__wktMaker__(response), url
     
@@ -97,30 +97,29 @@ class RouteProvider(object):
         #     '%02d' % now.second)
             
         
-        # parameter_movil = "car"
-        # if (tipoAutomovil is not None):
-        #     if (tipoAutomovil == CAMIONETA):
-        #         parameter_movil = "car"
-        #     if (tipoAutomovil == CAMION_LIGERO):
-        #         parameter_movil = "truck"
-        #     if (tipoAutomovil == CAMION_PESADO):
-        #         parameter_movil = "truck"
+        parameter_movil = "car"
+        if (tipoAutomovil is not None):
+            if (tipoAutomovil == CAMIONETA):
+                parameter_movil = "car"
+            if (tipoAutomovil == CAMION_LIGERO):
+                parameter_movil = "truck"
+            if (tipoAutomovil == CAMION_PESADO):
+                parameter_movil = "truck"
 
-        # if (len(listPointsExclusion) > 0):
-        #     points = ""
-        #     for i, elemento in enumerate(listPointsExclusion):
-        #         p = str(elemento[0]).split(',')
-        #         x = str(elemento[1]).split(',')
-        #         if (p[1] > x[1]):
-        #             points+= str(elemento[1])+';'+str(elemento[0])
-        #         else:
-        #             points+= str(elemento[0])+';'+str(elemento[1])
-        #         if(i+1 < len(listPointsExclusion)):
-        #             points+='!'
-        #     url = self.__hereBaseURLExclusion__ % (bingDepartureParameter,parameter_movil, points,parameter_movil, startPoint, endPoint)
-        # else:
-        #     url = self.__hereBaseURL__ % (bingDepartureParameter, parameter_movil, parameter_movil,startPoint, endPoint)
-        url = self.__hereBaseURL_V8 %(startPoint, endPoint)
+        if (len(listPointsExclusion) > 0):
+            points = ""
+            for i, elemento in enumerate(listPointsExclusion): 
+                p = str(elemento[0]).split(',')
+                x = str(elemento[1]).split(',')
+                if (p[1] > x[1]):
+                    points+= str(elemento[1])+';'+str(elemento[0])+";"+str(elemento[2])
+                else:
+                    points+= str(elemento[0])+';'+str(elemento[1])+";"+str(elemento[2])
+                if(i+1 < len(listPointsExclusion)):
+                    points+=';'
+            url = self.__hereBaseURL_V8_Exclusion % (startPoint, endPoint, parameter_movil, points, APIKEY_HERE)
+        else:
+           url = self.__hereBaseURL_V8 %(startPoint, endPoint, parameter_movil, APIKEY_HERE)
         print(url)
         response = urlopen(url).read().decode("utf-8")
         return self.__wktMaker__(response), url
@@ -327,7 +326,6 @@ class RouteProvider(object):
             usefulCoorList = []
             for i in polylines:
                 usefulCoorList.extend(i)
-            print(usefulCoorList)
             return self.__coorOrganizer__(usefulCoorList)
 
         

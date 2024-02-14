@@ -252,7 +252,6 @@ class OnlineRoutingMapper:
         destinationCRS = QgsCoordinateReferenceSystem(4326)  # google uses this CRS
         transformer = QgsCoordinateTransform(sourceCRS, destinationCRS,
                                              QgsProject.instance())  # defining a CRS transformer
-        print("llegue")
         outputQgsPoint = transformer.transform(pointXY, QgsCoordinateTransform.ForwardTransform)
 
         return str(outputQgsPoint.y()) + ',' + str(outputQgsPoint.x())
@@ -293,23 +292,15 @@ class OnlineRoutingMapper:
             if self.checkNetConnection():  
                 startPoint = self.crsTransform(self.startPointXY)
                 stopPoint = self.crsTransform(self.stopPointXY)   
-                print(startPoint)
-                print(stopPoint)
                 # index = self.dlg.serviceCombo.currentIndex()
                 try:
                     service = self.services[list(self.services)[7]]
-                    print("llegue")
                     self.cargar_puntos_lista()
-                    print("llegue 2")
                     # wkt, url = service(startPoint, stopPoint, self.listPointsExclution, self.tipoAutomovil)
-                    wkt, url = service(startPoint, stopPoint)
-                    print(wkt)
-                    print("llegue 3")
+                    wkt, url = service(startPoint, stopPoint, self.listPointsExclution, self.tipoAutomovil)
                     # report(url)
                     # self.calculate_routes_a_bombas(stopPoint)
                     self.routeMaker(wkt)
-                    print("llegue 4")
-
                     # clear rubberbands Esto ver si se saca
                     # self.startRubberBand.removeLastPoint()
                     # self.stopRubberBand.removeLastPoint()
@@ -698,7 +689,7 @@ class OnlineRoutingMapper:
                     # start
                     startPointExclution = tupla[2]+','+tupla[1]
                 i+=1
-            self.listPointsExclution.append((startPointExclution, stopPointExclution))
+            self.listPointsExclution.append((startPointExclution, stopPointExclution, stopPointExclution))
         
 
     def savePointsExclution(self):
