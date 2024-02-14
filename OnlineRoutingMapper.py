@@ -29,7 +29,7 @@ from qgis.PyQt.QtCore import Qt
 # Initialize Qt resources from file resources.py
 from .resources import *
 # Import the code for the dialog
-from .OnlineRoutingMapper_dialog import OnlineRoutingMapperDialog, OnlineRoutingMapperDialogAgPedido, OnlineRoutingMapperDialogModMapa, OnlineRoutingMapperDialogModBombas, OnlineRoutingMapperDialogVerPedidos
+from .OnlineRoutingMapper_dialog import OnlineRoutingMapperDialog, OnlineRoutingMapperDialogAgPedido, OnlineRoutingMapperDialogModMapa, OnlineRoutingMapperDialogModBombas, OnlineRoutingMapperDialogVerPedidos, OnlineRoutingMapperDialogEstadisticas
 import os.path
 from urllib.request import urlopen
 
@@ -46,6 +46,29 @@ from qgis.PyQt.QtWidgets import QTableWidgetItem,QPushButton,QFileDialog
 import pygame
 
 
+class CustomMapTool(QgsMapToolIdentifyFeature):
+    def __init__(self, canvas, capa_puntos):
+        self.canvas = canvas
+        self.capa_puntos = capa_puntos
+        QgsMapToolIdentifyFeature.__init__(self, self.canvas)
+
+    def canvasReleaseEvent(self, event):
+        results = self.identify(event.x(), event.y(), [self.capa_puntos], QgsMapToolIdentify.TopDownStopAtFirst)
+        if results:
+            feature = results[0].mFeature
+            fields = feature.fields()
+            attribute_text = ""
+        
+            for field, attribute in zip(fields, feature.attributes()):
+                if field.name()!='columna_x' and field.name()!='columna_y':
+                    attribute_text += f"{field.name()}: {attribute}\n"
+            self.showAttributeDialog(attribute_text)
+
+    def showAttributeDialog(self, attribute_text):
+        dialog = QMessageBox()
+        dialog.setWindowTitle("Datos de la salida")
+        dialog.setText(attribute_text)
+        dialog.exec()
 
 #variable necesaria para saber si calcular rutas a bombas de incendio
 is_incendio = False
@@ -577,6 +600,55 @@ class OnlineRoutingMapper:
         self.dlg.aceptar.clicked.connect(lambda: self.savePointsExclution())
         self.dlg.closeEvent = self.closeUpdate
     
+    def changeScreenEstadisticas(self):
+        self.dlg_back = self.dlg
+        self.dlg = OnlineRoutingMapperDialogEstadisticas()
+        self.borrar_todos_los_puntos()
+        self.dlg_back.showMinimized()
+        self.dlg.setFixedSize(self.dlg.size())
+        self.dlg.show()
+        self.dlg.btnMapa.clicked.connect(lambda: self.dlg.showMinimized())
+        #self.dlg.tableWidget.sortItems(0)
+        
+                # Crea una nueva capa de puntos en memoria
+        capa_puntos = QgsVectorLayer("Point?crs=EPSG:4326", "Pedidos", "memory")
+
+        # Define los campos para la capa de puntos
+        campos = QgsFields()
+        campos.append(QgsField("columna_x", QVariant.Double))
+        campos.append(QgsField("columna_y", QVariant.Double))
+        campos.append(QgsField("Descripccion", QVariant.String))
+        campos.append(QgsField("Direccion", QVariant.String))
+        campos.append(QgsField("Solicitante", QVariant.String))
+        # Asigna los campos a la capa
+        capa_puntos.dataProvider().addAttributes(campos)
+        capa_puntos.updateFields()
+        # Ejecuta la consulta SQL y crea los puntos
+        registros = select("pedido")
+        for tupla in registros:
+            if tupla[6]!=' ':
+                x, y = tupla[6].split(',')
+                punto = QgsPointXY(float(x), float(y))
+                punto_geom = QgsGeometry.fromPointXY(punto)
+                # Crea una nueva característica y agrega la geometría y los atributos
+                feature = QgsFeature()
+                feature.setGeometry(punto_geom)
+                feature.setAttributes([x, y, tupla[7], tupla[1],tupla[2]])
+                capa_puntos.dataProvider().addFeature(feature)
+        # Agrega la capa al proyecto de QGIS
+        QgsProject.instance().addMapLayer(capa_puntos)
+        # Refresca la interfaz de QGIS
+        self.iface.layerTreeView().refreshLayerSymbology(capa_puntos.id())
+        self.canvas = self.iface.mapCanvas()
+        self.clickTool = QgsMapToolEmitPoint(self.canvas)
+        self.clickTool = CustomMapTool(self.canvas,capa_puntos)
+        self.canvas.setMapTool(self.clickTool)
+        
+        self.dlg.closeEvent = self.closePedidos
+        
+    
+        #self.dlg.volver.clicked.connect(lambda: self.backScreen())
+         
     def update_pedido(self, id):
         try:
             i=0
@@ -743,12 +815,29 @@ class OnlineRoutingMapper:
 
     def agregar_actualizar_puntos_iniciales(self):
         self.borrar_todos_los_puntos()
+        self.vectorRubberBand = QgsRubberBand(self.canvas, QgsWkbTypes.PolygonGeometry)
+        self.vectorRubberBand.setColor(QColor("#000000"))
+        self.vectorRubberBand.setWidth(4)
+
+        self.startRubberBand = QgsRubberBand(self.canvas, QgsWkbTypes.PointGeometry)
+        self.startRubberBand.setColor(QColor("#000000"))
+        self.startRubberBand.setIconSize(10)
+        self.startRubberBand.setIcon(QgsRubberBand.ICON_FULL_BOX)
+        self.stopRubberBand = QgsRubberBand(self.canvas, QgsWkbTypes.PointGeometry)
+        self.stopRubberBand.setColor(QColor("#000000"))
+        self.stopRubberBand.setIconSize(10)
+        self.stopRubberBand.setIcon(QgsRubberBand.ICON_FULL_BOX)
+        self.bombasRubberBand = QgsRubberBand(self.canvas, QgsWkbTypes.PointGeometry)
+        self.bombasRubberBand.setColor(QColor("#ff000"))
+        self.bombasRubberBand.setIconSize(10)
+        self.bombasRubberBand.setIcon(QgsRubberBand.ICON_FULL_BOX)
         registros = select('points')
         i=1
         points = []
         for tupla in registros:
             points.append(QgsPointXY(float(tupla[1]), float(tupla[2])))
             if i % 2 == 0:
+                print(tupla[1], tupla[2], '+++++++')
                 self.vectorRubberBand.addGeometry(QgsGeometry.fromPolygonXY([points]), None)
                 points = []
                 self.stopRubberBand.addPoint(QgsPointXY(float(tupla[1]), float(tupla[2])))
@@ -757,8 +846,9 @@ class OnlineRoutingMapper:
             i+=1
         registros=select('bomba')
         for tupla in registros:
+            print(tupla[1], tupla[2], '-------')
             self.bombasRubberBand.addPoint(QgsPointXY(float(tupla[1]), float(tupla[2])))
-      
+            
     def run(self):
         self.no = 0
         self.startPointXY = None
@@ -784,7 +874,9 @@ class OnlineRoutingMapper:
         self.dlg.btnModMapa.clicked.connect(lambda: self.changeScreenModMapa())
         self.dlg.btnModBombas.clicked.connect(lambda: self.changeScreenModBombas())
         self.dlg.btn_ver_pedidos.clicked.connect(lambda: self.changeScreenVerPedidos())
-
+        
+        self.dlg.btnEstadisticas.clicked.connect(lambda: self.changeScreenEstadisticas())
+         
         self.vectorRubberBand = QgsRubberBand(self.canvas, QgsWkbTypes.PolygonGeometry)
         self.vectorRubberBand.setColor(QColor("#000000"))
         self.vectorRubberBand.setWidth(4)
@@ -813,7 +905,19 @@ class OnlineRoutingMapper:
         self.canvas.scene().removeItem(self.stopRubberBand)
         self.canvas.scene().removeItem(self.bombasRubberBand)
         self.canvas.scene().removeItem(self.vectorRubberBand)
-
+        
+    def closePedidos(self, event):
+        capa_pedidos = QgsProject.instance().mapLayersByName("Pedidos")
+        if capa_pedidos:
+            # Obtener la instancia de la capa
+            for capa in capa_pedidos:
+            # Eliminar todas las características de la capa
+                with edit(capa):
+                    capa.dataProvider().deleteFeatures([f.id() for f in capa.getFeatures()])
+                # Remover la capa del proyecto
+                QgsProject.instance().removeMapLayer(capa.id())
+        self.agregar_actualizar_puntos_iniciales()
+        
     def closeUpdate(self, event):
         self.dlg_back.closeEvent = self.close
         self.agregar_actualizar_puntos_iniciales()
