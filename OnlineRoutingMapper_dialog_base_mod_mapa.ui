@@ -137,34 +137,6 @@ border:1px solid black
            </property>
           </widget>
          </item>
-         <item row="4" column="2">
-          <widget class="QPushButton" name="startBtn">
-           <property name="minimumSize">
-            <size>
-             <width>40</width>
-             <height>40</height>
-            </size>
-           </property>
-           <property name="styleSheet">
-            <string notr="true">QPushButton {
-font-size:14px;
-background-color:#ffcb3a;
-border-radius: 10px;
-}
-
-QPushButton:hover {
-background-color: #FF0000;
-}</string>
-           </property>
-           <property name="text">
-            <string/>
-           </property>
-           <property name="icon">
-            <iconset>
-             <normaloff>sonidos/Logos/coordenada.png</normaloff>sonidos/Logos/coordenada.png</iconset>
-           </property>
-          </widget>
-         </item>
          <item row="7" column="0">
           <widget class="QLabel" name="stopLbl">
            <property name="font">
@@ -346,6 +318,34 @@ background-color: #FF0000;
           </widget>
          </item>
          <item row="7" column="2">
+          <widget class="QPushButton" name="startBtn">
+           <property name="minimumSize">
+            <size>
+             <width>40</width>
+             <height>40</height>
+            </size>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">QPushButton {
+font-size:14px;
+background-color:#ffcb3a;
+border-radius: 10px;
+}
+
+QPushButton:hover {
+background-color: #FF0000;
+}</string>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset>
+             <normaloff>sonidos/Logos/coordenada.png</normaloff>sonidos/Logos/coordenada.png</iconset>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="2">
           <widget class="QPushButton" name="stopBtn">
            <property name="minimumSize">
             <size>
