@@ -110,7 +110,7 @@ class RouteProvider(object):
                 else:
                     points+= str(elemento[0])+';'+str(elemento[1])+";"+str(elemento[2])
                 if(i+1 < len(listPointsExclusion)):
-                    points+=';'
+                    points+='|polygon:'
             url = self.__hereBaseURL_V8_Exclusion % (startPoint, endPoint, parameter_movil, points, APIKEY_HERE)
         else:
            url = self.__hereBaseURL_V8 %(startPoint, endPoint, parameter_movil, APIKEY_HERE)

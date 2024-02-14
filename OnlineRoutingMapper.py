@@ -757,11 +757,11 @@ class OnlineRoutingMapper:
                 if i % 2 == 0:
                     # stop
                     stopPointExclution = tupla[2]+','+tupla[1]
+                    self.listPointsExclution.append((startPointExclution, stopPointExclution, stopPointExclution))
                 else:
                     # start
                     startPointExclution = tupla[2]+','+tupla[1]
                 i+=1
-            self.listPointsExclution.append((startPointExclution, stopPointExclution, stopPointExclution))
         
 
     def savePointsExclution(self):
@@ -837,7 +837,6 @@ class OnlineRoutingMapper:
         for tupla in registros:
             points.append(QgsPointXY(float(tupla[1]), float(tupla[2])))
             if i % 2 == 0:
-                print(tupla[1], tupla[2], '+++++++')
                 self.vectorRubberBand.addGeometry(QgsGeometry.fromPolygonXY([points]), None)
                 points = []
                 self.stopRubberBand.addPoint(QgsPointXY(float(tupla[1]), float(tupla[2])))
@@ -846,7 +845,6 @@ class OnlineRoutingMapper:
             i+=1
         registros=select('bomba')
         for tupla in registros:
-            print(tupla[1], tupla[2], '-------')
             self.bombasRubberBand.addPoint(QgsPointXY(float(tupla[1]), float(tupla[2])))
             
     def run(self):
