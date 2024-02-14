@@ -39,11 +39,10 @@ def report(url):
     response = urlopen(url).read().decode("utf-8")
     diccionario = json.loads(response)
     f = open (PATH_REPORTE,'a')
-    for route in diccionario['response']['route']:
-        f.write(re.sub(r"\<[^>]*\>", "",(route['summary']['text']))+'\n\n')
-        for leg in route['leg']:
-            for maneuver in leg['maneuver']:
-                f.write(re.sub(r"\<[^>]*\>", "",(maneuver['instruction']))+'\n')
+    instrucciones = diccionario['routes'][0]['sections'][0]['actions']
+    for instruccion in instrucciones:
+        f.write(str(instruccion['instruction'])+'\n')
+
     registros = select('points')
     if (len(registros) > 0) :
         f.write('\nCortes\n')

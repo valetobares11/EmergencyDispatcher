@@ -29,4 +29,7 @@ CAMION_LIGERO = "Camion ligero"
 CAMION_PESADO = "Camion pesado"
 
 
-PATH_RUTA_EXPORT = "/home/tobares/Descargas/archivo.ods"
+PATH_RUTA_EXPORT = f"/home/{nombre_usuario}/Descargas/archivo.ods"
+
+# Tipos servicio
+TIPO_SERVICIO_HERE_V8 = 7

@@ -294,12 +294,12 @@ class OnlineRoutingMapper:
                 stopPoint = self.crsTransform(self.stopPointXY)   
                 # index = self.dlg.serviceCombo.currentIndex()
                 try:
-                    service = self.services[list(self.services)[7]]
+                    service = self.services[list(self.services)[TIPO_SERVICIO_HERE_V8]]
                     self.cargar_puntos_lista()
                     # wkt, url = service(startPoint, stopPoint, self.listPointsExclution, self.tipoAutomovil)
                     wkt, url = service(startPoint, stopPoint, self.listPointsExclution, self.tipoAutomovil)
-                    # report(url)
-                    # self.calculate_routes_a_bombas(stopPoint)
+                    report(url)
+                    self.calculate_routes_a_bombas(stopPoint)
                     self.routeMaker(wkt)
                     # clear rubberbands Esto ver si se saca
                     # self.startRubberBand.removeLastPoint()
@@ -321,14 +321,14 @@ class OnlineRoutingMapper:
         try:
             bombas = select('bomba')
             if (len(bombas)!=0):
-                service = self.services[list(self.services)[6]]
+                service = self.services[list(self.services)[TIPO_SERVICIO_HERE_V8]]
                 distances = []
                 for tupla in bombas:
                     if (tupla[4] == 'A'):
                         wkt, url = service(startPoint, self.crsTransform(QgsPointXY(float(tupla[1]), float(tupla[2]))))
                         response = urlopen(url).read().decode("utf-8")
                         diccionario = json.loads(response)
-                        d = int(diccionario['response']['route'][0]['summary']['distance'])
+                        d = int(diccionario['routes'][0]['sections'][0]['summary']['length'])
                         distances.append([d,tupla[3]])
 
                 list_distances = sorted(distances, key=lambda x: x[0])
