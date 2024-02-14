@@ -228,10 +228,16 @@ class OnlineRoutingMapper:
             self.stopRubberBand.addPoint(stopPointXY)
             self.dlg.stopTxt.setText(str(pointXY.x()) + ',' + str(pointXY.y()))
         
-        self.dlg.showNormal()
+         # Ocultar la ventana emergente temporalmente
+        self.dlg.hide()
+
+        # Liberar la herramienta de mapa para que se pueda hacer clic nuevamente
+        self.canvas.unsetMapTool(self.clickTool)
+
+        # Volver a mostrar la ventana emergente
+        self.dlg.show()
         
         # free them
-        self.canvas.unsetMapTool(self.clickTool)
         self.clickTool.canvasClicked.disconnect(self.clickHandler)
 
     def toolActivator(self, no):
@@ -244,7 +250,13 @@ class OnlineRoutingMapper:
     def clickHandlerStart(self, pointXY):
         self.stopPointXY = QgsPointXY(pointXY)
         self.stopRubberBand.addPoint(self.stopPointXY)
+        self.dlg.hide()
+
+        # Liberar la herramienta de mapa para que se pueda hacer clic nuevamente
         self.canvas.unsetMapTool(self.clickTool)
+
+        # Volver a mostrar la ventana emergente
+        self.dlg.show()
         # self.clickTool.canvasClicked.disconnect(self.clickHandler)
 
     def toolActivatorStartPoints(self):
@@ -257,17 +269,23 @@ class OnlineRoutingMapper:
         pointXY = QgsPointXY(pointXY)
         self.bombasRubberBand.addPoint(pointXY)
         self.dlg.bombaTxt.setText(str(pointXY.x()) + ',' + str(pointXY.y()))
-        self.dlg.showNormal()
 
-        # free them
+       
+        # Ocultar la ventana emergente temporalmente
+        self.dlg.hide()
+
+        # Liberar la herramienta de mapa para que se pueda hacer clic nuevamente
         self.canvas.unsetMapTool(self.clickTool)
-        #self.clickTool.canvasClicked.disconnect(self.clickHandlerBombas)
 
+        # Volver a mostrar la ventana emergente
+        self.dlg.show()
+        
     def toolActivatorBombas(self):
         self.dlg.showMinimized()
         self.dlg_back.showMinimized()
         self.clickTool.canvasClicked.connect(self.clickHandlerBombas)
         self.canvas.setMapTool(self.clickTool)  # clickTool is activatedr)
+        
 
 
     def crsTransform(self, pointXY):
@@ -444,8 +462,6 @@ class OnlineRoutingMapper:
         self.savePoints()
         self.runAnalysis()
 
-         
-
         
     def add_table_item(self, row, column, text):
         # Método para agregar un elemento a la tabla
@@ -551,9 +567,10 @@ class OnlineRoutingMapper:
             valores = "{}, {}, '{}'".format(startPoint[1], startPoint[0], self.dlg.descripcionTxt.text())
             insert('bomba', 'startPoint, stopPoint, description', valores)
         self.dlg = self.dlg_back
-        self.dlg.show()
-        self.dlg.showNormal()
-        self.agregar_actualizar_puntos_iniciales()
+        if self.dlg.close():
+            self.agregar_actualizar_puntos_iniciales()  
+            self.dlg.showNormal()
+            
 
 
     #tupla esta de mas?
@@ -784,7 +801,9 @@ class OnlineRoutingMapper:
 
         self.agregar_actualizar_puntos_iniciales()
         self.dlg = self.dlg_back
-        self.dlg.show()
+        if self.dlg.close():
+            self.agregar_actualizar_puntos_iniciales()  
+            self.dlg.showNormal()
 
     def savePoints(self):
         try:
