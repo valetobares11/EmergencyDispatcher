@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>500</height>
+    <width>226</width>
+    <height>276</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -129,8 +129,8 @@
           <widget class="QPushButton" name="btnAgPedido">
            <property name="minimumSize">
             <size>
-             <width>0</width>
-             <height>0</height>
+             <width>50</width>
+             <height>40</height>
             </size>
            </property>
            <property name="maximumSize">
@@ -167,7 +167,7 @@ background-color: #FF0000;
            <property name="minimumSize">
             <size>
              <width>0</width>
-             <height>0</height>
+             <height>40</height>
             </size>
            </property>
            <property name="maximumSize">
@@ -204,7 +204,7 @@ background-color: #FF0000;
            <property name="minimumSize">
             <size>
              <width>0</width>
-             <height>0</height>
+             <height>40</height>
             </size>
            </property>
            <property name="maximumSize">
@@ -241,7 +241,7 @@ background-color: #FF0000;
            <property name="minimumSize">
             <size>
              <width>0</width>
-             <height>0</height>
+             <height>40</height>
             </size>
            </property>
            <property name="maximumSize">
@@ -277,8 +277,8 @@ background-color: #FF0000;
           <widget class="QPushButton" name="btnEstadisticas">
            <property name="minimumSize">
             <size>
-             <width>0</width>
-             <height>0</height>
+             <width>200</width>
+             <height>40</height>
             </size>
            </property>
            <property name="maximumSize">

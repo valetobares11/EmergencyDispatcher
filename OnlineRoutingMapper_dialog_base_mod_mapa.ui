@@ -10,19 +10,19 @@
     <x>0</x>
     <y>0</y>
     <width>800</width>
-    <height>767</height>
+    <height>704</height>
    </rect>
   </property>
   <property name="sizePolicy">
-   <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+   <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
   </property>
   <property name="minimumSize">
    <size>
-    <width>10</width>
-    <height>10</height>
+    <width>400</width>
+    <height>400</height>
    </size>
   </property>
   <property name="maximumSize">
@@ -52,6 +52,12 @@
    </property>
    <item>
     <widget class="QGroupBox" name="groupBox_2">
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>100</height>
+      </size>
+     </property>
      <property name="maximumSize">
       <size>
        <width>16777215</width>
@@ -83,6 +89,18 @@
      <layout class="QVBoxLayout" name="verticalLayout">
       <item>
        <widget class="QFrame" name="frame">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>100</width>
+          <height>100</height>
+         </size>
+        </property>
         <property name="styleSheet">
          <string notr="true">background-color: rgb(33, 43, 56);</string>
         </property>
@@ -98,6 +116,12 @@
            <property name="enabled">
             <bool>true</bool>
            </property>
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>40</height>
+            </size>
+           </property>
            <property name="styleSheet">
             <string notr="true">background-color: rgb(255, 255, 255);
 border-radius:7px;
@@ -107,6 +131,34 @@ border:1px solid black
            </property>
            <property name="readOnly">
             <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="2">
+          <widget class="QPushButton" name="startBtn">
+           <property name="minimumSize">
+            <size>
+             <width>40</width>
+             <height>40</height>
+            </size>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">QPushButton {
+font-size:14px;
+background-color:#ffcb3a;
+border-radius: 10px;
+}
+
+QPushButton:hover {
+background-color: #FF0000;
+}</string>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset>
+             <normaloff>sonidos/Logos/coordenada.png</normaloff>sonidos/Logos/coordenada.png</iconset>
            </property>
           </widget>
          </item>
@@ -140,54 +192,6 @@ border:1px solid black
            </property>
           </widget>
          </item>
-         <item row="12" column="0">
-          <widget class="QFrame" name="frame_5">
-           <property name="frameShape">
-            <enum>QFrame::StyledPanel</enum>
-           </property>
-           <property name="frameShadow">
-            <enum>QFrame::Raised</enum>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="0">
-          <widget class="QLabel" name="startLlb_2">
-           <property name="font">
-            <font>
-             <pointsize>13</pointsize>
-            </font>
-           </property>
-           <property name="styleSheet">
-            <string notr="true">color: rgb(255, 255, 255);</string>
-           </property>
-           <property name="text">
-            <string>Descripcion</string>
-           </property>
-          </widget>
-         </item>
-         <item row="4" column="2">
-          <widget class="QPushButton" name="startBtn">
-           <property name="styleSheet">
-            <string notr="true">QPushButton {
-font-size:14px;
-background-color:#ffcb3a;
-border-radius: 10px;
-border: 1px solid black;
-}
-
-QPushButton:hover {
-background-color: #FF0000;
-}</string>
-           </property>
-           <property name="text">
-            <string/>
-           </property>
-           <property name="icon">
-            <iconset>
-             <normaloff>../../../../../../../../../.designer/backup/sonidos/Logos/coordenada.png</normaloff>../../../../../../../../../.designer/backup/sonidos/Logos/coordenada.png</iconset>
-           </property>
-          </widget>
-         </item>
          <item row="9" column="0">
           <widget class="QLabel" name="stopLbl_2">
            <property name="font">
@@ -203,6 +207,134 @@ background-color: #FF0000;
            </property>
           </widget>
          </item>
+         <item row="4" column="1">
+          <widget class="QLineEdit" name="stopTxt">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>40</height>
+            </size>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">background-color: rgb(255, 255, 255);
+border-radius:7px;
+border:1px solid black</string>
+           </property>
+           <property name="readOnly">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="startLlb_2">
+           <property name="font">
+            <font>
+             <pointsize>13</pointsize>
+            </font>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">color: rgb(255, 255, 255);</string>
+           </property>
+           <property name="text">
+            <string>Descripción</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QLineEdit" name="descripcionTxt">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>40</height>
+            </size>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">background-color: rgb(255, 255, 255);
+border-radius:7px;
+border:1px solid black</string>
+           </property>
+          </widget>
+         </item>
+         <item row="10" column="1">
+          <widget class="QFrame" name="frame_2">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>50</height>
+            </size>
+           </property>
+           <property name="frameShape">
+            <enum>QFrame::StyledPanel</enum>
+           </property>
+           <property name="frameShadow">
+            <enum>QFrame::Raised</enum>
+           </property>
+           <layout class="QHBoxLayout" name="horizontalLayout_2">
+            <item>
+             <widget class="QPushButton" name="volver">
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>40</height>
+               </size>
+              </property>
+              <property name="sizeIncrement">
+               <size>
+                <width>0</width>
+                <height>40</height>
+               </size>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">QPushButton {
+font-size:14px;
+background-color:#ffcb3a;
+border-radius: 10px;
+border: 1px solid black;
+}
+
+QPushButton:hover {
+background-color: #FF0000;
+}</string>
+              </property>
+              <property name="text">
+               <string>Volver</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="aceptar">
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>40</height>
+               </size>
+              </property>
+              <property name="sizeIncrement">
+               <size>
+                <width>0</width>
+                <height>40</height>
+               </size>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">QPushButton {
+font-size:14px;
+background-color:#ffcb3a;
+border-radius: 10px;
+border: 1px solid black;
+}
+
+QPushButton:hover {
+background-color: #FF0000;
+}</string>
+              </property>
+              <property name="text">
+               <string>Guardar</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
          <item row="9" column="1">
           <widget class="QTableWidget" name="tableWidget">
            <property name="styleSheet">
@@ -210,14 +342,19 @@ background-color: #FF0000;
            </property>
           </widget>
          </item>
-         <item row="1" column="2">
+         <item row="7" column="2">
           <widget class="QPushButton" name="stopBtn">
+           <property name="minimumSize">
+            <size>
+             <width>40</width>
+             <height>40</height>
+            </size>
+           </property>
            <property name="styleSheet">
             <string notr="true">QPushButton {
 font-size:14px;
 background-color:#ffcb3a;
 border-radius: 10px;
-border: 1px solid black;
 }
 
 QPushButton:hover {
@@ -229,66 +366,7 @@ background-color: #FF0000;
            </property>
            <property name="icon">
             <iconset>
-             <normaloff>../../../../../../../../../.designer/backup/sonidos/Logos/coordenada.png</normaloff>../../../../../../../../../.designer/backup/sonidos/Logos/coordenada.png</iconset>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="1">
-          <widget class="QLineEdit" name="descripcionTxt">
-           <property name="styleSheet">
-            <string notr="true">background-color: rgb(255, 255, 255);
-border-radius:7px;
-border:1px solid black</string>
-           </property>
-          </widget>
-         </item>
-         <item row="4" column="1">
-          <widget class="QLineEdit" name="stopTxt">
-           <property name="styleSheet">
-            <string notr="true">background-color: rgb(255, 255, 255);
-border-radius:7px;
-border:1px solid black</string>
-           </property>
-           <property name="readOnly">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item row="11" column="1">
-          <widget class="QPushButton" name="aceptar">
-           <property name="styleSheet">
-            <string notr="true">QPushButton {
-font-size:14px;
-background-color:#ffcb3a;
-border-radius: 10px;
-border: 1px solid black;
-}
-
-QPushButton:hover {
-background-color: #FF0000;
-}</string>
-           </property>
-           <property name="text">
-            <string>Guardar</string>
-           </property>
-          </widget>
-         </item>
-         <item row="11" column="0">
-          <widget class="QPushButton" name="volver">
-           <property name="styleSheet">
-            <string notr="true">QPushButton {
-font-size:14px;
-background-color:#ffcb3a;
-border-radius: 10px;
-border: 1px solid black;
-}
-
-QPushButton:hover {
-background-color: #FF0000;
-}</string>
-           </property>
-           <property name="text">
-            <string>Volver</string>
+             <normaloff>sonidos/Logos/coordenada.png</normaloff>sonidos/Logos/coordenada.png</iconset>
            </property>
           </widget>
          </item>
