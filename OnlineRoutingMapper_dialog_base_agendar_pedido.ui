@@ -732,6 +732,7 @@ background-color: #2CA02C;
   <tabstop>form_telefono</tabstop>
   <tabstop>comboBox_2</tabstop>
   <tabstop>comboBox</tabstop>
+  <tabstop>aceptar</tabstop>
   <tabstop>buttonIncendioForestal</tabstop>
   <tabstop>buttonIncendioEstructura</tabstop>
   <tabstop>buttonRescateDeAltura</tabstop>
@@ -740,9 +741,8 @@ background-color: #2CA02C;
   <tabstop>buttonIncendioRural</tabstop>
   <tabstop>buttonAccidenteVehicular</tabstop>
   <tabstop>buttonEmergVarias</tabstop>
-  <tabstop>volver</tabstop>
-  <tabstop>aceptar</tabstop>
   <tabstop>buscarPunto</tabstop>
+  <tabstop>volver</tabstop>
  </tabstops>
  <resources/>
  <connections/>

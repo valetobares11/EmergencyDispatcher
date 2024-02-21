@@ -381,6 +381,16 @@ background-color: #FF0000;
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>descripcionTxt</tabstop>
+  <tabstop>stopTxt</tabstop>
+  <tabstop>startTxt</tabstop>
+  <tabstop>tableWidget</tabstop>
+  <tabstop>aceptar</tabstop>
+  <tabstop>volver</tabstop>
+  <tabstop>stopBtn</tabstop>
+  <tabstop>startBtn</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>
