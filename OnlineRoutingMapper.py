@@ -628,13 +628,12 @@ class OnlineRoutingMapper:
         self.dlg.closeEvent = self.closeUpdate
     
     def changeScreenEstadisticas(self):
-        self.dlg_back = self.dlg
         self.dlg = OnlineRoutingMapperDialogEstadisticas()
         self.borrar_todos_los_puntos()
-        self.dlg_back.showMinimized()
+        # self.dlg_back.showMinimized()
         self.dlg.setFixedSize(self.dlg.size())
         self.dlg.show()
-        self.dlg.btnMapa.clicked.connect(lambda: self.dlg.showMinimized())
+        self.dlg.btnMapa.clicked.connect(lambda: (self.dlg_back.showMinimized(), self.dlg.showMinimized()))
         #self.dlg.tableWidget.sortItems(0)
         
                 # Crea una nueva capa de puntos en memoria
@@ -667,14 +666,16 @@ class OnlineRoutingMapper:
         # Refresca la interfaz de QGIS
         self.iface.layerTreeView().refreshLayerSymbology(capa_puntos.id())
         self.canvas = self.iface.mapCanvas()
-        self.clickTool = QgsMapToolEmitPoint(self.canvas)
         self.clickTool = CustomMapTool(self.canvas,capa_puntos)
         self.canvas.setMapTool(self.clickTool)
         
         self.dlg.closeEvent = self.closePedidos
+        self.dlg.volver_estadistica.clicked.connect(lambda: self.backScreenEstadistica())
         
-    
-        #self.dlg.volver.clicked.connect(lambda: self.backScreen())
+    def backScreenEstadistica(self):
+        self.closePedidos(None)
+        self.dlg.hide()
+        self.dlg = self.dlg_back
          
     def update_pedido(self, id):
         try:
@@ -945,7 +946,8 @@ class OnlineRoutingMapper:
                 # Remover la capa del proyecto
                 QgsProject.instance().removeMapLayer(capa.id())
         self.agregar_actualizar_puntos_iniciales()
-        
+        self.canvas.unsetMapTool(self.clickTool)
+
     def closeUpdate(self, event):
         self.dlg_back.closeEvent = self.close
         self.agregar_actualizar_puntos_iniciales()

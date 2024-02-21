@@ -175,7 +175,7 @@ background-color: #FF0000;
            </property>
            <layout class="QHBoxLayout" name="horizontalLayout_2">
             <item>
-             <widget class="QPushButton" name="pushButton">
+             <widget class="QPushButton" name="volver_estadistica">
               <property name="minimumSize">
                <size>
                 <width>30</width>
@@ -217,7 +217,7 @@ background-color: #c83737;
   </layout>
  </widget>
  <tabstops>
-  <tabstop>pushButton</tabstop>
+  <tabstop>volver_estadistica</tabstop>
   <tabstop>btnMapa</tabstop>
  </tabstops>
  <resources/>
