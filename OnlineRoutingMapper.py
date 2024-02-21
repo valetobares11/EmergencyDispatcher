@@ -296,6 +296,15 @@ class OnlineRoutingMapper:
         outputQgsPoint = transformer.transform(pointXY, QgsCoordinateTransform.ForwardTransform)
 
         return str(outputQgsPoint.y()) + ',' + str(outputQgsPoint.x())
+    
+    def crsTransformPedido(self, pointXY):
+        sourceCRS = self.canvas.mapSettings().destinationCrs()  # getting the project CRS
+        destinationCRS = QgsCoordinateReferenceSystem(4326)  # google uses this CRS
+        transformer = QgsCoordinateTransform(sourceCRS, destinationCRS,
+                                             QgsProject.instance())  # defining a CRS transformer
+        outputQgsPoint = transformer.transform(pointXY, QgsCoordinateTransform.ForwardTransform)
+
+        return str(outputQgsPoint.x()) + ',' + str(outputQgsPoint.y())
 
     def checkNetConnection(self):
         try:
@@ -342,6 +351,7 @@ class OnlineRoutingMapper:
                     report(url)
                     self.calculate_routes_a_bombas(stopPoint)
                     self.routeMaker(wkt)
+                    self.dlg.showMinimized()
                     # clear rubberbands Esto ver si se saca
                     # self.startRubberBand.removeLastPoint()
                     # self.stopRubberBand.removeLastPoint()
@@ -812,10 +822,11 @@ class OnlineRoutingMapper:
             solicitante = self.dlg.form_solicitante.text()
             telefono = self.dlg.form_telefono.text()
             #inserta los pedidos en la DB
-            valores = "'{}', '{}', '{}', '{}', '{}', '{}', '{}'".format(direccion, solicitante, telefono, "Pedro", " ", " ", descripcion)
+            self.calculate_points()
+            valores = "'{}', '{}', '{}', '{}', '{}', '{}', '{}'".format(direccion, solicitante, telefono, "Pedro", " ",self.crsTransformPedido(self.stopPointXY), descripcion)
             insert('pedido', 'direccion, solicitante, telefono, operador, startpoint, stoppoint, description ', valores)
         
-            self.calculate_points()
+            
             self.tipoAutomovil = self.dlg.comboBox.currentText()
             self.dlg = self.dlg_back
             self.dlg.show()
