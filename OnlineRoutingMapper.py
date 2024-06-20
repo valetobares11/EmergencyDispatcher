@@ -63,7 +63,7 @@ class CustomMapTool(QgsMapToolIdentifyFeature):
                 
                 for field, attribute in zip(fields, feature.attributes()):
                     if field.name() not in ['columna_x', 'columna_y']:
-                        attribute_text += f"{field.name()}: {attribute}\n"
+                        attribute_text += f"{field.name()} {attribute}\n"
         
         if attribute_text:  # Solo mostrar el diálogo si hay atributos encontrados
             self.showAttributeDialog(attribute_text)
@@ -666,7 +666,7 @@ class OnlineRoutingMapper:
         self.dlg.btnMapa.clicked.connect(lambda: (self.dlg_back.showMinimized(), self.dlg.showMinimized()))
         #self.dlg.tableWidget.sortItems(0)
         
-                # Crea una nueva capa de puntos en memoria
+        # Crea una nueva capa de puntos en memoria
         tipos = [TIPO1, TIPO2, TIPO3, TIPO4, TIPO5, TIPO6, TIPO7, TIPO8]
         capas_puntos = []
 
@@ -676,12 +676,17 @@ class OnlineRoutingMapper:
 
         # Define los campos para la capa de puntos
         campos = QgsFields()
+        campos.append(QgsField("Numero :", QVariant.String))
         campos.append(QgsField("columna_x", QVariant.Double))
         campos.append(QgsField("columna_y", QVariant.Double))
-        campos.append(QgsField("Descripccion", QVariant.String))
-        campos.append(QgsField("Direccion", QVariant.String))
-        campos.append(QgsField("Solicitante", QVariant.String))
-        campos.append(QgsField("Emergencia", QVariant.String))
+        campos.append(QgsField("Descripción :", QVariant.String))
+        campos.append(QgsField("Dirección :", QVariant.String))
+        campos.append(QgsField("Solicitante :", QVariant.String))
+        campos.append(QgsField("Tipo :", QVariant.String))
+        campos.append(QgsField("Fecha :", QVariant.String))
+        campos.append(QgsField("Tiempo Estimado :", QVariant.String))
+        campos.append(QgsField("Tiempo Real :", QVariant.String))
+        campos.append(QgsField(" ", QVariant.String))
 
         # Asigna los campos a cada capa
         for capa in capas_puntos:
@@ -697,7 +702,7 @@ class OnlineRoutingMapper:
                 # Crea una nueva característica y agrega la geometría y los atributos
                 feature = QgsFeature()
                 feature.setGeometry(punto_geom)
-                feature.setAttributes([x, y, tupla[7], tupla[1],tupla[2],tupla[10]])
+                feature.setAttributes([tupla[0], x, y, tupla[7], tupla[1],tupla[2],tupla[10], str(tupla[12]), tupla[8], tupla[11], " "])
                 # Crear un diccionario para mapear tipos a índices de capas
                 tipo_a_capa = {
                     TIPO1: capas_puntos[0],
@@ -750,19 +755,25 @@ class OnlineRoutingMapper:
                 startPoint = self.dlg.tableWidget.item(i,5).text()
                 stopPoint = self.dlg.tableWidget.item(i,6).text()
                 descripcion = self.dlg.tableWidget.item(i,7).text()
+                tiempo_estimado = self.dlg.tableWidget.item(i,8).text()
+                tiempo_real = self.dlg.tableWidget.item(i,9).text()
+                tipo = self.dlg.tableWidget.item(i,10).text()
+                fecha = self.dlg.tableWidget.item(i,11).text()
 
-                seters = "direccion = '{}', solicitante = '{}', telefono = '{}', operador = '{}', startPoint = '{}', stopPoint = '{}', description = '{}'".format(direccion, solicitante, telefono, operador, startPoint, stopPoint ,descripcion)
+                seters = "direccion = '{}', solicitante = '{}', telefono = '{}', operador = '{}', startPoint = '{}', stopPoint = '{}', description = '{}', tiempo_estimado = '{}', tiempo_real = '{}', tipo = '{}'".format(direccion, solicitante, telefono, operador, startPoint, stopPoint ,descripcion,tiempo_estimado, tiempo_real, tipo)
             
                 update('pedido', seters, id)
         except Exception as e:
             QgsMessageLog.logMessage(str(e))
             QMessageBox.warning(self.dlg, 'actualizar_pedido', "No se puede modificar el valor por exceder de caracteres o tipo incorrecto")
 
-    def add_pedido(self, id, direccion, solicitante, telefono, operador, coordenada_partida, coordenada_lugar, descripcion):
+    def add_pedido(self, id, direccion, solicitante, telefono, operador, coordenada_partida, coordenada_lugar, descripcion, tiempo_estimado, tiempo_real, tipo, fecha):
         rowPosition = self.dlg.tableWidget.rowCount()
         self.dlg.tableWidget.insertRow(rowPosition)
         item = QTableWidgetItem(str(id))
         item.setFlags(item.flags() & ~Qt.ItemIsEditable)
+        item2 = QTableWidgetItem(str(fecha))
+        item2.setFlags(item2.flags() & ~Qt.ItemIsEditable)
         self.dlg.tableWidget.setItem(rowPosition, 0, item)
         self.dlg.tableWidget.setItem(rowPosition, 1, QTableWidgetItem(str(direccion)))
         self.dlg.tableWidget.setItem(rowPosition, 2, QTableWidgetItem(str(solicitante)))
@@ -771,17 +782,21 @@ class OnlineRoutingMapper:
         self.dlg.tableWidget.setItem(rowPosition, 5, QTableWidgetItem(coordenada_partida))
         self.dlg.tableWidget.setItem(rowPosition, 6, QTableWidgetItem(str(coordenada_lugar)))
         self.dlg.tableWidget.setItem(rowPosition, 7, QTableWidgetItem(descripcion))
+        self.dlg.tableWidget.setItem(rowPosition, 8, QTableWidgetItem(str(tiempo_estimado)))
+        self.dlg.tableWidget.setItem(rowPosition, 9, QTableWidgetItem(str(tiempo_real)))
+        self.dlg.tableWidget.setItem(rowPosition, 10, QTableWidgetItem(tipo))
+        self.dlg.tableWidget.setItem(rowPosition, 11, QTableWidgetItem(item2))
         update_button = QPushButton("Modificar")
         update_button.clicked.connect(lambda: self.update_pedido(id))
-        self.dlg.tableWidget.setCellWidget(rowPosition, 8, update_button)
+        self.dlg.tableWidget.setCellWidget(rowPosition, 12, update_button)
         
 
     def changeScreenVerPedidos(self):
         self.dlg = OnlineRoutingMapperDialogVerPedidos()
         self.dlg.setFixedSize(self.dlg.size())
         self.dlg.show()
-        self.dlg.tableWidget.setColumnCount(9)
-        self.dlg.tableWidget.setHorizontalHeaderLabels(["Numero ID", "Direccion", "Solicitante", "Telefono", "Operador", "Coordenada de partida", "Coordenada del lugar", "Descripcion", "Modificar"])
+        self.dlg.tableWidget.setColumnCount(13)
+        self.dlg.tableWidget.setHorizontalHeaderLabels(["Numero ID", "Direccion", "Solicitante", "Telefono", "Operador", "Coordenada de partida", "Coordenada del lugar", "Descripcion", "Tiempo Estimado", "Tiempo Real", "Tipo", "Fecha", "Modificar"])
         #self.dlg.tableWidget.sortItems(0)
         
         self.cargar_pedidos_tabla()
@@ -799,7 +814,7 @@ class OnlineRoutingMapper:
     def cargar_pedidos_tabla(self):
         registros = select("pedido")
         for tupla in registros:
-            self.add_pedido(tupla[0], tupla[1], tupla[2], tupla[3], tupla[4], tupla[5], tupla[6], tupla[7])
+            self.add_pedido(tupla[0], tupla[1], tupla[2], tupla[3], tupla[4], tupla[5], tupla[6], tupla[7], tupla[8], tupla[11], tupla[10], tupla[12])
 
     def exportar_pedidos_tabla(self):
         try:
