@@ -70,9 +70,6 @@ class CustomMapTool(QgsMapToolIdentifyFeature):
         dialog.setText(attribute_text)
         dialog.exec()
 
-#variable necesaria para saber que tipo de emergencia es
-type_emergency = 0
-
 class OnlineRoutingMapper:
     
 
@@ -105,6 +102,8 @@ class OnlineRoutingMapper:
         self.listPointsExclution = []
         self.tipoAutomovil = None
         self.path_planilla_carga = None
+        #variable necesaria para saber que tipo de emergencia es
+        self.type_emergency = 0
 
     # noinspection PyMethodMayBeStatic
     def tr(self, message):
@@ -336,9 +335,11 @@ class OnlineRoutingMapper:
     def runAnalysis(self):
         # if len(self.dlg.startTxt.text()) > 0 and len(self.dlg.stopTxt.text()) > 0:
         if self.startPointXY is not None and self.stopPointXY is not None:
-            polygon = QgsProject.instance().mapLayersByName('Jurisdicción')[0]
-            if not polygon.getFeature(1).geometry().contains(self.stopPointXY):
-                QMessageBox.warning(self.dlg, 'Calculate routes bombas',"El punto esta fuera de la juridiccion")
+            juridiccion = QgsProject.instance().mapLayersByName('Jurisdicción')
+            if len(juridiccion) > 0:
+                polygon = juridiccion[0]
+                if not polygon.getFeature(1).geometry().contains(self.stopPointXY):
+                    QMessageBox.warning(self.dlg, 'Calculate routes bombas',"El punto esta fuera de la juridiccion")
             if self.checkNetConnection():  
                 startPoint = self.crsTransform(self.startPointXY)
                 stopPoint = self.crsTransform(self.stopPointXY)   
@@ -349,7 +350,11 @@ class OnlineRoutingMapper:
                     # wkt, url = service(startPoint, stopPoint, self.listPointsExclution, self.tipoAutomovil)
                     wkt, url = service(startPoint, stopPoint, self.listPointsExclution, self.tipoAutomovil)
                     report(url)
-                    self.calculate_routes_a_bombas(stopPoint)
+
+                    if self.type_emergency in (1,2,3,4):
+                        # si es incendio
+                        self.calculate_routes_a_bombas(stopPoint)
+
                     self.routeMaker(wkt)
                     self.dlg.showMinimized()
                     # clear rubberbands Esto ver si se saca
@@ -370,25 +375,24 @@ class OnlineRoutingMapper:
     
     def calculate_routes_a_bombas(self, startPoint):
         try:
-            if type_emergency in (1,2,3,4):
-                bombas = select('bomba')
-                if (len(bombas)!=0):
-                    service = self.services[list(self.services)[TIPO_SERVICIO_HERE_V8]]
-                    distances = []
-                    for tupla in bombas:
-                        if (tupla[4] == 'A'):
-                            wkt, url = service(startPoint, self.crsTransform(QgsPointXY(float(tupla[1]), float(tupla[2]))))
-                            response = urlopen(url).read().decode("utf-8")
-                            diccionario = json.loads(response)
-                            d = int(diccionario['routes'][0]['sections'][0]['summary']['length'])
-                            distances.append([d,tupla[3]])
+            bombas = select('bomba')
+            if (len(bombas)!=0):
+                service = self.services[list(self.services)[TIPO_SERVICIO_HERE_V8]]
+                distances = []
+                for tupla in bombas:
+                    if (tupla[4] == 'A'):
+                        wkt, url = service(startPoint, self.crsTransform(QgsPointXY(float(tupla[1]), float(tupla[2]))))
+                        response = urlopen(url).read().decode("utf-8")
+                        diccionario = json.loads(response)
+                        d = int(diccionario['routes'][0]['sections'][0]['summary']['length'])
+                        distances.append([d,tupla[3]])
 
-                    list_distances = sorted(distances, key=lambda x: x[0])
-                    f = open (PATH_REPORTE,'a')
-                    f.write('\nLas Bombas de agua más cercanas de menor a mayor:\n')
-                    for tupla in list_distances:
-                        f.write(str(tupla[1])+ ", distancia :"+ str(tupla[0])+'\n')
-                    f.close()
+                list_distances = sorted(distances, key=lambda x: x[0])
+                f = open (PATH_REPORTE,'a')
+                f.write('\nLas Bombas de agua más cercanas de menor a mayor:\n')
+                for tupla in list_distances:
+                    f.write(str(tupla[1])+ ", distancia :"+ str(tupla[0])+'\n')
+                f.close()
         except Exception as err:
             QgsMessageLog.logMessage(str(err))
             QMessageBox.warning(self.dlg, 'Calculate routes bombas',"Hubo un error al calcular las bombas mas cercanas")
@@ -426,7 +430,8 @@ class OnlineRoutingMapper:
     
     
     def call_sound(self, path_sound, emergency):
-        type_emergency = emergency
+        self.type_emergency = emergency
+        print("path y emergencia {} {}".format(path_sound, self.type_emergency))
         pygame.init()
 
         # Configura el sistema de sonido
@@ -458,24 +463,22 @@ class OnlineRoutingMapper:
         self.dlg.buttonAccidenteVehicular.clicked.connect(lambda: self.call_sound(SONIDO_ALARMA_ACCIDENTE_VEHICULAR, 5))
         self.dlg.buttonAccidenteMatPel.clicked.connect(lambda: self.call_sound(SONIDO_ALARMA_ACCIDENTE_MAT_PEL, 6))
         self.dlg.buttonEmergVarias.clicked.connect(lambda: self.call_sound(SONIDO_ALARMA_EMERGENCIAS_VARIAS, 7))
-        print(f"type sond{type_emergency}")
         self.dlg.buttonRescateDeAltura.clicked.connect(lambda: self.call_sound(SONIDO_ALARMA_RESCATE_DE_ALTURA, 8))
 
         self.canvas = self.iface.mapCanvas()
         self.clickTool = QgsMapToolEmitPoint(self.canvas)
         self.dlg.buscarPunto.clicked.connect(lambda: self.toolActivatorStartPoints())
         self.dlg.volver.clicked.connect(lambda: self.backScreen())
-        print(f"type sond{type_emergency}")
         self.dlg.aceptar.clicked.connect(lambda: self.press_btn_acept())
-        print(f"type sond{type_emergency}")
 
 
     def press_btn_acept(self):
-        print(f"type sond{type_emergency}")
-        self.savePoints()
-        print(f"type sond{type_emergency}")
-        self.runAnalysis()
-
+        direccion = self.dlg.form_direccion.text()
+        if ((direccion and direccion.strip()) or (self.stopPointXY is not None)):
+            print("direccion {}".format(direccion))
+            self.savePoints()
+            self.runAnalysis()
+        else :self.backScreen()
         
     def add_table_item(self, row, column, text):
         # Método para agregar un elemento a la tabla
@@ -828,17 +831,17 @@ class OnlineRoutingMapper:
             telefono = self.dlg.form_telefono.text()
             #inserta los pedidos en la DB
             self.calculate_points()
-            print(f"--------save points {type_emergency}")
+            print(f"--------save points {self.type_emergency}")
             categoria={
                 '1':'INCENDIO FORESTAL',
                 '2':'INCENDIO RURAL',
                 '3':'INCENDIO VEHICULAR',
                 '4':'INCENDIO ESTRUCTURAL',
                 '5':'ACCIDENTE',
-                '6':'MATERIAL_PELIGRO',
+                '6':'MATERIAL PELIGRO',
                 '7':'VARIOS',
-                '8':'RESCATE_DE_ALTURA'
-            }.get(str(type_emergency),'Desconocido')
+                '8':'RESCATE DE ALTURA'
+            }.get(str(self.type_emergency),'Desconocido')
             valores = "'{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}'".format(direccion, solicitante, telefono, "Pedro", "",self.crsTransformPedido(self.stopPointXY), descripcion,0,categoria)
             insert('pedido', 'direccion, solicitante, telefono, operador, startpoint, stoppoint, description, tiempo_estimado,tipo', valores)
                 
