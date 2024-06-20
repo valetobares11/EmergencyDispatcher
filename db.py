@@ -217,8 +217,8 @@ def insertarPedido(direccion, solicitante, telefono, operador, startpoint, stopp
     conexion = connectBD()
     cursor = conexion.cursor()
     
-    consulta_insercion_pedido = sql.SQL("INSERT INTO pedido (direccion, solicitante, telefono, operador, startpoint, stoppoint, description, tiempo_estimado, tipo,tiempo_real,fecha) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)")
-    datos_pedido = (direccion, solicitante, telefono, operador, startpoint, stoppoint, description, tiempo_estimado, tipo,0, datetime.datetime.now())
+    consulta_insercion_pedido = sql.SQL("INSERT INTO pedido (direccion, solicitante, telefono, operador, startpoint, stoppoint, description, tiempo_estimado, tipo,tiempo_real,fecha) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, now())")
+    datos_pedido = (direccion, solicitante, telefono, operador, startpoint, stoppoint, description, tiempo_estimado, tipo,0)
     cursor.execute(consulta_insercion_pedido, datos_pedido)
 
 
