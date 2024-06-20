@@ -104,6 +104,10 @@ class OnlineRoutingMapper:
         self.path_planilla_carga = None
         #variable necesaria para saber que tipo de emergencia es
         self.type_emergency = 0
+        self.address = ""
+        self.telefono =""
+        self.solicitante = ""
+        self.descripcion = ""
 
     # noinspection PyMethodMayBeStatic
     def tr(self, message):
@@ -349,8 +353,9 @@ class OnlineRoutingMapper:
                     self.cargar_puntos_lista()
                     # wkt, url = service(startPoint, stopPoint, self.listPointsExclution, self.tipoAutomovil)
                     wkt, url = service(startPoint, stopPoint, self.listPointsExclution, self.tipoAutomovil)
+                    
                     report(url)
-
+                    self.persistir_pedido(url)
                     if self.type_emergency in (1,2,3,4):
                         # si es incendio
                         self.calculate_routes_a_bombas(stopPoint)
@@ -373,6 +378,34 @@ class OnlineRoutingMapper:
         else:
             QMessageBox.information(self.dlg, 'Warning', 'Please choose Start Location and Stop Location.')
     
+    
+    def persistir_pedido(self, url):
+        try:
+            response = urlopen(url).read().decode("utf-8")
+            diccionario = json.loads(response)
+            tiempo_estimado = int(diccionario['routes'][0]['sections'][0]['summary']['duration'])
+            descripcion = self.descripcion
+            direccion = self.address
+            solicitante = self.solicitante
+            telefono = self.telefono
+            print(f"--------save points {self.type_emergency}")
+            categoria={
+                '1':'INCENDIO FORESTAL',
+                '2':'INCENDIO RURAL',
+                '3':'INCENDIO VEHICULAR',
+                '4':'INCENDIO ESTRUCTURAL',
+                '5':'ACCIDENTE',
+                '6':'MATERIAL PELIGRO',
+                '7':'VARIOS',
+                '8':'RESCATE DE ALTURA'
+            }.get(str(self.type_emergency),'Desconocido')
+            valores = "'{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}','{}', now()".format(direccion, solicitante, telefono, "Pedro", "",self.crsTransformPedido(self.stopPointXY), descripcion, tiempo_estimado, categoria, tiempo_estimado)
+            insert('pedido', 'direccion, solicitante, telefono, operador, startpoint, stoppoint, description, tiempo_estimado,tipo, tiempo_real, fecha', valores)
+                
+        except Exception as e:
+            QgsMessageLog.logMessage(str(e))
+            QMessageBox.warning(self.dlg, 'persistir_pedido', "Error al intentar guardar el pedido")
+            
     def calculate_routes_a_bombas(self, startPoint):
         try:
             bombas = select('bomba')
@@ -399,35 +432,23 @@ class OnlineRoutingMapper:
 
     def calculate_points(self):
         punto_part = PUNTO_PARTIDA.split(',')
+        self.descripcion = self.dlg.form_descripcion.text()
+        self.solicitante = self.dlg.form_solicitante.text()
+        self.telefono = self.dlg.form_telefono.text()
         self.startPointXY = QgsPointXY(float(punto_part[0]), float(punto_part[1]))
-        if (self.dlg.form_direccion.text() != None):
+        try:
             if (self.stopPointXY is None):
                 address = self.dlg.form_direccion.text()+ " " + CIUDAD + " " + PROVINCIA
-                try:
-                    x, y = obtener_coordenada(address)
-                    self.stopPointXY = QgsPointXY(x,y)
-                    f = open (PATH_REPORTE ,'w')
-                    f.write('Descripcion Emergencia: '+self.dlg.form_descripcion.text())
-                    f.write('\n\nDireccion: '+address)
-                    f.write('\n\nSolicitante: '+self.dlg.form_solicitante.text())
-                    f.write('\n\nTelefono: '+self.dlg.form_telefono.text()+'\n\n')
-                    f.close()
-                except Exception as e:
-                    QgsMessageLog.logMessage(str(e))
-                    QMessageBox.warning(self.dlg, 'calculate_points', "No se pudo encontrar esa direccion pruebe seleccionando un punto con el buscar punto")
+                x, y = obtener_coordenada(address)
+                self.stopPointXY = QgsPointXY(x,y)
             else:
-                try:
-                    address = obtener_direccion(self.stopPointXY.x(),self.stopPointXY.y())
-                    f = open (PATH_REPORTE ,'w')
-                    f.write('Descripcion Emergencia: '+self.dlg.form_descripcion.text())
-                    f.write('\n\nDireccion: '+self.dlg.form_direccion.text())
-                    f.write('\n\nSolicitante: '+self.dlg.form_solicitante.text())
-                    f.write('\n\nTelefono: '+self.dlg.form_telefono.text()+'\n\n')
-                    f.close()
-                except Exception as e:
-                    QgsMessageLog.logMessage(str(e))
-                    QMessageBox.warning(self.dlg, 'calculate_points', "No se pudo encontrar este punto")
-    
+                address = obtener_direccion(self.stopPointXY.x(),self.stopPointXY.y())
+        
+            self.address = address
+            write_report(self.dlg.form_descripcion.text(), address, self.dlg.form_solicitante.text(), self.dlg.form_telefono.text())
+        except Exception as e:
+            QgsMessageLog.logMessage(str(e))
+            QMessageBox.warning(self.dlg, 'calculate_points', "Error al obtener coordenada o direccion")
     
     def call_sound(self, path_sound, emergency):
         self.type_emergency = emergency
@@ -823,26 +844,7 @@ class OnlineRoutingMapper:
 
     def savePoints(self):
         try:
-            descripcion = self.dlg.form_descripcion.text()
-            direccion = self.dlg.form_direccion.text()
-            solicitante = self.dlg.form_solicitante.text()
-            telefono = self.dlg.form_telefono.text()
-            #inserta los pedidos en la DB
-            self.calculate_points()
-            categoria={
-                '1':TIPO1,              
-                '2':TIPO2,          
-                '3':TIPO3,              
-                '4':TIPO4,
-                '5':TIPO5,
-                '6':TIPO6,
-                '7':TIPO7,
-                '8':TIPO8
-            }.get(str(self.type_emergency),TIPO0)
-            valores = "'{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}'".format(direccion, solicitante, telefono, "Pedro", "",self.crsTransformPedido(self.stopPointXY), descripcion,0,categoria)
-            insert('pedido', 'direccion, solicitante, telefono, operador, startpoint, stoppoint, description, tiempo_estimado,tipo', valores)
-                
-            
+            self.calculate_points()    
             self.tipoAutomovil = self.dlg.comboBox.currentText()
             self.dlg = self.dlg_back
             self.dlg.show()
@@ -850,7 +852,7 @@ class OnlineRoutingMapper:
             #     self.dlg.showNormal()
         except Exception as e:
             QgsMessageLog.logMessage(str(e))
-            QMessageBox.warning(self.dlg, 'actualizar_pedido', "No se puede modificar el valor por exceder de caracteres o tipo incorrecto")
+            QMessageBox.warning(self.dlg, 'savePoints', "Error al intentar guardar los puntos")
 
     def backScreen(self):
         self.dlg = self.dlg_back

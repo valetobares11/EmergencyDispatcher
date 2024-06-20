@@ -50,14 +50,21 @@ def report(url):
             f.write(str(registros[x][3]))
     f.close()
 
-def obtener_direccion(latitud, longitud):
-    url = f"https://nominatim.openstreetmap.org/search?format=json&lat={latitud}&lon={longitud}"
+def write_report(descripcion, address, solicitante, telefono):
+    f = open (PATH_REPORTE ,'w')
+    f.write('Descripcion Emergencia: '+descripcion)
+    f.write('\n\nDireccion: '+address)
+    f.write('\n\nSolicitante: '+solicitante)
+    f.write('\n\nTelefono: '+telefono+'\n\n')
+    f.close()
+
+def obtener_direccion(longitud, latitud):
+    url = f" https://maps.googleapis.com/maps/api/geocode/json?latlng={latitud},{longitud}&key={APIKEY}"
     response = requests.get(url)
-    
     if response.status_code == 200:
         data = response.json()
         if data:
-            direccion = data[0]["display_name"]
+            direccion = data['results'][0]['formatted_address']
             return direccion
         else:
             return "No se encontró ninguna dirección para las coordenadas proporcionadas."
