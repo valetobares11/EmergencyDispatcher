@@ -114,7 +114,7 @@ class RouteProvider(object):
             url = self.__hereBaseURL_V8_Exclusion % (startPoint, endPoint, parameter_movil, points, APIKEY_HERE)
         else:
            url = self.__hereBaseURL_V8 %(startPoint, endPoint, parameter_movil, APIKEY_HERE)
-        print(url)
+        
         response = urlopen(url).read().decode("utf-8")
         return self.__wktMaker__(response), url
 

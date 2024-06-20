@@ -11,7 +11,7 @@ nombre_usuario = os.getlogin()
 # CONFIG
 PUNTO_PARTIDA = "-64.3451616313023,-33.12684997058952"
 CIUDAD = "rio cuarto"
-PROVINCIA="cordoba"
+PROVINCIA = "cordoba"
 PATH_REPORTE = f"/home/{nombre_usuario}/Descargas/reporte.txt"
 SONIDO_ALARMA_INCENDIO_FORESTAL = f"/home/{nombre_usuario}/.local/share/QGIS/QGIS3/profiles/default/python/plugins/OnlineRoutingMapper/sonidos/iforestal.mp3"
 SONIDO_ALARMA_INCENDIO_RURAL = f"/home/{nombre_usuario}/.local/share/QGIS/QGIS3/profiles/default/python/plugins/OnlineRoutingMapper/sonidos/irural.mp3"
@@ -21,7 +21,15 @@ SONIDO_ALARMA_ACCIDENTE_VEHICULAR = f"/home/{nombre_usuario}/.local/share/QGIS/Q
 SONIDO_ALARMA_ACCIDENTE_MAT_PEL= f"/home/{nombre_usuario}/.local/share/QGIS/QGIS3/profiles/default/python/plugins/OnlineRoutingMapper/sonidos/matpel.mp3"
 SONIDO_ALARMA_EMERGENCIAS_VARIAS = f"/home/{nombre_usuario}/.local/share/QGIS/QGIS3/profiles/default/python/plugins/OnlineRoutingMapper/sonidos/ivarios.mp3"
 SONIDO_ALARMA_RESCATE_DE_ALTURA = f"/home/{nombre_usuario}/.local/share/QGIS/QGIS3/profiles/default/python/plugins/OnlineRoutingMapper/sonidos/raltura.mp3"
-
+TIPO0 = "DESCONOCIDO"
+TIPO1 = "INCENDIO FORESTAL"
+TIPO2 = "INCENDIO RURAL"
+TIPO3 = "INCENDIO VEHICULAR"
+TIPO4 = "INCENDIO ESTRUCTURAL"
+TIPO5 = "ACCIDENTE"
+TIPO6 = "MATERIAL PELIGROSO"
+TIPO7 = "VARIOS"
+TIPO8 = "RESCATE DE ALTURA"
 
 # TIPO AUTOMOVILES
 CAMIONETA = "Camioneta"

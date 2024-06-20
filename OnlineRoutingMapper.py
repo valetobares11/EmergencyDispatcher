@@ -431,7 +431,6 @@ class OnlineRoutingMapper:
     
     def call_sound(self, path_sound, emergency):
         self.type_emergency = emergency
-        print("path y emergencia {} {}".format(path_sound, self.type_emergency))
         pygame.init()
 
         # Configura el sistema de sonido
@@ -475,7 +474,6 @@ class OnlineRoutingMapper:
     def press_btn_acept(self):
         direccion = self.dlg.form_direccion.text()
         if ((direccion and direccion.strip()) or (self.stopPointXY is not None)):
-            print("direccion {}".format(direccion))
             self.savePoints()
             self.runAnalysis()
         else :self.backScreen()
@@ -831,17 +829,16 @@ class OnlineRoutingMapper:
             telefono = self.dlg.form_telefono.text()
             #inserta los pedidos en la DB
             self.calculate_points()
-            print(f"--------save points {self.type_emergency}")
             categoria={
-                '1':'INCENDIO FORESTAL',
-                '2':'INCENDIO RURAL',
-                '3':'INCENDIO VEHICULAR',
-                '4':'INCENDIO ESTRUCTURAL',
-                '5':'ACCIDENTE',
-                '6':'MATERIAL PELIGRO',
-                '7':'VARIOS',
-                '8':'RESCATE DE ALTURA'
-            }.get(str(self.type_emergency),'Desconocido')
+                '1':TIPO1,              
+                '2':TIPO2,          
+                '3':TIPO3,              
+                '4':TIPO4,
+                '5':TIPO5,
+                '6':TIPO6,
+                '7':TIPO7,
+                '8':TIPO8
+            }.get(str(self.type_emergency),TIPO0)
             valores = "'{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}'".format(direccion, solicitante, telefono, "Pedro", "",self.crsTransformPedido(self.stopPointXY), descripcion,0,categoria)
             insert('pedido', 'direccion, solicitante, telefono, operador, startpoint, stoppoint, description, tiempo_estimado,tipo', valores)
                 

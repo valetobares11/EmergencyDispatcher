@@ -121,7 +121,7 @@
         <property name="styleSheet">
          <string notr="true">background-color: rgb(33, 43, 56);</string>
         </property>
-        <layout class="QVBoxLayout" name="verticalLayout_3">
+        <layout class="QVBoxLayout" name="verticalLayout">
          <item>
           <widget class="QPushButton" name="btnMapa">
            <property name="minimumSize">
@@ -155,7 +155,44 @@ background-color: #FF0000;
 }</string>
            </property>
            <property name="text">
-            <string>Ver Mapa</string>
+            <string>Historial de emergencias</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="btnMapa_2">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>600</width>
+             <height>80</height>
+            </size>
+           </property>
+           <property name="font">
+            <font>
+             <family>URW Gothic [urw]</family>
+             <pointsize>-1</pointsize>
+            </font>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">QPushButton {
+font-size:14px;
+background-color:#ffcb3a;
+border-radius: 10px;
+border: 1px solid black;
+}
+
+QPushButton:hover {
+background-color: #FF0000;
+}</string>
+           </property>
+           <property name="text">
+            <string>Gráficos</string>
            </property>
           </widget>
          </item>
