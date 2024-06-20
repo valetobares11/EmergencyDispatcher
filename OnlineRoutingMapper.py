@@ -70,8 +70,8 @@ class CustomMapTool(QgsMapToolIdentifyFeature):
         dialog.setText(attribute_text)
         dialog.exec()
 
-#variable necesaria para saber si calcular rutas a bombas de incendio
-is_incendio = False
+#variable necesaria para saber que tipo de emergencia es
+type_emergency = 0
 
 class OnlineRoutingMapper:
     
@@ -370,24 +370,25 @@ class OnlineRoutingMapper:
     
     def calculate_routes_a_bombas(self, startPoint):
         try:
-            bombas = select('bomba')
-            if (len(bombas)!=0):
-                service = self.services[list(self.services)[TIPO_SERVICIO_HERE_V8]]
-                distances = []
-                for tupla in bombas:
-                    if (tupla[4] == 'A'):
-                        wkt, url = service(startPoint, self.crsTransform(QgsPointXY(float(tupla[1]), float(tupla[2]))))
-                        response = urlopen(url).read().decode("utf-8")
-                        diccionario = json.loads(response)
-                        d = int(diccionario['routes'][0]['sections'][0]['summary']['length'])
-                        distances.append([d,tupla[3]])
+            if type_emergency in (1,2,3,4):
+                bombas = select('bomba')
+                if (len(bombas)!=0):
+                    service = self.services[list(self.services)[TIPO_SERVICIO_HERE_V8]]
+                    distances = []
+                    for tupla in bombas:
+                        if (tupla[4] == 'A'):
+                            wkt, url = service(startPoint, self.crsTransform(QgsPointXY(float(tupla[1]), float(tupla[2]))))
+                            response = urlopen(url).read().decode("utf-8")
+                            diccionario = json.loads(response)
+                            d = int(diccionario['routes'][0]['sections'][0]['summary']['length'])
+                            distances.append([d,tupla[3]])
 
-                list_distances = sorted(distances, key=lambda x: x[0])
-                f = open (PATH_REPORTE,'a')
-                f.write('\nLas Bombas de agua más cercanas de menor a mayor:\n')
-                for tupla in list_distances:
-                    f.write(str(tupla[1])+ ", distancia :"+ str(tupla[0])+'\n')
-                f.close()
+                    list_distances = sorted(distances, key=lambda x: x[0])
+                    f = open (PATH_REPORTE,'a')
+                    f.write('\nLas Bombas de agua más cercanas de menor a mayor:\n')
+                    for tupla in list_distances:
+                        f.write(str(tupla[1])+ ", distancia :"+ str(tupla[0])+'\n')
+                    f.close()
         except Exception as err:
             QgsMessageLog.logMessage(str(err))
             QMessageBox.warning(self.dlg, 'Calculate routes bombas',"Hubo un error al calcular las bombas mas cercanas")
@@ -424,10 +425,8 @@ class OnlineRoutingMapper:
                     QMessageBox.warning(self.dlg, 'calculate_points', "No se pudo encontrar este punto")
     
     
-    def call_sound(self, path_sound, fire = False):
-        if (fire):
-            is_incendio = True
-
+    def call_sound(self, path_sound, emergency):
+        type_emergency = emergency
         pygame.init()
 
         # Configura el sistema de sonido
@@ -452,24 +451,29 @@ class OnlineRoutingMapper:
         opciones = [CAMIONETA, CAMION_LIGERO, CAMION_PESADO]
         self.dlg.comboBox.addItems(opciones)
 
-        self.dlg.buttonIncendioForestal.clicked.connect(lambda: self.call_sound(SONIDO_ALARMA_INCENDIO_FORESTAL, True))
-        self.dlg.buttonIncendioRural.clicked.connect(lambda: self.call_sound(SONIDO_ALARMA_INCENDIO_RURAL, True))
-        self.dlg.buttonIncendioVehicular.clicked.connect(lambda: self.call_sound(SONIDO_ALARMA_INCENDIO_VEHICULAR, True))
-        self.dlg.buttonIncendioEstructura.clicked.connect(lambda: self.call_sound(SONIDO_ALARMA_RESCATE_ESTRUCTURA, True))
-        self.dlg.buttonAccidenteVehicular.clicked.connect(lambda: self.call_sound(SONIDO_ALARMA_ACCIDENTE_VEHICULAR))
-        self.dlg.buttonAccidenteMatPel.clicked.connect(lambda: self.call_sound(SONIDO_ALARMA_ACCIDENTE_MAT_PEL))
-        self.dlg.buttonEmergVarias.clicked.connect(lambda: self.call_sound(SONIDO_ALARMA_EMERGENCIAS_VARIAS))
-        self.dlg.buttonRescateDeAltura.clicked.connect(lambda: self.call_sound(SONIDO_ALARMA_RESCATE_DE_ALTURA))
+        self.dlg.buttonIncendioForestal.clicked.connect(lambda: self.call_sound(SONIDO_ALARMA_INCENDIO_FORESTAL, 1))
+        self.dlg.buttonIncendioRural.clicked.connect(lambda: self.call_sound(SONIDO_ALARMA_INCENDIO_RURAL, 2))
+        self.dlg.buttonIncendioVehicular.clicked.connect(lambda: self.call_sound(SONIDO_ALARMA_INCENDIO_VEHICULAR, 3))
+        self.dlg.buttonIncendioEstructura.clicked.connect(lambda: self.call_sound(SONIDO_ALARMA_RESCATE_ESTRUCTURA, 4))
+        self.dlg.buttonAccidenteVehicular.clicked.connect(lambda: self.call_sound(SONIDO_ALARMA_ACCIDENTE_VEHICULAR, 5))
+        self.dlg.buttonAccidenteMatPel.clicked.connect(lambda: self.call_sound(SONIDO_ALARMA_ACCIDENTE_MAT_PEL, 6))
+        self.dlg.buttonEmergVarias.clicked.connect(lambda: self.call_sound(SONIDO_ALARMA_EMERGENCIAS_VARIAS, 7))
+        print(f"type sond{type_emergency}")
+        self.dlg.buttonRescateDeAltura.clicked.connect(lambda: self.call_sound(SONIDO_ALARMA_RESCATE_DE_ALTURA, 8))
 
         self.canvas = self.iface.mapCanvas()
         self.clickTool = QgsMapToolEmitPoint(self.canvas)
         self.dlg.buscarPunto.clicked.connect(lambda: self.toolActivatorStartPoints())
         self.dlg.volver.clicked.connect(lambda: self.backScreen())
+        print(f"type sond{type_emergency}")
         self.dlg.aceptar.clicked.connect(lambda: self.press_btn_acept())
+        print(f"type sond{type_emergency}")
 
 
     def press_btn_acept(self):
+        print(f"type sond{type_emergency}")
         self.savePoints()
+        print(f"type sond{type_emergency}")
         self.runAnalysis()
 
         
@@ -824,9 +828,20 @@ class OnlineRoutingMapper:
             telefono = self.dlg.form_telefono.text()
             #inserta los pedidos en la DB
             self.calculate_points()
-            valores = "'{}', '{}', '{}', '{}', '{}', '{}', '{}'".format(direccion, solicitante, telefono, "Pedro", " ",self.crsTransformPedido(self.stopPointXY), descripcion)
-            insert('pedido', 'direccion, solicitante, telefono, operador, startpoint, stoppoint, description ', valores)
-        
+            print(f"--------save points {type_emergency}")
+            categoria={
+                '1':'INCENDIO FORESTAL',
+                '2':'INCENDIO RURAL',
+                '3':'INCENDIO VEHICULAR',
+                '4':'INCENDIO ESTRUCTURAL',
+                '5':'ACCIDENTE',
+                '6':'MATERIAL_PELIGRO',
+                '7':'VARIOS',
+                '8':'RESCATE_DE_ALTURA'
+            }.get(str(type_emergency),'Desconocido')
+            valores = "'{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}'".format(direccion, solicitante, telefono, "Pedro", "",self.crsTransformPedido(self.stopPointXY), descripcion,0,categoria)
+            insert('pedido', 'direccion, solicitante, telefono, operador, startpoint, stoppoint, description, tiempo_estimado,tipo', valores)
+                
             
             self.tipoAutomovil = self.dlg.comboBox.currentText()
             self.dlg = self.dlg_back

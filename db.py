@@ -1,6 +1,7 @@
 import psycopg2
 from psycopg2 import sql
 from .config import *
+import datetime
                 
 def connectBD():
     # Conectar a la base de datos
@@ -197,8 +198,11 @@ def createTablePedido():
             startpoint VARCHAR(40),
             stoppoint VARCHAR(40),
             description VARCHAR(255),
-            tiempo TIMESTAMP,
+            tiempo_estimado INT,
             id_archivo INT,
+            tipo VARCHAR(40),
+            tiempo_real INT,
+            fecha TIMESTAMP,
             FOREIGN KEY (id_archivo) REFERENCES archivo(id)
         );
     """
@@ -209,12 +213,12 @@ def createTablePedido():
     conexion.close()
 
 
-def insertarPedido(direccion, solicitante, telefono, operador, startpoint, stoppoint, description=""):
+def insertarPedido(direccion, solicitante, telefono, operador, startpoint, stoppoint, description, tiempo_estimado, tipo):
     conexion = connectBD()
     cursor = conexion.cursor()
     
-    consulta_insercion_pedido = sql.SQL("INSERT INTO pedido (direccion, solicitante, telefono, operador, startpoint, stoppoint, description) VALUES (%s, %s, %s, %s, %s, %s, %s)")
-    datos_pedido = (direccion, solicitante, telefono, operador, startpoint, stoppoint, description)
+    consulta_insercion_pedido = sql.SQL("INSERT INTO pedido (direccion, solicitante, telefono, operador, startpoint, stoppoint, description, tiempo_estimado, tipo,tiempo_real,fecha) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)")
+    datos_pedido = (direccion, solicitante, telefono, operador, startpoint, stoppoint, description, tiempo_estimado, tipo,0, datetime.datetime.now())
     cursor.execute(consulta_insercion_pedido, datos_pedido)
 
 
