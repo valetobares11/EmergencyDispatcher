@@ -47,21 +47,25 @@ import pygame
 
 
 class CustomMapTool(QgsMapToolIdentifyFeature):
-    def __init__(self, canvas, capa_puntos):
+    def __init__(self, canvas, capas_puntos):
+        QgsMapToolIdentifyFeature.__init__(self, canvas)
         self.canvas = canvas
-        self.capa_puntos = capa_puntos
-        QgsMapToolIdentifyFeature.__init__(self, self.canvas)
+        self.capas_puntos = capas_puntos  # Lista de capas de puntos
 
     def canvasReleaseEvent(self, event):
-        results = self.identify(event.x(), event.y(), [self.capa_puntos], QgsMapToolIdentify.TopDownStopAtFirst)
-        if results:
-            feature = results[0].mFeature
-            fields = feature.fields()
-            attribute_text = ""
+        # Identificar características en todas las capas de puntos
+        attribute_text = ""
+        for capa_puntos in self.capas_puntos:
+            results = self.identify(event.x(), event.y(), [capa_puntos], QgsMapToolIdentify.TopDownStopAtFirst)
+            if results:
+                feature = results[0].mFeature
+                fields = feature.fields()
+                
+                for field, attribute in zip(fields, feature.attributes()):
+                    if field.name() not in ['columna_x', 'columna_y']:
+                        attribute_text += f"{field.name()}: {attribute}\n"
         
-            for field, attribute in zip(fields, feature.attributes()):
-                if field.name()!='columna_x' and field.name()!='columna_y':
-                    attribute_text += f"{field.name()}: {attribute}\n"
+        if attribute_text:  # Solo mostrar el diálogo si hay atributos encontrados
             self.showAttributeDialog(attribute_text)
 
     def showAttributeDialog(self, attribute_text):
@@ -69,7 +73,7 @@ class CustomMapTool(QgsMapToolIdentifyFeature):
         dialog.setWindowTitle("Datos de la salida")
         dialog.setText(attribute_text)
         dialog.exec()
-
+        
 class OnlineRoutingMapper:
     
 
@@ -663,7 +667,12 @@ class OnlineRoutingMapper:
         #self.dlg.tableWidget.sortItems(0)
         
                 # Crea una nueva capa de puntos en memoria
-        capa_puntos = QgsVectorLayer("Point?crs=EPSG:4326", "Pedidos", "memory")
+        tipos = [TIPO1, TIPO2, TIPO3, TIPO4, TIPO5, TIPO6, TIPO7, TIPO8]
+        capas_puntos = []
+
+        for tipo in tipos:
+            capa = QgsVectorLayer("Point?crs=EPSG:4326", tipo, "memory")
+            capas_puntos.append(capa)
 
         # Define los campos para la capa de puntos
         campos = QgsFields()
@@ -672,9 +681,12 @@ class OnlineRoutingMapper:
         campos.append(QgsField("Descripccion", QVariant.String))
         campos.append(QgsField("Direccion", QVariant.String))
         campos.append(QgsField("Solicitante", QVariant.String))
-        # Asigna los campos a la capa
-        capa_puntos.dataProvider().addAttributes(campos)
-        capa_puntos.updateFields()
+        campos.append(QgsField("Emergencia", QVariant.String))
+
+        # Asigna los campos a cada capa
+        for capa in capas_puntos:
+            capa.dataProvider().addAttributes(campos)
+            capa.updateFields()
         # Ejecuta la consulta SQL y crea los puntos
         registros = select("pedido")
         for tupla in registros:
@@ -685,14 +697,30 @@ class OnlineRoutingMapper:
                 # Crea una nueva característica y agrega la geometría y los atributos
                 feature = QgsFeature()
                 feature.setGeometry(punto_geom)
-                feature.setAttributes([x, y, tupla[7], tupla[1],tupla[2]])
-                capa_puntos.dataProvider().addFeature(feature)
-        # Agrega la capa al proyecto de QGIS
-        QgsProject.instance().addMapLayer(capa_puntos)
-        # Refresca la interfaz de QGIS
-        self.iface.layerTreeView().refreshLayerSymbology(capa_puntos.id())
-        self.canvas = self.iface.mapCanvas()
-        self.clickTool = CustomMapTool(self.canvas,capa_puntos)
+                feature.setAttributes([x, y, tupla[7], tupla[1],tupla[2],tupla[10]])
+                # Crear un diccionario para mapear tipos a índices de capas
+                tipo_a_capa = {
+                    TIPO1: capas_puntos[0],
+                    TIPO2: capas_puntos[1],
+                    TIPO3: capas_puntos[2],
+                    TIPO4: capas_puntos[3],
+                    TIPO5: capas_puntos[4],
+                    TIPO6: capas_puntos[5],
+                    TIPO7: capas_puntos[6],
+                    TIPO8: capas_puntos[7]
+                }
+
+                # Asignar la característica a la capa correspondiente
+                if tupla[10] in tipo_a_capa:
+                    tipo_a_capa[tupla[10]].dataProvider().addFeature(feature)
+
+        for capa in capas_puntos:
+            # Agrega la capa al proyecto de QGIS
+            QgsProject.instance().addMapLayer(capa)
+            # Refresca la interfaz de QGIS
+            self.iface.layerTreeView().refreshLayerSymbology(capa.id())
+            self.canvas = self.iface.mapCanvas()
+        self.clickTool = CustomMapTool(self.canvas,capas_puntos)
         self.canvas.setMapTool(self.clickTool)
         
         self.dlg.closeEvent = self.closePedidos
