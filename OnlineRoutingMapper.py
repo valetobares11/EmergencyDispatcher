@@ -297,7 +297,7 @@ class OnlineRoutingMapper:
 
     def crsTransform(self, pointXY):
         sourceCRS = self.canvas.mapSettings().destinationCrs()  # getting the project CRS
-        destinationCRS = QgsCoordinateReferenceSystem(4326)  # google uses this CRS
+        destinationCRS = QgsCoordinateReferenceSystem.fromEpsgId(4326)  # google uses this CRS
         transformer = QgsCoordinateTransform(sourceCRS, destinationCRS,
                                              QgsProject.instance())  # defining a CRS transformer
         outputQgsPoint = transformer.transform(pointXY, QgsCoordinateTransform.ForwardTransform)
@@ -306,7 +306,7 @@ class OnlineRoutingMapper:
     
     def crsTransformPedido(self, pointXY):
         sourceCRS = self.canvas.mapSettings().destinationCrs()  # getting the project CRS
-        destinationCRS = QgsCoordinateReferenceSystem(4326)  # google uses this CRS
+        destinationCRS = QgsCoordinateReferenceSystem.fromEpsgId(4326)  # google uses this CRS
         transformer = QgsCoordinateTransform(sourceCRS, destinationCRS,
                                              QgsProject.instance())  # defining a CRS transformer
         outputQgsPoint = transformer.transform(pointXY, QgsCoordinateTransform.ForwardTransform)
@@ -333,7 +333,7 @@ class OnlineRoutingMapper:
         vectorLayer.loadNamedStyle(self.plugin_dir + os.sep + 'OnlineRoutingMapper.qml')
         QgsProject.instance().addMapLayer(vectorLayer)
         destinationCRS = self.canvas.mapSettings().destinationCrs()  # getting the project CRS
-        sourceCRS = QgsCoordinateReferenceSystem(4326)
+        sourceCRS = QgsCoordinateReferenceSystem.fromEpsgId(4326)
         transformer = QgsCoordinateTransform(sourceCRS, destinationCRS, QgsProject.instance())
         extentForZoom = transformer.transform(vectorLayer.extent(), QgsCoordinateTransform.ForwardTransform)
         self.canvas.setExtent(extentForZoom)
