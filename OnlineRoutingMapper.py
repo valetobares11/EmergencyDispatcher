@@ -403,7 +403,7 @@ class OnlineRoutingMapper:
                 '7':'VARIOS',
                 '8':'RESCATE DE ALTURA'
             }.get(str(self.type_emergency),'Desconocido')
-            valores = "'{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}','{}', now()".format(direccion, solicitante, telefono, "Pedro", "",self.crsTransformPedido(self.stopPointXY), descripcion, 0, categoria, math.ceil(tiempo_estimado / 60))
+            valores = "'{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}','{}', now()".format(direccion, solicitante, telefono, "Pedro", "",self.crsTransformPedido(self.stopPointXY), descripcion, math.ceil(tiempo_estimado / 60), categoria, 0)
             columnasPedido = 'direccion, solicitante, telefono, operador, startpoint, stoppoint, description, tiempo_estimado,tipo, tiempo_real, fecha'
             insert('pedido', columnasPedido, valores)
                 
