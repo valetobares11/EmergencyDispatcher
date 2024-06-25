@@ -218,21 +218,11 @@
            <property name="title">
             <string>Fecha desde - hasta</string>
            </property>
-           <widget class="QgsDateTimeEdit" name="form_fecha">
-            <property name="geometry">
-             <rect>
-              <x>30</x>
-              <y>40</y>
-              <width>171</width>
-              <height>25</height>
-             </rect>
-            </property>
-           </widget>
            <widget class="QTimeEdit" name="form_hora">
             <property name="geometry">
              <rect>
               <x>30</x>
-              <y>80</y>
+              <y>90</y>
               <width>81</width>
               <height>25</height>
              </rect>
@@ -285,11 +275,47 @@ background-color: #FF0000;
             <property name="geometry">
              <rect>
               <x>30</x>
-              <y>120</y>
+              <y>130</y>
               <width>171</width>
               <height>25</height>
              </rect>
             </property>
+           </widget>
+           <widget class="QFrame" name="frame_3">
+            <property name="geometry">
+             <rect>
+              <x>20</x>
+              <y>40</y>
+              <width>351</width>
+              <height>41</height>
+             </rect>
+            </property>
+            <property name="frameShape">
+             <enum>QFrame::StyledPanel</enum>
+            </property>
+            <property name="frameShadow">
+             <enum>QFrame::Raised</enum>
+            </property>
+            <widget class="QgsDateTimeEdit" name="form_fecha">
+             <property name="geometry">
+              <rect>
+               <x>10</x>
+               <y>10</y>
+               <width>151</width>
+               <height>21</height>
+              </rect>
+             </property>
+            </widget>
+            <widget class="QgsDateTimeEdit" name="form_fecha_2">
+             <property name="geometry">
+              <rect>
+               <x>180</x>
+               <y>10</y>
+               <width>151</width>
+               <height>21</height>
+              </rect>
+             </property>
+            </widget>
            </widget>
           </widget>
          </item>
