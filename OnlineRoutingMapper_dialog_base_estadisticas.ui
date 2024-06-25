@@ -368,19 +368,22 @@
            <property name="title">
             <string>Hora</string>
            </property>
-           <widget class="QTimeEdit" name="form_hora">
-            <property name="geometry">
-             <rect>
-              <x>10</x>
-              <y>30</y>
-              <width>81</width>
-              <height>25</height>
-             </rect>
-            </property>
-            <property name="styleSheet">
-             <string notr="true">color: white;</string>
-            </property>
-           </widget>
+           <layout class="QHBoxLayout" name="horizontalLayout_3">
+            <item>
+             <widget class="QTimeEdit" name="form_hora">
+              <property name="styleSheet">
+               <string notr="true">color: white;</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="checkBox">
+              <property name="text">
+               <string/>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </widget>
          </item>
          <item>
