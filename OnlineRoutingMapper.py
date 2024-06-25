@@ -339,7 +339,7 @@ class OnlineRoutingMapper:
         extentForZoom = transformer.transform(vectorLayer.extent(), QgsCoordinateTransform.ForwardTransform)
         self.canvas.setExtent(extentForZoom)
         self.canvas.zoomScale(self.canvas.scale() * 1.03)  # zoom out a little bit.
-        QMessageBox.information(self.dlg, 'Information', 'The analysis result was added to the canvas.')
+        QMessageBox.information(self.dlg, 'Informacion', 'Ruta calculada con éxito.')
 
     def runAnalysis(self):
         # if len(self.dlg.startTxt.text()) > 0 and len(self.dlg.stopTxt.text()) > 0:
@@ -504,7 +504,7 @@ class OnlineRoutingMapper:
         if ((direccion and direccion.strip()) or (self.stopPointXY is not None)):
             self.savePoints()
             self.runAnalysis()
-        else :self.backScreen()
+        else : QMessageBox.warning(self.dlg, 'Aviso', "Ingresa al menos una direccion")
         
     def add_table_item(self, row, column, text):
         # Método para agregar un elemento a la tabla
