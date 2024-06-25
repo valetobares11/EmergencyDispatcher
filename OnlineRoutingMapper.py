@@ -32,12 +32,12 @@ from .resources import *
 from .OnlineRoutingMapper_dialog import OnlineRoutingMapperDialog, OnlineRoutingMapperDialogAgPedido, OnlineRoutingMapperDialogModMapa, OnlineRoutingMapperDialogModBombas, OnlineRoutingMapperDialogVerPedidos, OnlineRoutingMapperDialogEstadisticas
 import os.path
 from urllib.request import urlopen
-
 from .routeprovider import RouteProvider
 from .db import *
 from .util import *
 from qgis.gui import *
 from qgis.core import *
+import math
 
 import platform
 from .config import *
@@ -403,8 +403,9 @@ class OnlineRoutingMapper:
                 '7':'VARIOS',
                 '8':'RESCATE DE ALTURA'
             }.get(str(self.type_emergency),'Desconocido')
-            valores = "'{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}','{}', now()".format(direccion, solicitante, telefono, "Pedro", "",self.crsTransformPedido(self.stopPointXY), descripcion, tiempo_estimado, categoria, tiempo_estimado)
-            insert('pedido', 'direccion, solicitante, telefono, operador, startpoint, stoppoint, description, tiempo_estimado,tipo, tiempo_real, fecha', valores)
+            valores = "'{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}','{}', now()".format(direccion, solicitante, telefono, "Pedro", "",self.crsTransformPedido(self.stopPointXY), descripcion, 0, categoria, math.ceil(tiempo_estimado / 60))
+            columnasPedido = 'direccion, solicitante, telefono, operador, startpoint, stoppoint, description, tiempo_estimado,tipo, tiempo_real, fecha'
+            insert('pedido', columnasPedido, valores)
                 
         except Exception as e:
             QgsMessageLog.logMessage(str(e))
@@ -605,7 +606,8 @@ class OnlineRoutingMapper:
             #Inserta los puntos en la BD 
             startPoint = point.split(',')
             valores = "{}, {}, '{}'".format(startPoint[1], startPoint[0], self.dlg.descripcionTxt.text())
-            insert('bomba', 'startPoint, stopPoint, description', valores)
+            columnasBomba = 'startPoint, stopPoint, description'
+            insert('bomba', columnasBomba, valores)
         self.dlg = self.dlg_back
         if self.dlg.close():
             self.agregar_actualizar_puntos_iniciales()  
