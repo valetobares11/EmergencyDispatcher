@@ -155,3 +155,22 @@ def create_and_download_ods():
     # Guardar el libro de trabajo como un archivo ODS
     sheet.save_as(PATH_RUTA_EXPORT)
     
+def getIdTipoEmergencia(emergencia):
+    if (emergencia == 'Incendio forestal'):
+        return "INCENDIO FORESTAL"
+    if (emergencia == 'Incendio rural'):
+        return "INCENDIO RURAL"
+    if (emergencia == 'Incendio vehicular'):
+        return "INCENDIO VEHICULAR"
+    if (emergencia == 'Incendio estructural'):
+        return "INCENDIO ESTRUCTURAL"
+    if (emergencia == 'Accidente'):
+        return "ACCIDENTE"
+    if (emergencia == 'Material peligroso'):
+        return "MATERIAL PELIGROSO"
+    if (emergencia == 'Varios'):
+        return "VARIOS"
+    if (emergencia == 'Rescate altura'):
+        return "RESCATE DE ALTURA"
+    
+    return "DESCONOCIDO"

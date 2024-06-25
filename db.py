@@ -45,7 +45,7 @@ def insert(table = '', columns = '', values = ''):
         conexion.close()
 
 
-def select(table = '', id = None, limit = None):
+def select(table = '', id = None, limit = None, filtro = {}):
     if (table == ''):
         return []
     
@@ -55,12 +55,21 @@ def select(table = '', id = None, limit = None):
     
     if (id is not None):
         query+= " AND id = {} ".format(id)
+
+    if 'fecha_desde' in filtro:
+        query += " AND fecha >= '{}'".format(filtro['fecha_desde'])
+
+    if 'fecha_hasta' in filtro:
+        query += " AND fecha <= '{}'".format(filtro['fecha_hasta'])
+
+    if 'tipo_emergencia' in filtro:
+        query += " AND tipo = '{}'".format(filtro['tipo_emergencia'])
     
     query += "ORDER BY id"
 
     if (limit is not None):
         query+= " DESC LIMIT {}".format(limit)
-
+    
     cursor.execute(query)
     result = cursor.fetchall()
     conexion.close()

@@ -48,3 +48,16 @@ OPERADORES = [
     'Jose',
     'Ignacio'
 ]
+
+# tipos Emergencia
+TIPOS_EMERGENCIA = [
+    'Todos',
+    'Incendio forestal',
+    'Incendio rural',
+    'Incendio vehicular',
+    'Incendio estructural',
+    'Accidente',
+    'Material peligroso',
+    'Rescate altura',
+    'Varios'
+]

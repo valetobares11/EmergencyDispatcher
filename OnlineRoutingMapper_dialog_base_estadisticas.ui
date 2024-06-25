@@ -345,7 +345,7 @@
              <string notr="true">color: white;</string>
             </property>
            </widget>
-           <widget class="QgsDateTimeEdit" name="form_fecha_2">
+           <widget class="QgsDateTimeEdit" name="form_fecha_hasta">
             <property name="geometry">
              <rect>
               <x>170</x>
@@ -391,7 +391,7 @@
            <property name="title">
             <string>Tipo</string>
            </property>
-           <widget class="QComboBox" name="form_tipo">
+           <widget class="QComboBox" name="combo_tipo">
             <property name="geometry">
              <rect>
               <x>10</x>
@@ -407,7 +407,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="btnMapa">
+          <widget class="QPushButton" name="button_filtrar">
            <property name="minimumSize">
             <size>
              <width>0</width>

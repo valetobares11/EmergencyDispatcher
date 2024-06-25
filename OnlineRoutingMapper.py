@@ -38,6 +38,7 @@ from .util import *
 from qgis.gui import *
 from qgis.core import *
 import math
+from datetime import datetime
 
 import platform
 from .config import *
@@ -659,78 +660,95 @@ class OnlineRoutingMapper:
         self.dlg.volver.clicked.connect(lambda: self.backScreen())
         self.dlg.aceptar.clicked.connect(lambda: self.savePointsExclution())
         self.dlg.closeEvent = self.closeUpdate
-    
+
+    def crearCapaPuntos(self):
+        tipo_emergencia = self.dlg.combo_tipo.currentText()
+        fecha_desde = datetime.strptime(self.dlg.form_fecha_desde.text(), "%d/%m/%y %H:%M")
+        fecha_desde_filtro_sql = fecha_desde.strftime("%Y-%m-%d")
+        
+        fecha_hasta = datetime.strptime(self.dlg.form_fecha_hasta.text(), "%d/%m/%y %H:%M")
+        fecha_hasta_filtro_sql = fecha_hasta.strftime("%Y-%m-%d")
+        filtro = {
+            'fecha_desde': fecha_desde_filtro_sql,
+            'fecha_hasta': fecha_hasta_filtro_sql
+        }
+        if (tipo_emergencia != 'Todos'):
+            filtro['tipo_emergencia'] = getIdTipoEmergencia(tipo_emergencia)
+
+        # Ejecuta la consulta SQL y crea los puntos
+        registros = select("pedido", None, None, filtro)
+        if (len(registros) > 0):
+            # Crea una nueva capa de puntos en memoria
+            tipos = [TIPO1, TIPO2, TIPO3, TIPO4, TIPO5, TIPO6, TIPO7, TIPO8]
+            capas_puntos = []
+
+            for tipo in tipos:
+                capa = QgsVectorLayer("Point?crs=EPSG:4326", tipo, "memory")
+                capas_puntos.append(capa)
+
+            # Define los campos para la capa de puntos
+            campos = QgsFields()
+            campos.append(QgsField("Numero :", QVariant.String))
+            campos.append(QgsField("columna_x", QVariant.Double))
+            campos.append(QgsField("columna_y", QVariant.Double))
+            campos.append(QgsField("Descripción :", QVariant.String))
+            campos.append(QgsField("Dirección :", QVariant.String))
+            campos.append(QgsField("Solicitante :", QVariant.String))
+            campos.append(QgsField("Tipo :", QVariant.String))
+            campos.append(QgsField("Fecha :", QVariant.String))
+            campos.append(QgsField("Tiempo Estimado :", QVariant.String))
+            campos.append(QgsField("Tiempo Real :", QVariant.String))
+            campos.append(QgsField(" ", QVariant.String))
+
+            # Asigna los campos a cada capa
+            for capa in capas_puntos:
+                capa.dataProvider().addAttributes(campos)
+                capa.updateFields()
+
+            for tupla in registros:
+                if tupla[6]!=' ':
+                    x, y = tupla[6].split(',')
+                    punto = QgsPointXY(float(x), float(y))
+                    punto_geom = QgsGeometry.fromPointXY(punto)
+                    # Crea una nueva característica y agrega la geometría y los atributos
+                    feature = QgsFeature()
+                    feature.setGeometry(punto_geom)
+                    feature.setAttributes([tupla[0], x, y, tupla[7], tupla[1],tupla[2],tupla[10], str(tupla[12]), tupla[8], tupla[11], " "])
+                    # Crear un diccionario para mapear tipos a índices de capas
+                    tipo_a_capa = {
+                        TIPO1: capas_puntos[0],
+                        TIPO2: capas_puntos[1],
+                        TIPO3: capas_puntos[2],
+                        TIPO4: capas_puntos[3],
+                        TIPO5: capas_puntos[4],
+                        TIPO6: capas_puntos[5],
+                        TIPO7: capas_puntos[6],
+                        TIPO8: capas_puntos[7]
+                    }
+
+                    # Asignar la característica a la capa correspondiente
+                    if tupla[10] in tipo_a_capa:
+                        tipo_a_capa[tupla[10]].dataProvider().addFeature(feature)
+
+            for capa in capas_puntos:
+                # Agrega la capa al proyecto de QGIS
+                QgsProject.instance().addMapLayer(capa)
+                # Refresca la interfaz de QGIS
+                self.iface.layerTreeView().refreshLayerSymbology(capa.id())
+                self.canvas = self.iface.mapCanvas()
+            self.clickTool = CustomMapTool(self.canvas,capas_puntos)
+            self.canvas.setMapTool(self.clickTool)
+
     def changeScreenEstadisticas(self):
         self.dlg = OnlineRoutingMapperDialogEstadisticas()
         self.borrar_todos_los_puntos()
         # self.dlg_back.showMinimized()
         self.dlg.setFixedSize(self.dlg.size())
         self.dlg.show()
-        self.dlg.btnMapa.clicked.connect(lambda: (self.dlg_back.showMinimized(), self.dlg.showMinimized()))
+        # self.dlg.btnMapa.clicked.connect(lambda: (self.dlg_back.showMinimized(), self.dlg.showMinimized()))
+        self.dlg.button_filtrar.clicked.connect(lambda: (self.crearCapaPuntos(), self.dlg_back.showMinimized(), self.dlg.showMinimized()))
+        self.dlg.combo_tipo.addItems(TIPOS_EMERGENCIA)
         #self.dlg.tableWidget.sortItems(0)
-        
-        # Crea una nueva capa de puntos en memoria
-        tipos = [TIPO1, TIPO2, TIPO3, TIPO4, TIPO5, TIPO6, TIPO7, TIPO8]
-        capas_puntos = []
-
-        for tipo in tipos:
-            capa = QgsVectorLayer("Point?crs=EPSG:4326", tipo, "memory")
-            capas_puntos.append(capa)
-
-        # Define los campos para la capa de puntos
-        campos = QgsFields()
-        campos.append(QgsField("Numero :", QVariant.String))
-        campos.append(QgsField("columna_x", QVariant.Double))
-        campos.append(QgsField("columna_y", QVariant.Double))
-        campos.append(QgsField("Descripción :", QVariant.String))
-        campos.append(QgsField("Dirección :", QVariant.String))
-        campos.append(QgsField("Solicitante :", QVariant.String))
-        campos.append(QgsField("Tipo :", QVariant.String))
-        campos.append(QgsField("Fecha :", QVariant.String))
-        campos.append(QgsField("Tiempo Estimado :", QVariant.String))
-        campos.append(QgsField("Tiempo Real :", QVariant.String))
-        campos.append(QgsField(" ", QVariant.String))
-
-        # Asigna los campos a cada capa
-        for capa in capas_puntos:
-            capa.dataProvider().addAttributes(campos)
-            capa.updateFields()
-        # Ejecuta la consulta SQL y crea los puntos
-        registros = select("pedido")
-        for tupla in registros:
-            if tupla[6]!=' ':
-                x, y = tupla[6].split(',')
-                punto = QgsPointXY(float(x), float(y))
-                punto_geom = QgsGeometry.fromPointXY(punto)
-                # Crea una nueva característica y agrega la geometría y los atributos
-                feature = QgsFeature()
-                feature.setGeometry(punto_geom)
-                feature.setAttributes([tupla[0], x, y, tupla[7], tupla[1],tupla[2],tupla[10], str(tupla[12]), tupla[8], tupla[11], " "])
-                # Crear un diccionario para mapear tipos a índices de capas
-                tipo_a_capa = {
-                    TIPO1: capas_puntos[0],
-                    TIPO2: capas_puntos[1],
-                    TIPO3: capas_puntos[2],
-                    TIPO4: capas_puntos[3],
-                    TIPO5: capas_puntos[4],
-                    TIPO6: capas_puntos[5],
-                    TIPO7: capas_puntos[6],
-                    TIPO8: capas_puntos[7]
-                }
-
-                # Asignar la característica a la capa correspondiente
-                if tupla[10] in tipo_a_capa:
-                    tipo_a_capa[tupla[10]].dataProvider().addFeature(feature)
-
-        for capa in capas_puntos:
-            # Agrega la capa al proyecto de QGIS
-            QgsProject.instance().addMapLayer(capa)
-            # Refresca la interfaz de QGIS
-            self.iface.layerTreeView().refreshLayerSymbology(capa.id())
-            self.canvas = self.iface.mapCanvas()
-        self.clickTool = CustomMapTool(self.canvas,capas_puntos)
-        self.canvas.setMapTool(self.clickTool)
-        
         self.dlg.closeEvent = self.closePedidos
         self.dlg.volver_estadistica.clicked.connect(lambda: self.backScreenEstadistica())
         
