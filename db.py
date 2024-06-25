@@ -65,6 +65,9 @@ def select(table = '', id = None, limit = None, filtro = {}):
     if 'tipo_emergencia' in filtro:
         query += " AND tipo = '{}'".format(filtro['tipo_emergencia'])
     
+    if 'hours' in filtro:
+        query+= " AND EXTRACT(HOUR FROM fecha) = '{}'".format(filtro['hours'])
+
     query += "ORDER BY id"
 
     if (limit is not None):
