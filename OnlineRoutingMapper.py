@@ -735,20 +735,20 @@ class OnlineRoutingMapper:
         self.dlg.volver_estadistica.clicked.connect(lambda: self.backScreenEstadistica())
     
     def filtrarEmergencias(self):
+        filtro = {}
         tipo_emergencia = self.dlg.combo_tipo.currentText()
-        fecha_desde = datetime.strptime(self.dlg.form_fecha_desde.text(), "%d/%m/%y %H:%M")
-        fecha_desde_filtro_sql = fecha_desde.strftime("%Y-%m-%d")
-        
-        fecha_hasta = datetime.strptime(self.dlg.form_fecha_hasta.text(), "%d/%m/%y %H:%M")
-        fecha_hasta_filtro_sql = fecha_hasta.strftime("%Y-%m-%d")
-        filtro = {
-            'fecha_desde': fecha_desde_filtro_sql,
-            'fecha_hasta': fecha_hasta_filtro_sql,
-            'hours' : self.dlg.form_hora.text().split(':')[0]
-        }
+        if (self.dlg.checkBox_fecha.isChecked()):
+            fecha_desde = datetime.strptime(self.dlg.form_fecha_desde.text(), "%d/%m/%y %H:%M")
+            fecha_hasta = datetime.strptime(self.dlg.form_fecha_hasta.text(), "%d/%m/%y %H:%M")
+            filtro['fecha_desde'] = fecha_desde.strftime("%Y-%m-%d")
+            filtro['fecha_hasta'] = fecha_hasta.strftime("%Y-%m-%d")
+
         if (tipo_emergencia != 'Todos'):
             filtro['tipo_emergencia'] = getIdTipoEmergencia(tipo_emergencia)
-
+        
+        if (self.dlg.checkBox_hora.isChecked()):
+            filtro['hours'] = self.dlg.form_hora.text().split(':')[0]
+        
         # Ejecuta la consulta SQL y crea los puntos
         registros = select("pedido", None, None, filtro)
         if (len(registros)):
