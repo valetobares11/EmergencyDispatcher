@@ -127,12 +127,39 @@
            <property name="palette">
             <palette>
              <active>
+              <colorrole role="WindowText">
+               <brush brushstyle="SolidPattern">
+                <color alpha="255">
+                 <red>255</red>
+                 <green>255</green>
+                 <blue>255</blue>
+                </color>
+               </brush>
+              </colorrole>
               <colorrole role="Button">
                <brush brushstyle="SolidPattern">
                 <color alpha="255">
                  <red>33</red>
                  <green>43</green>
                  <blue>56</blue>
+                </color>
+               </brush>
+              </colorrole>
+              <colorrole role="Text">
+               <brush brushstyle="SolidPattern">
+                <color alpha="255">
+                 <red>255</red>
+                 <green>255</green>
+                 <blue>255</blue>
+                </color>
+               </brush>
+              </colorrole>
+              <colorrole role="ButtonText">
+               <brush brushstyle="SolidPattern">
+                <color alpha="255">
+                 <red>255</red>
+                 <green>255</green>
+                 <blue>255</blue>
                 </color>
                </brush>
               </colorrole>
@@ -151,17 +178,53 @@
                  <red>33</red>
                  <green>43</green>
                  <blue>56</blue>
+                </color>
+               </brush>
+              </colorrole>
+              <colorrole role="PlaceholderText">
+               <brush brushstyle="SolidPattern">
+                <color alpha="255">
+                 <red>255</red>
+                 <green>255</green>
+                 <blue>255</blue>
                 </color>
                </brush>
               </colorrole>
              </active>
              <inactive>
+              <colorrole role="WindowText">
+               <brush brushstyle="SolidPattern">
+                <color alpha="255">
+                 <red>255</red>
+                 <green>255</green>
+                 <blue>255</blue>
+                </color>
+               </brush>
+              </colorrole>
               <colorrole role="Button">
                <brush brushstyle="SolidPattern">
                 <color alpha="255">
                  <red>33</red>
                  <green>43</green>
                  <blue>56</blue>
+                </color>
+               </brush>
+              </colorrole>
+              <colorrole role="Text">
+               <brush brushstyle="SolidPattern">
+                <color alpha="255">
+                 <red>255</red>
+                 <green>255</green>
+                 <blue>255</blue>
+                </color>
+               </brush>
+              </colorrole>
+              <colorrole role="ButtonText">
+               <brush brushstyle="SolidPattern">
+                <color alpha="255">
+                 <red>255</red>
+                 <green>255</green>
+                 <blue>255</blue>
                 </color>
                </brush>
               </colorrole>
@@ -180,17 +243,53 @@
                  <red>33</red>
                  <green>43</green>
                  <blue>56</blue>
+                </color>
+               </brush>
+              </colorrole>
+              <colorrole role="PlaceholderText">
+               <brush brushstyle="SolidPattern">
+                <color alpha="255">
+                 <red>255</red>
+                 <green>255</green>
+                 <blue>255</blue>
                 </color>
                </brush>
               </colorrole>
              </inactive>
              <disabled>
+              <colorrole role="WindowText">
+               <brush brushstyle="SolidPattern">
+                <color alpha="255">
+                 <red>255</red>
+                 <green>255</green>
+                 <blue>255</blue>
+                </color>
+               </brush>
+              </colorrole>
               <colorrole role="Button">
                <brush brushstyle="SolidPattern">
                 <color alpha="255">
                  <red>33</red>
                  <green>43</green>
                  <blue>56</blue>
+                </color>
+               </brush>
+              </colorrole>
+              <colorrole role="Text">
+               <brush brushstyle="SolidPattern">
+                <color alpha="255">
+                 <red>255</red>
+                 <green>255</green>
+                 <blue>255</blue>
+                </color>
+               </brush>
+              </colorrole>
+              <colorrole role="ButtonText">
+               <brush brushstyle="SolidPattern">
+                <color alpha="255">
+                 <red>255</red>
+                 <green>255</green>
+                 <blue>255</blue>
                 </color>
                </brush>
               </colorrole>
@@ -209,54 +308,126 @@
                  <red>33</red>
                  <green>43</green>
                  <blue>56</blue>
+                </color>
+               </brush>
+              </colorrole>
+              <colorrole role="PlaceholderText">
+               <brush brushstyle="SolidPattern">
+                <color alpha="255">
+                 <red>255</red>
+                 <green>255</green>
+                 <blue>255</blue>
                 </color>
                </brush>
               </colorrole>
              </disabled>
             </palette>
            </property>
+           <property name="tabletTracking">
+            <bool>true</bool>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">color: white;</string>
+           </property>
            <property name="title">
             <string>Fecha desde - hasta</string>
+           </property>
+           <widget class="QgsDateTimeEdit" name="form_fecha_desde">
+            <property name="geometry">
+             <rect>
+              <x>10</x>
+              <y>30</y>
+              <width>151</width>
+              <height>21</height>
+             </rect>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">color: white;</string>
+            </property>
+           </widget>
+           <widget class="QgsDateTimeEdit" name="form_fecha_2">
+            <property name="geometry">
+             <rect>
+              <x>170</x>
+              <y>30</y>
+              <width>151</width>
+              <height>21</height>
+             </rect>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">color: white;</string>
+            </property>
+           </widget>
+          </widget>
+         </item>
+         <item>
+          <widget class="QGroupBox" name="groupBox_3">
+           <property name="styleSheet">
+            <string notr="true">color: white;</string>
+           </property>
+           <property name="title">
+            <string>Hora</string>
            </property>
            <widget class="QTimeEdit" name="form_hora">
             <property name="geometry">
              <rect>
-              <x>30</x>
-              <y>90</y>
+              <x>10</x>
+              <y>30</y>
               <width>81</width>
               <height>25</height>
              </rect>
             </property>
+            <property name="styleSheet">
+             <string notr="true">color: white;</string>
+            </property>
            </widget>
-           <widget class="QPushButton" name="btnMapa">
+          </widget>
+         </item>
+         <item>
+          <widget class="QGroupBox" name="groupBox_4">
+           <property name="styleSheet">
+            <string notr="true">color: white;</string>
+           </property>
+           <property name="title">
+            <string>Tipo</string>
+           </property>
+           <widget class="QComboBox" name="form_tipo">
             <property name="geometry">
              <rect>
-              <x>100</x>
-              <y>240</y>
-              <width>161</width>
-              <height>31</height>
+              <x>10</x>
+              <y>30</y>
+              <width>171</width>
+              <height>25</height>
              </rect>
             </property>
-            <property name="minimumSize">
-             <size>
-              <width>0</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="maximumSize">
-             <size>
-              <width>600</width>
-              <height>80</height>
-             </size>
-            </property>
-            <property name="font">
-             <font>
-              <family>URW Gothic [urw]</family>
-              <pointsize>-1</pointsize>
-             </font>
-            </property>
             <property name="styleSheet">
-             <string notr="true">QPushButton {
+             <string notr="true">color: white;</string>
+            </property>
+           </widget>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="btnMapa">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>600</width>
+             <height>80</height>
+            </size>
+           </property>
+           <property name="font">
+            <font>
+             <family>URW Gothic [urw]</family>
+             <pointsize>-1</pointsize>
+            </font>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">QPushButton {
 font-size:14px;
 background-color:#ffcb3a;
 border-radius: 10px;
@@ -266,57 +437,10 @@ border: 1px solid black;
 QPushButton:hover {
 background-color: #FF0000;
 }</string>
-            </property>
-            <property name="text">
-             <string>Filtrar</string>
-            </property>
-           </widget>
-           <widget class="QComboBox" name="comboBox">
-            <property name="geometry">
-             <rect>
-              <x>30</x>
-              <y>130</y>
-              <width>171</width>
-              <height>25</height>
-             </rect>
-            </property>
-           </widget>
-           <widget class="QFrame" name="frame_3">
-            <property name="geometry">
-             <rect>
-              <x>20</x>
-              <y>40</y>
-              <width>351</width>
-              <height>41</height>
-             </rect>
-            </property>
-            <property name="frameShape">
-             <enum>QFrame::StyledPanel</enum>
-            </property>
-            <property name="frameShadow">
-             <enum>QFrame::Raised</enum>
-            </property>
-            <widget class="QgsDateTimeEdit" name="form_fecha">
-             <property name="geometry">
-              <rect>
-               <x>10</x>
-               <y>10</y>
-               <width>151</width>
-               <height>21</height>
-              </rect>
-             </property>
-            </widget>
-            <widget class="QgsDateTimeEdit" name="form_fecha_2">
-             <property name="geometry">
-              <rect>
-               <x>180</x>
-               <y>10</y>
-               <width>151</width>
-               <height>21</height>
-              </rect>
-             </property>
-            </widget>
-           </widget>
+           </property>
+           <property name="text">
+            <string>Filtrar</string>
+           </property>
           </widget>
          </item>
          <item>
