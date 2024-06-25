@@ -38,7 +38,9 @@ def geocode_address(address):
 def report(url):
     response = urlopen(url).read().decode("utf-8")
     diccionario = json.loads(response)
+    tiempo_estimado = int(diccionario['routes'][0]['sections'][0]['summary']['duration'])
     f = open (PATH_REPORTE,'a')
+    f.write('El tiempo estimado de viaje es: '+ str(round(tiempo_estimado/60))+' min\n\n')
     instrucciones = diccionario['routes'][0]['sections'][0]['actions']
     for instruccion in instrucciones:
         f.write(str(instruccion['instruction'])+'\n')

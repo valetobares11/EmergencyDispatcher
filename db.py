@@ -203,12 +203,12 @@ def createTablePedido():
 
         CREATE TABLE IF NOT EXISTS pedido (
             id SERIAL PRIMARY KEY,
-            direccion VARCHAR(40),
+            direccion VARCHAR(100),
             solicitante VARCHAR(40),
             telefono VARCHAR(40),
             operador VARCHAR(40),
-            startpoint VARCHAR(40),
-            stoppoint VARCHAR(40),
+            startpoint VARCHAR(100),
+            stoppoint VARCHAR(100),
             description VARCHAR(255),
             tiempo_estimado INT,
             id_archivo INT,

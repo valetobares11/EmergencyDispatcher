@@ -32,13 +32,12 @@ from .resources import *
 from .OnlineRoutingMapper_dialog import OnlineRoutingMapperDialog, OnlineRoutingMapperDialogAgPedido, OnlineRoutingMapperDialogModMapa, OnlineRoutingMapperDialogModBombas, OnlineRoutingMapperDialogVerPedidos, OnlineRoutingMapperDialogEstadisticas
 import os.path
 from urllib.request import urlopen
+
 from .routeprovider import RouteProvider
 from .db import *
 from .util import *
 from qgis.gui import *
 from qgis.core import *
-import math
-from datetime import datetime
 
 import platform
 from .config import *
@@ -256,15 +255,16 @@ class OnlineRoutingMapper:
         self.canvas.setMapTool(self.clickTool)  # clickTool is activated
 
     def clickHandlerStart(self, pointXY):
-        self.stopPointXY = QgsPointXY(pointXY)
-        self.stopRubberBand.addPoint(self.stopPointXY)
+        point = QgsPointXY(pointXY)
+        self.address = obtener_direccion(point.x(),point.y())
+        self.stopRubberBand.addPoint(point)
         self.dlg.hide()
 
         # Liberar la herramienta de mapa para que se pueda hacer clic nuevamente
         self.canvas.unsetMapTool(self.clickTool)
-
         # Volver a mostrar la ventana emergente
         self.dlg.show()
+        self.dlg.form_direccion.setText(self.address)
         # self.clickTool.canvasClicked.disconnect(self.clickHandler)
 
     def toolActivatorStartPoints(self):
@@ -272,6 +272,7 @@ class OnlineRoutingMapper:
         self.dlg_back.showMinimized()
         self.clickTool.canvasClicked.connect(self.clickHandlerStart)
         self.canvas.setMapTool(self.clickTool)  # clickTool is activated
+        
 
     def clickHandlerBombas(self, pointXY):
         pointXY = QgsPointXY(pointXY)
@@ -363,6 +364,7 @@ class OnlineRoutingMapper:
                     self.persistir_pedido(url)
                     if self.type_emergency in (1,2,3,4):
                         # si es incendio
+                        print(str(stopPoint))
                         self.calculate_routes_a_bombas(stopPoint)
 
                     self.routeMaker(wkt)
@@ -388,12 +390,11 @@ class OnlineRoutingMapper:
         try:
             response = urlopen(url).read().decode("utf-8")
             diccionario = json.loads(response)
-            tiempo_estimado = int(diccionario['routes'][0]['sections'][0]['summary']['duration'])
+            tiempo_estimado = round(int(diccionario['routes'][0]['sections'][0]['summary']['duration'])/60)
             descripcion = self.descripcion
             direccion = self.address
             solicitante = self.solicitante
             telefono = self.telefono
-            print(f"--------save points {self.type_emergency}")
             categoria={
                 '1':'INCENDIO FORESTAL',
                 '2':'INCENDIO RURAL',
@@ -404,9 +405,8 @@ class OnlineRoutingMapper:
                 '7':'VARIOS',
                 '8':'RESCATE DE ALTURA'
             }.get(str(self.type_emergency),'Desconocido')
-            valores = "'{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}','{}', now()".format(direccion, solicitante, telefono, "Pedro", "",self.crsTransformPedido(self.stopPointXY), descripcion, math.ceil(tiempo_estimado / 60), categoria, 0)
-            columnasPedido = 'direccion, solicitante, telefono, operador, startpoint, stoppoint, description, tiempo_estimado,tipo, tiempo_real, fecha'
-            insert('pedido', columnasPedido, valores)
+            valores = "'{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}','{}', now()".format(direccion, solicitante, telefono, "Pedro", "",self.crsTransformPedido(self.stopPointXY), descripcion, tiempo_estimado, categoria, tiempo_estimado)
+            insert('pedido', 'direccion, solicitante, telefono, operador, startpoint, stoppoint, description, tiempo_estimado,tipo, tiempo_real, fecha', valores)
                 
         except Exception as e:
             QgsMessageLog.logMessage(str(e))
@@ -438,20 +438,12 @@ class OnlineRoutingMapper:
 
     def calculate_points(self):
         punto_part = PUNTO_PARTIDA.split(',')
-        self.descripcion = self.dlg.form_descripcion.text()
-        self.solicitante = self.dlg.form_solicitante.text()
-        self.telefono = self.dlg.form_telefono.text()
         self.startPointXY = QgsPointXY(float(punto_part[0]), float(punto_part[1]))
         try:
-            if (self.stopPointXY is None):
-                address = self.dlg.form_direccion.text()+ " " + CIUDAD + " " + PROVINCIA
-                x, y = obtener_coordenada(address)
-                self.stopPointXY = QgsPointXY(x,y)
-            else:
-                address = obtener_direccion(self.stopPointXY.x(),self.stopPointXY.y())
-        
+            address = self.dlg.form_direccion.text()+ " " + CIUDAD + " " + PROVINCIA
+            x, y = obtener_coordenada(address)
+            self.stopPointXY = QgsPointXY(x,y)
             self.address = address
-            write_report(self.dlg.form_descripcion.text(), address, self.dlg.form_solicitante.text(), self.dlg.form_telefono.text())
         except Exception as e:
             QgsMessageLog.logMessage(str(e))
             QMessageBox.warning(self.dlg, 'calculate_points', "Error al obtener coordenada o direccion")
@@ -477,8 +469,7 @@ class OnlineRoutingMapper:
         
         self.dlg.setFixedSize(self.dlg.size())
         self.dlg.show()
-        self.dlg.comboBox_2.addItems(OPERADORES)
-
+        
         
         opciones = [CAMIONETA, CAMION_LIGERO, CAMION_PESADO]
         self.dlg.comboBox.addItems(opciones)
@@ -495,14 +486,22 @@ class OnlineRoutingMapper:
         self.canvas = self.iface.mapCanvas()
         self.clickTool = QgsMapToolEmitPoint(self.canvas)
         self.dlg.buscarPunto.clicked.connect(lambda: self.toolActivatorStartPoints())
+        
         self.dlg.volver.clicked.connect(lambda: self.backScreen())
         self.dlg.aceptar.clicked.connect(lambda: self.press_btn_acept())
 
 
     def press_btn_acept(self):
         direccion = self.dlg.form_direccion.text()
+        descripcion=self.dlg.form_descripcion.text()
+        solicitante=self.dlg.form_solicitante.text()
+        telefono=self.dlg.form_telefono.text()
         if ((direccion and direccion.strip()) or (self.stopPointXY is not None)):
+            self.tipoAutomovil = self.dlg.comboBox.currentText()
             self.savePoints()
+            self.dlg = self.dlg_back
+            self.dlg.show()
+            write_report(descripcion, direccion, solicitante, telefono)
             self.runAnalysis()
         else : QMessageBox.warning(self.dlg, 'Aviso', "Ingresa al menos una direccion")
         
@@ -608,8 +607,7 @@ class OnlineRoutingMapper:
             #Inserta los puntos en la BD 
             startPoint = point.split(',')
             valores = "{}, {}, '{}'".format(startPoint[1], startPoint[0], self.dlg.descripcionTxt.text())
-            columnasBomba = 'startPoint, stopPoint, description'
-            insert('bomba', columnasBomba, valores)
+            insert('bomba', 'startPoint, stopPoint, description', valores)
         self.dlg = self.dlg_back
         if self.dlg.close():
             self.agregar_actualizar_puntos_iniciales()  
@@ -918,9 +916,7 @@ class OnlineRoutingMapper:
     def savePoints(self):
         try:
             self.calculate_points()    
-            self.tipoAutomovil = self.dlg.comboBox.currentText()
-            self.dlg = self.dlg_back
-            self.dlg.show()
+            
             # if(self.dlg.close()):
             #     self.dlg.showNormal()
         except Exception as e:
