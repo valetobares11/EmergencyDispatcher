@@ -738,8 +738,8 @@ class OnlineRoutingMapper:
         filtro = {}
         tipo_emergencia = self.dlg.combo_tipo.currentText()
         if (self.dlg.checkBox_fecha.isChecked()):
-            fecha_desde = datetime.strptime(self.dlg.form_fecha_desde.text(), "%d/%m/%y %H:%M")
-            fecha_hasta = datetime.strptime(self.dlg.form_fecha_hasta.text(), "%d/%m/%y %H:%M")
+            fecha_desde = datetime.strptime(self.dlg.form_fecha_desde.text().strip(), "%d/%m/%y")
+            fecha_hasta = datetime.strptime(self.dlg.form_fecha_hasta.text().strip(), "%d/%m/%y")
             filtro['fecha_desde'] = fecha_desde.strftime("%Y-%m-%d")
             filtro['fecha_hasta'] = fecha_hasta.strftime("%Y-%m-%d")
 
