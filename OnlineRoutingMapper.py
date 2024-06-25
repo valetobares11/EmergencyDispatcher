@@ -476,7 +476,8 @@ class OnlineRoutingMapper:
         
         self.dlg.setFixedSize(self.dlg.size())
         self.dlg.show()
-        
+        self.dlg.comboBox_2.addItems(OPERADORES)
+
         
         opciones = [CAMIONETA, CAMION_LIGERO, CAMION_PESADO]
         self.dlg.comboBox.addItems(opciones)

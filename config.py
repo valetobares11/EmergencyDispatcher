@@ -41,3 +41,10 @@ PATH_RUTA_EXPORT = f"/home/{nombre_usuario}/Descargas/archivo.ods"
 
 # Tipos servicio
 TIPO_SERVICIO_HERE_V8 = 7
+
+# operadores
+OPERADORES = [
+    'Pedro',
+    'Jose',
+    'Ignacio'
+]
