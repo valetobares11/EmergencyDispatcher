@@ -1,5 +1,0 @@
-<RCC>
-    <qresource prefix="/plugins/EmergencyDispatcher" >
-        <file>icon.png</file>
-    </qresource>
-</RCC>
