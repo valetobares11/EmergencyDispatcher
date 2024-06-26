@@ -35,7 +35,7 @@
    <cursorShape>ArrowCursor</cursorShape>
   </property>
   <property name="windowTitle">
-   <string>Online Routing Mapper</string>
+   <string>Emergency Dispatcher</string>
   </property>
   <property name="sizeGripEnabled">
    <bool>true</bool>

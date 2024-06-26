@@ -7,12 +7,12 @@
 # This file should be included when you package your plugin.# Mandatory items:
 
 [general]
-name=Online Routing Mapper
+name=Emergency Dispatcher
 qgisMinimumVersion=3.0
-description=Generate routes by using online services (Google Directions, Here, MapBox, YourNavigation, OSRM etc.)
-version=0.9
-author=Mehmet Selim BILGIN
-email=mselimbilgin@yahoo.com
+description=Emergency dispatcher that allows you to enter an emergency request and calculate various interesting calculations such as the optimal route. It allows you to list orders, modify them, calculate statistics, apply restrictions on the map, among other functionalities.
+version=0.1
+author=Alvarez Yanina, Gaspero Maximiliano, Tobares Valentin
+email=yanialva2009@gmail.com, maxigaspero@gmail.com, valetobares11@gmail.com
 
 about=Generate routes by using online services (Google Directions, Here, MapBox, YourNavigation, OSRM etc.)
 

@@ -102,10 +102,10 @@ class OnlineRoutingMapper:
 
         # Declare instance attributes
         self.actions = []
-        self.menu = self.tr(u'&Online Routing Mapper')
+        self.menu = self.tr(u'&Emergency Dispatcher')
         # TODO: We are going to let the user set this up in a future iteration
-        self.toolbar = self.iface.addToolBar(u'OnlineRoutingMapper')
-        self.toolbar.setObjectName(u'OnlineRoutingMapper')
+        self.toolbar = self.iface.addToolBar(u'Emergency Dispatcher')
+        self.toolbar.setObjectName(u'Emergency Dispatcher')
         self.dlg_back = None
         self.listPointsExclution = []
         self.tipoAutomovil = None
@@ -219,7 +219,7 @@ class OnlineRoutingMapper:
         """Removes the plugin menu item and icon from QGIS GUI."""
         for action in self.actions:
             self.iface.removePluginMenu(
-                self.tr(u'&Online Routing Mapper'),
+                self.tr(u'&Emergency Dispatcher'),
                 action)
             self.iface.removeToolBarIcon(action)
         # remove the toolbar

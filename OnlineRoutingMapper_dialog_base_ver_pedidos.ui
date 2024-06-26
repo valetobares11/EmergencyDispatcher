@@ -20,7 +20,7 @@
    </sizepolicy>
   </property>
   <property name="windowTitle">
-   <string>Online Routing Mapper</string>
+   <string>Emergency Dispatcher</string>
   </property>
   <widget class="QPushButton" name="volver">
    <property name="geometry">
