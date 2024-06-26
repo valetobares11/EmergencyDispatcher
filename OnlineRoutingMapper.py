@@ -45,7 +45,7 @@ from .apikey import *
 from qgis.PyQt.QtWidgets import QTableWidgetItem,QPushButton,QFileDialog
 import pygame
 import matplotlib.pyplot as plt
-from collections import Counter
+from collections import Counter,defaultdict
 from matplotlib.ticker import MaxNLocator
 
 
@@ -732,21 +732,22 @@ class OnlineRoutingMapper:
         self.dlg.setFixedSize(self.dlg.size())
         self.dlg.show()
         # self.dlg.btnMapa.clicked.connect(lambda: (self.dlg_back.showMinimized(), self.dlg.showMinimized()))
-        self.dlg.button_filtrar.clicked.connect(lambda: (self.filtrarEmergencias(False)))
-        self.dlg.button_graficos_barra.clicked.connect(lambda: (self.filtrarEmergencias(True)))
+        self.dlg.button_filtrar.clicked.connect(lambda: (self.filtrarEmergencias(0)))
+        self.dlg.button_graficos_barra.clicked.connect(lambda: (self.filtrarEmergencias(1)))
+        self.dlg.button_graficos_linea.clicked.connect(lambda: (self.filtrarEmergencias(2)))
         self.dlg.combo_tipo.addItems(TIPOS_EMERGENCIA)
         #self.dlg.tableWidget.sortItems(0)
         self.dlg.closeEvent = self.closePedidos
         self.dlg.volver_estadistica.clicked.connect(lambda: self.backScreenEstadistica())
     
-    def filtrarEmergencias(self, graficos):
+    def filtrarEmergencias(self, grafico):
         filtro = {}
         tipo_emergencia = self.dlg.combo_tipo.currentText()
         if (self.dlg.checkBox_fecha.isChecked()):
             fecha_desde = datetime.strptime(self.dlg.form_fecha_desde.text().strip(), "%d/%m/%y")
             fecha_hasta = datetime.strptime(self.dlg.form_fecha_hasta.text().strip(), "%d/%m/%y")
-            filtro['fecha_desde'] = fecha_desde.strftime("%Y-%m-%d")
-            filtro['fecha_hasta'] = fecha_hasta.strftime("%Y-%m-%d")
+            filtro['fecha_desde'] = fecha_desde.strftime("%Y-%m-%d 00:00:00")
+            filtro['fecha_hasta'] = fecha_hasta.strftime("%Y-%m-%d 23:59:59")
 
         if (tipo_emergencia != 'Todos'):
             filtro['tipo_emergencia'] = getIdTipoEmergencia(tipo_emergencia)
@@ -756,17 +757,20 @@ class OnlineRoutingMapper:
         
         # Ejecuta la consulta SQL y crea los puntos
         registros = select("pedido", None, None, filtro)
-        if (len(registros)):
-            self.crearCapaPuntos(registros)
-            self.dlg_back.showMinimized()
-            self.dlg.showMinimized()
-        else:
-            QMessageBox.information(self.dlg, 'filtrarEmergencias', "No se encontraron emergencias")
-        if graficos:
-            self.graficosEstadisticas(registros)
+        if grafico==0:
+            if (len(registros)):
+                self.crearCapaPuntos(registros)
+                self.dlg_back.showMinimized()
+                self.dlg.showMinimized()
+            else:
+                QMessageBox.information(self.dlg, 'filtrarEmergencias', "No se encontraron emergencias")
+        if grafico==1:
+            self.graficosBarra(registros)
+        if grafico==2:
+            self.graficosLinea(registros)
 
 
-    def graficosEstadisticas(self, registros):
+    def graficosBarra(self, registros):
         tipos = [registro[10] for registro in registros]
         conteo_tipos = Counter(tipos)
         categories = list(conteo_tipos.keys())
@@ -778,6 +782,51 @@ class OnlineRoutingMapper:
         plt.xlabel('Tipo Emergencia')
         plt.ylabel('Cantidad')
         plt.title('Cantidad de salidas por tipo')
+        plt.show()
+
+
+    def graficosLinea(self, registros):
+        # Procesar los datos para la visualización
+        data_by_tipo = defaultdict(lambda: defaultdict(int))
+
+        # Ordenar y acumular los datos por tipo y fecha
+        for registro in registros:
+            tipo = registro[10]  # Acceder al campo 'tipo'
+            fecha = str(registro[12]).split(' ')[0]  # Acceder al campo 'fecha'
+            cantidad = 1  # Supongamos que cada registro cuenta como 1 emergencia
+            data_by_tipo[tipo][fecha] += cantidad
+
+        # Organizar y ordenar las fechas únicas
+        fechas = sorted(set(fecha for tipo_data in data_by_tipo.values() for fecha in tipo_data.keys()))
+
+        # Crear el gráfico
+        fig, ax = plt.subplots()
+
+        # Graficar cada tipo de emergencia como una línea separada
+        for tipo, data in data_by_tipo.items():
+            cantidades_por_tipo = []
+            valor_anterior = 0
+            
+            for fecha in fechas:
+                if fecha in data:
+                    valor_anterior = data[fecha]
+                cantidades_por_tipo.append(valor_anterior)
+            
+            ax.plot(fechas, cantidades_por_tipo, marker='o', linestyle='-', label=tipo)
+
+        # Configurar etiquetas y leyenda
+        ax.yaxis.set_major_locator(MaxNLocator(integer=True))
+        ax.set_xlabel('Fecha')
+        ax.set_ylabel('Cantidad de emergencias')
+        ax.set_title('Cantidad de emergencias por tipo a lo largo del tiempo')
+        ax.legend()
+
+        # Configurar el eje x para mostrar solo valores enteros
+        ax.set_xticks(range(len(fechas)))
+        ax.set_xticklabels(fechas, rotation=45)
+
+        # Mostrar el gráfico
+        plt.tight_layout()
         plt.show()
             
     def backScreenEstadistica(self):
