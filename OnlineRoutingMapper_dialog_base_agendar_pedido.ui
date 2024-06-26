@@ -58,6 +58,18 @@
    </property>
    <item>
     <widget class="QFrame" name="frame_5">
+     <property name="minimumSize">
+      <size>
+       <width>600</width>
+       <height>650</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>1000</width>
+       <height>1000</height>
+      </size>
+     </property>
      <property name="frameShape">
       <enum>QFrame::StyledPanel</enum>
      </property>
@@ -66,33 +78,64 @@
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_2">
       <item>
-       <widget class="QFrame" name="frame">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
+       <widget class="QLabel" name="label_7">
+        <property name="font">
+         <font>
+          <pointsize>13</pointsize>
+         </font>
         </property>
-        <property name="minimumSize">
-         <size>
-          <width>500</width>
-          <height>400</height>
-         </size>
+        <property name="tabletTracking">
+         <bool>false</bool>
         </property>
-        <property name="maximumSize">
-         <size>
-          <width>700</width>
-          <height>16777215</height>
-         </size>
+        <property name="styleSheet">
+         <string notr="true">QLabel {
+    color: white;
+}</string>
         </property>
+        <property name="text">
+         <string>AGENDAR PEDIDO</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QFrame" name="frame_6">
         <property name="frameShape">
          <enum>QFrame::StyledPanel</enum>
         </property>
         <property name="frameShadow">
          <enum>QFrame::Raised</enum>
         </property>
-        <layout class="QGridLayout" name="gridLayout_2">
-         <item row="2" column="0">
+        <layout class="QGridLayout" name="gridLayout_3">
+         <item row="4" column="3" colspan="2">
+          <widget class="QComboBox" name="comboBox">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>30</height>
+            </size>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">background-color: rgb(255, 255, 255);</string>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="1">
+          <widget class="QComboBox" name="comboBox_2">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>30</height>
+            </size>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">background-color: rgb(255, 255, 255);</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
           <widget class="QLabel" name="label">
            <property name="font">
             <font>
@@ -108,8 +151,14 @@
            </property>
           </widget>
          </item>
-         <item row="5" column="0">
-          <widget class="QLabel" name="label_6">
+         <item row="4" column="2">
+          <widget class="QLabel" name="label_3">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>30</height>
+            </size>
+           </property>
            <property name="font">
             <font>
              <pointsize>14</pointsize>
@@ -119,48 +168,11 @@
             <string notr="true">color: rgb(255, 255, 255);</string>
            </property>
            <property name="text">
-            <string>Operador</string>
+            <string>Móvil</string>
            </property>
           </widget>
          </item>
-         <item row="4" column="1" colspan="5">
-          <widget class="QLineEdit" name="form_telefono">
-           <property name="styleSheet">
-            <string notr="true">background-color: rgb(255, 255, 255);</string>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="1" colspan="4">
-          <widget class="QLineEdit" name="form_direccion">
-           <property name="styleSheet">
-            <string notr="true">background-color: rgb(255, 255, 255);</string>
-           </property>
-          </widget>
-         </item>
-         <item row="3" column="1" colspan="5">
-          <widget class="QLineEdit" name="form_solicitante">
-           <property name="styleSheet">
-            <string notr="true">background-color: rgb(255, 255, 255);</string>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="0">
-          <widget class="QLabel" name="label_2">
-           <property name="font">
-            <font>
-             <family>Ubuntu</family>
-             <pointsize>14</pointsize>
-            </font>
-           </property>
-           <property name="styleSheet">
-            <string notr="true">color: rgb(255, 255, 255);</string>
-           </property>
-           <property name="text">
-            <string>Descripción</string>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="1" colspan="5">
+         <item row="0" column="1" colspan="4">
           <widget class="QLineEdit" name="form_descripcion">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Ignored" vsizetype="Fixed">
@@ -168,10 +180,16 @@
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>30</height>
+            </size>
+           </property>
            <property name="maximumSize">
             <size>
-             <width>600</width>
-             <height>600</height>
+             <width>16777215</width>
+             <height>16777215</height>
             </size>
            </property>
            <property name="acceptDrops">
@@ -187,10 +205,10 @@
             <string/>
            </property>
            <property name="maxLength">
-            <number>20</number>
+            <number>32767</number>
            </property>
            <property name="alignment">
-            <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+            <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
            </property>
            <property name="dragEnabled">
             <bool>false</bool>
@@ -200,7 +218,7 @@
            </property>
           </widget>
          </item>
-         <item row="3" column="0">
+         <item row="2" column="0">
           <widget class="QLabel" name="label_4">
            <property name="font">
             <font>
@@ -216,14 +234,36 @@
            </property>
           </widget>
          </item>
-         <item row="5" column="1" colspan="2">
-          <widget class="QComboBox" name="comboBox_2">
+         <item row="0" column="0">
+          <widget class="QLabel" name="label_2">
+           <property name="font">
+            <font>
+             <family>Ubuntu</family>
+             <pointsize>14</pointsize>
+            </font>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">color: rgb(255, 255, 255);</string>
+           </property>
+           <property name="text">
+            <string>Descripción</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1" colspan="3">
+          <widget class="QLineEdit" name="form_direccion">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>30</height>
+            </size>
+           </property>
            <property name="styleSheet">
             <string notr="true">background-color: rgb(255, 255, 255);</string>
            </property>
           </widget>
          </item>
-         <item row="4" column="0">
+         <item row="3" column="0">
           <widget class="QLabel" name="label_5">
            <property name="font">
             <font>
@@ -239,7 +279,22 @@
            </property>
           </widget>
          </item>
-         <item row="2" column="5">
+         <item row="4" column="0">
+          <widget class="QLabel" name="label_6">
+           <property name="font">
+            <font>
+             <pointsize>14</pointsize>
+            </font>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">color: rgb(255, 255, 255);</string>
+           </property>
+           <property name="text">
+            <string>Operador</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="4">
           <widget class="QPushButton" name="buscarPunto">
            <property name="styleSheet">
             <string notr="true">QPushButton {
@@ -264,374 +319,370 @@ background-color: #2CA02C;
            <property name="iconSize">
             <size>
              <width>20</width>
-             <height>20</height>
+             <height>30</height>
             </size>
            </property>
           </widget>
          </item>
-         <item row="6" column="0" colspan="6">
-          <widget class="QGroupBox" name="groupBox_2">
-           <property name="maximumSize">
+         <item row="2" column="1" colspan="4">
+          <widget class="QLineEdit" name="form_solicitante">
+           <property name="minimumSize">
             <size>
-             <width>900</width>
-             <height>400</height>
+             <width>0</width>
+             <height>30</height>
             </size>
            </property>
-           <layout class="QGridLayout" name="gridLayout">
-            <item row="0" column="1">
-             <widget class="QPushButton" name="buttonIncendioEstructura">
-              <property name="minimumSize">
-               <size>
-                <width>110</width>
-                <height>110</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>110</width>
-                <height>110</height>
-               </size>
-              </property>
-              <property name="styleSheet">
-               <string notr="true">QPushButton:hover {
-background-color: #FF0000;
-}</string>
-              </property>
-              <property name="text">
-               <string/>
-              </property>
-              <property name="icon">
-               <iconset>
-                <normaloff>sonidos/Logos/Logo_Incendio_Estructural.png</normaloff>sonidos/Logos/Logo_Incendio_Estructural.png</iconset>
-              </property>
-              <property name="iconSize">
-               <size>
-                <width>150</width>
-                <height>150</height>
-               </size>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="3">
-             <widget class="QPushButton" name="buttonEmergVarias">
-              <property name="minimumSize">
-               <size>
-                <width>110</width>
-                <height>110</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>110</width>
-                <height>110</height>
-               </size>
-              </property>
-              <property name="styleSheet">
-               <string notr="true">QPushButton:hover {
-background-color: #FF0000;
-}</string>
-              </property>
-              <property name="text">
-               <string/>
-              </property>
-              <property name="icon">
-               <iconset>
-                <normaloff>sonidos/Logos/Logo_emergencias_varias.png</normaloff>sonidos/Logos/Logo_emergencias_varias.png</iconset>
-              </property>
-              <property name="iconSize">
-               <size>
-                <width>150</width>
-                <height>150</height>
-               </size>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="0">
-             <widget class="QPushButton" name="buttonIncendioForestal">
-              <property name="minimumSize">
-               <size>
-                <width>110</width>
-                <height>110</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>110</width>
-                <height>110</height>
-               </size>
-              </property>
-              <property name="styleSheet">
-               <string notr="true">QPushButton:hover {
-background-color: #FF0000;
-}</string>
-              </property>
-              <property name="text">
-               <string/>
-              </property>
-              <property name="icon">
-               <iconset>
-                <normaloff>sonidos/Logos/Logo_Incendio_Forestal.png</normaloff>
-                <normalon>../../../../../../../../../.designer/backup/sonidos/Logos/Logo_Incendio_Forestal.png</normalon>
-                <activeoff>../../../../../../../../../.designer/backup/sonidos/Logos/Logo_Incendio_Forestal.png</activeoff>
-                <activeon>../../../../../../../../../.designer/backup/sonidos/Logos/Logo_Incendio_Forestal.png</activeon>
-                <selectedoff>../../../../../../../../../.designer/backup/sonidos/Logos/Logo_Incendio_Forestal.png</selectedoff>
-                <selectedon>../../../../../../../../../.designer/backup/sonidos/Logos/Logo_Incendio_Forestal.png</selectedon>sonidos/Logos/Logo_Incendio_Forestal.png</iconset>
-              </property>
-              <property name="iconSize">
-               <size>
-                <width>150</width>
-                <height>150</height>
-               </size>
-              </property>
-              <property name="autoDefault">
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="2">
-             <widget class="QPushButton" name="buttonRescateDeAltura">
-              <property name="minimumSize">
-               <size>
-                <width>110</width>
-                <height>110</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>110</width>
-                <height>110</height>
-               </size>
-              </property>
-              <property name="styleSheet">
-               <string notr="true">QPushButton:hover {
-background-color: #FF0000;
-}</string>
-              </property>
-              <property name="text">
-               <string/>
-              </property>
-              <property name="icon">
-               <iconset>
-                <normaloff>sonidos/Logos/Logo_rescate_cuerdas.png</normaloff>sonidos/Logos/Logo_rescate_cuerdas.png</iconset>
-              </property>
-              <property name="iconSize">
-               <size>
-                <width>150</width>
-                <height>150</height>
-               </size>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="3">
-             <widget class="QPushButton" name="buttonAccidenteMatPel">
-              <property name="minimumSize">
-               <size>
-                <width>110</width>
-                <height>110</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>110</width>
-                <height>110</height>
-               </size>
-              </property>
-              <property name="styleSheet">
-               <string notr="true">QPushButton:hover {
-background-color: #FF0000;
-}</string>
-              </property>
-              <property name="text">
-               <string/>
-              </property>
-              <property name="icon">
-               <iconset>
-                <normaloff>sonidos/Logos/Logo_mat_pel.png</normaloff>sonidos/Logos/Logo_mat_pel.png</iconset>
-              </property>
-              <property name="iconSize">
-               <size>
-                <width>140</width>
-                <height>140</height>
-               </size>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="2">
-             <widget class="QPushButton" name="buttonAccidenteVehicular">
-              <property name="minimumSize">
-               <size>
-                <width>110</width>
-                <height>110</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>110</width>
-                <height>110</height>
-               </size>
-              </property>
-              <property name="styleSheet">
-               <string notr="true">QPushButton:hover {
-background-color: #FF0000;
-}</string>
-              </property>
-              <property name="text">
-               <string/>
-              </property>
-              <property name="icon">
-               <iconset>
-                <normaloff>sonidos/Logos/Logo_Accidente_Vehicular.png</normaloff>sonidos/Logos/Logo_Accidente_Vehicular.png</iconset>
-              </property>
-              <property name="iconSize">
-               <size>
-                <width>160</width>
-                <height>160</height>
-               </size>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="0">
-             <widget class="QPushButton" name="buttonIncendioVehicular">
-              <property name="minimumSize">
-               <size>
-                <width>110</width>
-                <height>110</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>110</width>
-                <height>110</height>
-               </size>
-              </property>
-              <property name="styleSheet">
-               <string notr="true">QPushButton:hover {
-background-color: #FF0000;
-}</string>
-              </property>
-              <property name="text">
-               <string/>
-              </property>
-              <property name="icon">
-               <iconset>
-                <normaloff>sonidos/Logos/Logo_Incendio_Vehicular.png</normaloff>sonidos/Logos/Logo_Incendio_Vehicular.png</iconset>
-              </property>
-              <property name="iconSize">
-               <size>
-                <width>150</width>
-                <height>150</height>
-               </size>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="1">
-             <widget class="QPushButton" name="buttonIncendioRural">
-              <property name="minimumSize">
-               <size>
-                <width>110</width>
-                <height>110</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>110</width>
-                <height>110</height>
-               </size>
-              </property>
-              <property name="styleSheet">
-               <string notr="true">QPushButton:hover {
-background-color: #FF0000;
-}</string>
-              </property>
-              <property name="text">
-               <string/>
-              </property>
-              <property name="icon">
-               <iconset>
-                <normaloff>sonidos/Logos/Logo_Incendio_Rural.png</normaloff>sonidos/Logos/Logo_Incendio_Rural.png</iconset>
-              </property>
-              <property name="iconSize">
-               <size>
-                <width>170</width>
-                <height>170</height>
-               </size>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </widget>
-         </item>
-         <item row="5" column="4" colspan="2">
-          <widget class="QComboBox" name="comboBox">
            <property name="styleSheet">
             <string notr="true">background-color: rgb(255, 255, 255);</string>
            </property>
           </widget>
          </item>
-         <item row="5" column="3">
-          <widget class="QLabel" name="label_3">
-           <property name="font">
-            <font>
-             <pointsize>14</pointsize>
-            </font>
+         <item row="3" column="1" colspan="4">
+          <widget class="QLineEdit" name="form_telefono">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>30</height>
+            </size>
            </property>
            <property name="styleSheet">
-            <string notr="true">color: rgb(255, 255, 255);</string>
-           </property>
-           <property name="text">
-            <string>Móvil</string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="0" colspan="2">
-          <widget class="QFrame" name="frame_4">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="frameShape">
-            <enum>QFrame::StyledPanel</enum>
-           </property>
-           <property name="frameShadow">
-            <enum>QFrame::Raised</enum>
+            <string notr="true">background-color: rgb(255, 255, 255);</string>
            </property>
           </widget>
          </item>
         </layout>
        </widget>
       </item>
-     </layout>
-    </widget>
-   </item>
-   <item>
-    <widget class="QFrame" name="frame_3">
-     <property name="minimumSize">
-      <size>
-       <width>100</width>
-       <height>100</height>
-      </size>
-     </property>
-     <property name="maximumSize">
-      <size>
-       <width>800</width>
-       <height>200</height>
-      </size>
-     </property>
-     <property name="frameShape">
-      <enum>QFrame::StyledPanel</enum>
-     </property>
-     <property name="frameShadow">
-      <enum>QFrame::Raised</enum>
-     </property>
-     <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
-       <widget class="QFrame" name="frame_2">
+       <widget class="QLabel" name="label_8">
+        <property name="font">
+         <font>
+          <pointsize>13</pointsize>
+         </font>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">QLabel {
+    color: white;
+}</string>
+        </property>
+        <property name="text">
+         <string>ALARMA EMERGENCIA</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QGroupBox" name="groupBox_2">
+        <property name="minimumSize">
+         <size>
+          <width>300</width>
+          <height>300</height>
+         </size>
+        </property>
         <property name="maximumSize">
          <size>
-          <width>500</width>
-          <height>75</height>
+          <width>1000</width>
+          <height>1000</height>
+         </size>
+        </property>
+        <layout class="QGridLayout" name="gridLayout">
+         <item row="0" column="1">
+          <widget class="QPushButton" name="buttonIncendioEstructura">
+           <property name="minimumSize">
+            <size>
+             <width>110</width>
+             <height>110</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>110</width>
+             <height>110</height>
+            </size>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">QPushButton:hover {
+background-color: #FF0000;
+}</string>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset>
+             <normaloff>sonidos/Logos/Logo_Incendio_Estructural.png</normaloff>sonidos/Logos/Logo_Incendio_Estructural.png</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>150</width>
+             <height>150</height>
+            </size>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="0">
+          <widget class="QPushButton" name="buttonIncendioForestal">
+           <property name="minimumSize">
+            <size>
+             <width>110</width>
+             <height>110</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>110</width>
+             <height>110</height>
+            </size>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">QPushButton:hover {
+background-color: #FF0000;
+}</string>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset>
+             <normaloff>sonidos/Logos/Logo_Incendio_Forestal.png</normaloff>
+             <normalon>../../../../../../../../../.designer/backup/sonidos/Logos/Logo_Incendio_Forestal.png</normalon>
+             <activeoff>../../../../../../../../../.designer/backup/sonidos/Logos/Logo_Incendio_Forestal.png</activeoff>
+             <activeon>../../../../../../../../../.designer/backup/sonidos/Logos/Logo_Incendio_Forestal.png</activeon>
+             <selectedoff>../../../../../../../../../.designer/backup/sonidos/Logos/Logo_Incendio_Forestal.png</selectedoff>
+             <selectedon>../../../../../../../../../.designer/backup/sonidos/Logos/Logo_Incendio_Forestal.png</selectedon>sonidos/Logos/Logo_Incendio_Forestal.png</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>150</width>
+             <height>150</height>
+            </size>
+           </property>
+           <property name="autoDefault">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QPushButton" name="buttonIncendioVehicular">
+           <property name="minimumSize">
+            <size>
+             <width>110</width>
+             <height>110</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>110</width>
+             <height>110</height>
+            </size>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">QPushButton:hover {
+background-color: #FF0000;
+}</string>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset>
+             <normaloff>sonidos/Logos/Logo_Incendio_Vehicular.png</normaloff>sonidos/Logos/Logo_Incendio_Vehicular.png</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>150</width>
+             <height>150</height>
+            </size>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="2">
+          <widget class="QPushButton" name="buttonRescateDeAltura">
+           <property name="minimumSize">
+            <size>
+             <width>110</width>
+             <height>110</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>110</width>
+             <height>110</height>
+            </size>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">QPushButton:hover {
+background-color: #FF0000;
+}</string>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset>
+             <normaloff>sonidos/Logos/Logo_rescate_cuerdas.png</normaloff>sonidos/Logos/Logo_rescate_cuerdas.png</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>150</width>
+             <height>150</height>
+            </size>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="3">
+          <widget class="QPushButton" name="buttonEmergVarias">
+           <property name="minimumSize">
+            <size>
+             <width>110</width>
+             <height>110</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>110</width>
+             <height>110</height>
+            </size>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">QPushButton:hover {
+background-color: #FF0000;
+}</string>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset>
+             <normaloff>sonidos/Logos/Logo_emergencias_varias.png</normaloff>sonidos/Logos/Logo_emergencias_varias.png</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>150</width>
+             <height>150</height>
+            </size>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QPushButton" name="buttonIncendioRural">
+           <property name="minimumSize">
+            <size>
+             <width>110</width>
+             <height>110</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>110</width>
+             <height>110</height>
+            </size>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">QPushButton:hover {
+background-color: #FF0000;
+}</string>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset>
+             <normaloff>sonidos/Logos/Logo_Incendio_Rural.png</normaloff>sonidos/Logos/Logo_Incendio_Rural.png</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>170</width>
+             <height>170</height>
+            </size>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="2">
+          <widget class="QPushButton" name="buttonAccidenteVehicular">
+           <property name="minimumSize">
+            <size>
+             <width>110</width>
+             <height>110</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>110</width>
+             <height>110</height>
+            </size>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">QPushButton:hover {
+background-color: #FF0000;
+}</string>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset>
+             <normaloff>sonidos/Logos/Logo_Accidente_Vehicular.png</normaloff>sonidos/Logos/Logo_Accidente_Vehicular.png</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>160</width>
+             <height>160</height>
+            </size>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="3">
+          <widget class="QPushButton" name="buttonAccidenteMatPel">
+           <property name="minimumSize">
+            <size>
+             <width>110</width>
+             <height>110</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>110</width>
+             <height>110</height>
+            </size>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">QPushButton:hover {
+background-color: #FF0000;
+}</string>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset>
+             <normaloff>sonidos/Logos/Logo_mat_pel.png</normaloff>sonidos/Logos/Logo_mat_pel.png</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>140</width>
+             <height>140</height>
+            </size>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
+       <widget class="QFrame" name="frame_3">
+        <property name="minimumSize">
+         <size>
+          <width>600</width>
+          <height>100</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>1000</width>
+          <height>200</height>
          </size>
         </property>
         <property name="frameShape">
@@ -640,31 +691,52 @@ background-color: #FF0000;
         <property name="frameShadow">
          <enum>QFrame::Raised</enum>
         </property>
-        <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <layout class="QHBoxLayout" name="horizontalLayout">
          <item>
-          <widget class="QPushButton" name="volver">
+          <widget class="QFrame" name="frame_2">
            <property name="minimumSize">
             <size>
-             <width>30</width>
-             <height>40</height>
+             <width>600</width>
+             <height>50</height>
             </size>
            </property>
            <property name="maximumSize">
             <size>
-             <width>150</width>
-             <height>40</height>
+             <width>500</width>
+             <height>75</height>
             </size>
            </property>
-           <property name="font">
-            <font>
-             <pointsize>-1</pointsize>
-             <weight>50</weight>
-             <italic>false</italic>
-             <bold>false</bold>
-            </font>
+           <property name="frameShape">
+            <enum>QFrame::StyledPanel</enum>
            </property>
-           <property name="styleSheet">
-            <string notr="true">QPushButton {
+           <property name="frameShadow">
+            <enum>QFrame::Raised</enum>
+           </property>
+           <layout class="QHBoxLayout" name="horizontalLayout_2">
+            <item>
+             <widget class="QPushButton" name="volver">
+              <property name="minimumSize">
+               <size>
+                <width>30</width>
+                <height>40</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>150</width>
+                <height>40</height>
+               </size>
+              </property>
+              <property name="font">
+               <font>
+                <pointsize>-1</pointsize>
+                <weight>50</weight>
+                <italic>false</italic>
+                <bold>false</bold>
+               </font>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">QPushButton {
 font-size:14px;
 background-color:#ffcb3a;
 border-radius: 10px;
@@ -674,34 +746,34 @@ border: 1px solid black;
 QPushButton:hover {
 background-color: #c83737;
 }</string>
-           </property>
-           <property name="text">
-            <string>Cancelar</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="aceptar">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>40</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>300</width>
-             <height>40</height>
-            </size>
-           </property>
-           <property name="styleSheet">
-            <string notr="true">QPushButton {
+              </property>
+              <property name="text">
+               <string>Cancelar</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="aceptar">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>40</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>300</width>
+                <height>40</height>
+               </size>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">QPushButton {
 font-size:14px;
 background-color:#ffcb3a;
 border-radius: 10px;
@@ -711,10 +783,13 @@ border: 1px solid black;
 QPushButton:hover {
 background-color: #2CA02C;
 }</string>
-           </property>
-           <property name="text">
-            <string>Aceptar</string>
-           </property>
+              </property>
+              <property name="text">
+               <string>Aceptar</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </widget>
          </item>
         </layout>
@@ -732,7 +807,6 @@ background-color: #2CA02C;
   <tabstop>form_telefono</tabstop>
   <tabstop>comboBox_2</tabstop>
   <tabstop>comboBox</tabstop>
-  <tabstop>aceptar</tabstop>
   <tabstop>buttonIncendioForestal</tabstop>
   <tabstop>buttonIncendioEstructura</tabstop>
   <tabstop>buttonRescateDeAltura</tabstop>
@@ -741,8 +815,9 @@ background-color: #2CA02C;
   <tabstop>buttonIncendioRural</tabstop>
   <tabstop>buttonAccidenteVehicular</tabstop>
   <tabstop>buttonEmergVarias</tabstop>
-  <tabstop>buscarPunto</tabstop>
   <tabstop>volver</tabstop>
+  <tabstop>aceptar</tabstop>
+  <tabstop>buscarPunto</tabstop>
  </tabstops>
  <resources/>
  <connections/>
