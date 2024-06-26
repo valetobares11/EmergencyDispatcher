@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>OnlineRoutingMapperDialogBase</class>
- <widget class="QDialog" name="OnlineRoutingMapperDialogBase">
+ <class>EmergencyDispatcherDialogBase</class>
+ <widget class="QDialog" name="EmergencyDispatcherDialogBase">
   <property name="enabled">
    <bool>true</bool>
   </property>

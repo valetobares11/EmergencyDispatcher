@@ -38,5 +38,5 @@ You dont need data anymore to calculate routes for your maps. Just point the sta
 ###Installation
 
 1. Download the project and unzip it.
-2. Change the plugin folder name to OnlineRoutingMapper. 
+2. Change the plugin folder name to EmergencyDispatcher. 
 3. Copy this folder to QGIS plugins folder (eg. /home/user/.local/share/QGIS/QGIS3/profiles/default/python/plugins/)

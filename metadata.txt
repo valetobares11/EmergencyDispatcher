@@ -16,8 +16,8 @@ email=yanialva2009@gmail.com, maxigaspero@gmail.com, valetobares11@gmail.com
 
 about=Generate routes by using online services (Google Directions, Here, MapBox, YourNavigation, OSRM etc.)
 
-tracker=https://github.com/MSBilgin/OnlineRoutingMapper/issues
-repository=https://github.com/MSBilgin/OnlineRoutingMapper
+tracker=https://github.com/MSBilgin/EmergencyDispatcher/issues
+repository=https://github.com/MSBilgin/EmergencyDispatcher
 # End of mandatory metadata
 
 # Recommended items:
