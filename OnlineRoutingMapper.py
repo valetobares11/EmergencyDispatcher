@@ -732,9 +732,9 @@ class OnlineRoutingMapper:
         self.dlg.setFixedSize(self.dlg.size())
         self.dlg.show()
         # self.dlg.btnMapa.clicked.connect(lambda: (self.dlg_back.showMinimized(), self.dlg.showMinimized()))
-        self.dlg.button_filtrar.clicked.connect(lambda: (self.filtrarEmergencias(0)))
-        self.dlg.button_graficos_barra.clicked.connect(lambda: (self.filtrarEmergencias(1)))
-        self.dlg.button_graficos_linea.clicked.connect(lambda: (self.filtrarEmergencias(2)))
+        self.dlg.button_filtrar.clicked.connect(lambda: (self.filtrarEmergencias(FILTRAR_EMERGENCIA)))
+        self.dlg.button_graficos_barra.clicked.connect(lambda: (self.filtrarEmergencias(GRAFICOS_BARRA)))
+        self.dlg.button_graficos_linea.clicked.connect(lambda: (self.filtrarEmergencias(GRAFICOS_LINEA)))
         self.dlg.combo_tipo.addItems(TIPOS_EMERGENCIA)
         #self.dlg.tableWidget.sortItems(0)
         self.dlg.closeEvent = self.closePedidos
@@ -757,16 +757,16 @@ class OnlineRoutingMapper:
         
         # Ejecuta la consulta SQL y crea los puntos
         registros = select("pedido", None, None, filtro)
-        if grafico==0:
+        if grafico == FILTRAR_EMERGENCIA:
             if (len(registros)):
                 self.crearCapaPuntos(registros)
                 self.dlg_back.showMinimized()
                 self.dlg.showMinimized()
             else:
                 QMessageBox.information(self.dlg, 'filtrarEmergencias', "No se encontraron emergencias")
-        if grafico==1:
+        if grafico == GRAFICOS_BARRA:
             self.graficosBarra(registros)
-        if grafico==2:
+        if grafico == GRAFICOS_LINEA:
             self.graficosLinea(registros)
 
 

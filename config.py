@@ -61,3 +61,7 @@ TIPOS_EMERGENCIA = [
     'Rescate altura',
     'Varios'
 ]
+
+FILTRAR_EMERGENCIA = 0
+GRAFICOS_BARRA = 1
+GRAFICOS_LINEA = 2
