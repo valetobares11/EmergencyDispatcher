@@ -44,6 +44,10 @@ from .config import *
 from .apikey import *
 from qgis.PyQt.QtWidgets import QTableWidgetItem,QPushButton,QFileDialog
 import pygame
+import matplotlib.pyplot as plt
+from collections import Counter
+from matplotlib.ticker import MaxNLocator
+
 
 
 class CustomMapTool(QgsMapToolIdentifyFeature):
@@ -728,13 +732,14 @@ class OnlineRoutingMapper:
         self.dlg.setFixedSize(self.dlg.size())
         self.dlg.show()
         # self.dlg.btnMapa.clicked.connect(lambda: (self.dlg_back.showMinimized(), self.dlg.showMinimized()))
-        self.dlg.button_filtrar.clicked.connect(lambda: (self.filtrarEmergencias()))
+        self.dlg.button_filtrar.clicked.connect(lambda: (self.filtrarEmergencias(False)))
+        self.dlg.button_graficos_barra.clicked.connect(lambda: (self.filtrarEmergencias(True)))
         self.dlg.combo_tipo.addItems(TIPOS_EMERGENCIA)
         #self.dlg.tableWidget.sortItems(0)
         self.dlg.closeEvent = self.closePedidos
         self.dlg.volver_estadistica.clicked.connect(lambda: self.backScreenEstadistica())
     
-    def filtrarEmergencias(self):
+    def filtrarEmergencias(self, graficos):
         filtro = {}
         tipo_emergencia = self.dlg.combo_tipo.currentText()
         if (self.dlg.checkBox_fecha.isChecked()):
@@ -757,8 +762,24 @@ class OnlineRoutingMapper:
             self.dlg.showMinimized()
         else:
             QMessageBox.information(self.dlg, 'filtrarEmergencias', "No se encontraron emergencias")
+        if graficos:
+            self.graficosEstadisticas(registros)
 
 
+    def graficosEstadisticas(self, registros):
+        tipos = [registro[10] for registro in registros]
+        conteo_tipos = Counter(tipos)
+        categories = list(conteo_tipos.keys())
+        values = [int(valor) for valor in conteo_tipos.values()]
+        fig, ax = plt.subplots()
+        ax.bar(categories,values)
+
+        ax.yaxis.set_major_locator(MaxNLocator(integer=True))
+        plt.xlabel('Tipo Emergencia')
+        plt.ylabel('Cantidad')
+        plt.title('Cantidad de salidas por tipo')
+        plt.show()
+            
     def backScreenEstadistica(self):
         self.closePedidos(None)
         self.dlg.hide()
