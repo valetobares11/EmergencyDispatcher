@@ -21,8 +21,8 @@
   </property>
   <property name="minimumSize">
    <size>
-    <width>400</width>
-    <height>400</height>
+    <width>700</width>
+    <height>500</height>
    </size>
   </property>
   <property name="maximumSize">
@@ -53,34 +53,6 @@
    <property name="rightMargin">
     <number>0</number>
    </property>
-   <item>
-    <widget class="QGroupBox" name="groupBox_2">
-     <property name="minimumSize">
-      <size>
-       <width>0</width>
-       <height>100</height>
-      </size>
-     </property>
-     <property name="maximumSize">
-      <size>
-       <width>16777215</width>
-       <height>200</height>
-      </size>
-     </property>
-     <layout class="QHBoxLayout" name="horizontalLayout">
-      <item>
-       <widget class="QFrame" name="frame_4">
-        <property name="frameShape">
-         <enum>QFrame::StyledPanel</enum>
-        </property>
-        <property name="frameShadow">
-         <enum>QFrame::Raised</enum>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-   </item>
    <item>
     <widget class="QGroupBox" name="groupBox_3">
      <property name="sizePolicy">
@@ -341,7 +313,7 @@ background-color: #FF0000;
            </property>
            <property name="icon">
             <iconset>
-             <normaloff>sonidos/Logos/coordenada.png</normaloff>sonidos/Logos/coordenada.png</iconset>
+             <normaloff>../../../../../../../../../.designer/backup/sonidos/Logos/coordenada.png</normaloff>../../../../../../../../../.designer/backup/sonidos/Logos/coordenada.png</iconset>
            </property>
           </widget>
          </item>
@@ -369,7 +341,7 @@ background-color: #FF0000;
            </property>
            <property name="icon">
             <iconset>
-             <normaloff>sonidos/Logos/coordenada.png</normaloff>sonidos/Logos/coordenada.png</iconset>
+             <normaloff>../../../../../../../../../.designer/backup/sonidos/Logos/coordenada.png</normaloff>../../../../../../../../../.designer/backup/sonidos/Logos/coordenada.png</iconset>
            </property>
           </widget>
          </item>

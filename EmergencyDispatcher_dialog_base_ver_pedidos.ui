@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1103</width>
-    <height>802</height>
+    <width>700</width>
+    <height>500</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -19,14 +19,23 @@
     <verstretch>0</verstretch>
    </sizepolicy>
   </property>
+  <property name="minimumSize">
+   <size>
+    <width>700</width>
+    <height>500</height>
+   </size>
+  </property>
   <property name="windowTitle">
    <string>Emergency Dispatcher</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">background-color: rgb(33, 43, 56);</string>
   </property>
   <widget class="QPushButton" name="volver">
    <property name="geometry">
     <rect>
-     <x>450</x>
-     <y>710</y>
+     <x>410</x>
+     <y>400</y>
      <width>93</width>
      <height>41</height>
     </rect>
@@ -34,13 +43,13 @@
    <property name="styleSheet">
     <string notr="true">QPushButton {
 font-size:14px;
-background-color:#d35f5f;
+background-color:#ffcb3a;
 border-radius: 10px;
 border: 1px solid black;
 }
 
 QPushButton:hover {
-background-color: #c83737;
+background-color: #FF0000;
 }</string>
    </property>
    <property name="text">
@@ -50,8 +59,8 @@ background-color: #c83737;
   <widget class="QPushButton" name="aceptar">
    <property name="geometry">
     <rect>
-     <x>560</x>
-     <y>710</y>
+     <x>520</x>
+     <y>400</y>
      <width>93</width>
      <height>41</height>
     </rect>
@@ -59,13 +68,13 @@ background-color: #c83737;
    <property name="styleSheet">
     <string notr="true">QPushButton {
 font-size:14px;
-background-color:#37c871;
+background-color:#ffcb3a;
 border-radius: 10px;
 border: 1px solid black;
 }
 
 QPushButton:hover {
-background-color: #2CA02C;
+background-color: #FF0000;
 }</string>
    </property>
    <property name="text">
@@ -77,12 +86,20 @@ background-color: #2CA02C;
     <rect>
      <x>40</x>
      <y>20</y>
-     <width>221</width>
+     <width>281</width>
      <height>16</height>
     </rect>
    </property>
+   <property name="font">
+    <font>
+     <pointsize>14</pointsize>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">color: white;</string>
+   </property>
    <property name="text">
-    <string>Pedidos de emergencia</string>
+    <string>PEDIDOS DE EMERGENCIA</string>
    </property>
   </widget>
   <widget class="QTableWidget" name="tableWidget">
@@ -90,30 +107,36 @@ background-color: #2CA02C;
     <rect>
      <x>40</x>
      <y>51</y>
-     <width>1011</width>
-     <height>621</height>
+     <width>571</width>
+     <height>331</height>
     </rect>
    </property>
   </widget>
   <widget class="QPushButton" name="cargar_planilla">
    <property name="geometry">
     <rect>
-     <x>20</x>
-     <y>720</y>
-     <width>191</width>
+     <x>40</x>
+     <y>410</y>
+     <width>150</width>
      <height>31</height>
     </rect>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>150</width>
+     <height>31</height>
+    </size>
    </property>
    <property name="styleSheet">
     <string notr="true">QPushButton {
 font-size:14px;
-background-color:#37c871;
+background-color:#ffcb3a;
 border-radius: 10px;
 border: 1px solid black;
 }
 
 QPushButton:hover {
-background-color: #2CA02C;
+background-color: #FF0000;
 }</string>
    </property>
    <property name="text">
@@ -123,8 +146,8 @@ background-color: #2CA02C;
   <widget class="QPushButton" name="cargar">
    <property name="geometry">
     <rect>
-     <x>240</x>
-     <y>720</y>
+     <x>200</x>
+     <y>410</y>
      <width>71</width>
      <height>31</height>
     </rect>
@@ -132,13 +155,13 @@ background-color: #2CA02C;
    <property name="styleSheet">
     <string notr="true">QPushButton {
 font-size:14px;
-background-color:#37c871;
+background-color:#ffcb3a;
 border-radius: 10px;
 border: 1px solid black;
 }
 
 QPushButton:hover {
-background-color: #2CA02C;
+background-color: #FF0000;
 }</string>
    </property>
    <property name="text">
@@ -148,8 +171,8 @@ background-color: #2CA02C;
   <widget class="QPushButton" name="exportar">
    <property name="geometry">
     <rect>
-     <x>340</x>
-     <y>720</y>
+     <x>280</x>
+     <y>410</y>
      <width>71</width>
      <height>31</height>
     </rect>
@@ -157,13 +180,13 @@ background-color: #2CA02C;
    <property name="styleSheet">
     <string notr="true">QPushButton {
 font-size:14px;
-background-color:#37c871;
+background-color:#ffcb3a;
 border-radius: 10px;
 border: 1px solid black;
 }
 
 QPushButton:hover {
-background-color: #2CA02C;
+background-color: #FF0000;
 }</string>
    </property>
    <property name="text">
