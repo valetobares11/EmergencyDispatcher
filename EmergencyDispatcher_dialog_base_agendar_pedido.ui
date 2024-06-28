@@ -35,7 +35,8 @@
    <string>Emergency Dispatcher</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">background-color: rgb(33, 43, 56);</string>
+   <string notr="true">background-color: rgb(33, 43, 56);
+centralWidget: horizontal;</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <property name="spacing">
