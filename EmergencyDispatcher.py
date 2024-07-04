@@ -116,6 +116,8 @@ class EmergencyDispatcher:
         self.telefono =""
         self.solicitante = ""
         self.descripcion = ""
+        self.capaPuntoInicial = None
+        self.capaBombas = []
 
     # noinspection PyMethodMayBeStatic
     def tr(self, message):
@@ -280,9 +282,11 @@ class EmergencyDispatcher:
 
     def clickHandlerBombas(self, pointXY):
         pointXY = QgsPointXY(pointXY)
-        self.bombasRubberBand.addPoint(pointXY)
+        capa = self.agregar_punto_con_icono(pointXY, PATH_IMAGEN_BOMBAS_ICON_SVG, "Bomba")
+        if (capa not in self.capaBombas):
+            self.capaBombas.append(capa)
+        # self.bombasRubberBand.addPoint(pointXY)
         self.dlg.bombaTxt.setText(str(pointXY.x()) + ',' + str(pointXY.y()))
-
        
         # Ocultar la ventana emergente temporalmente
         self.dlg.hide()
@@ -363,8 +367,9 @@ class EmergencyDispatcher:
                     self.cargar_puntos_lista()
                     # wkt, url = service(startPoint, stopPoint, self.listPointsExclution, self.tipoAutomovil)
                     wkt, url = service(startPoint, stopPoint, self.listPointsExclution, self.tipoAutomovil)
-                    
-                    report(url)
+                    wkt2, url2 = service(stopPoint, startPoint, self.listPointsExclution, self.tipoAutomovil)
+
+                    report(url, url2)
                     self.persistir_pedido(url)
                     if self.type_emergency in (1,2,3,4):
                         # si es incendio
@@ -409,7 +414,7 @@ class EmergencyDispatcher:
                 '7':'VARIOS',
                 '8':'RESCATE DE ALTURA'
             }.get(str(self.type_emergency),'Desconocido')
-            valores = "'{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}','{}', now()".format(direccion, solicitante, telefono, "Pedro", "",self.crsTransformPedido(self.stopPointXY), descripcion, tiempo_estimado, categoria, tiempo_estimado)
+            valores = "'{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}','{}', now()".format(direccion, solicitante, telefono, "Pedro", self.crsTransformPedido(self.startPointXY),self.crsTransformPedido(self.stopPointXY), descripcion, tiempo_estimado, categoria, tiempo_estimado)
             insert('pedido', 'direccion, solicitante, telefono, operador, startpoint, stoppoint, description, tiempo_estimado,tipo, tiempo_real, fecha', valores)
                 
         except Exception as e:
@@ -441,8 +446,6 @@ class EmergencyDispatcher:
             QMessageBox.warning(self.dlg, 'Calculate routes bombas',"Hubo un error al calcular las bombas mas cercanas")
 
     def calculate_points(self):
-        punto_part = PUNTO_PARTIDA.split(',')
-        self.startPointXY = QgsPointXY(float(punto_part[0]), float(punto_part[1]))
         try:
             address = self.dlg.form_direccion.text()+ " " + CIUDAD + " " + PROVINCIA
             x, y = obtener_coordenada(address)
@@ -474,7 +477,8 @@ class EmergencyDispatcher:
         self.dlg.setFixedSize(self.dlg.size())
         self.dlg.show()
         
-        
+        self.dlg.comboBox_2.addItems(OPERADORES)
+
         opciones = [CAMIONETA, CAMION_LIGERO, CAMION_PESADO]
         self.dlg.comboBox.addItems(opciones)
 
@@ -522,11 +526,18 @@ class EmergencyDispatcher:
         while self.startRubberBand.numberOfVertices() > 0:
             self.startRubberBand.removeLastPoint()
 
-        while self.bombasRubberBand.numberOfVertices() > 0:
-            self.bombasRubberBand.removeLastPoint()
-
+        self.borrarCapaBombas()
         self.vectorRubberBand.reset()
-    ####
+    
+    def borrarCapaBombas(self):
+        if (len(self.capaBombas)>0):
+            todasLasCapas = QgsProject.instance().mapLayers().values()
+            for capa in self.capaBombas:
+                # if capa in todasLasCapas:
+                QgsProject.instance().removeMapLayer(capa)
+                self.capaBombas.remove(capa)
+
+
     def remove_bomba(self, id):
         # Borrar en la tabla interface
         i=0
@@ -1000,12 +1011,39 @@ class EmergencyDispatcher:
         #     self.dlg.showNormal()
         self.agregar_actualizar_puntos_iniciales()
 
+    def agregar_punto_con_icono(self, point, icon_path, nombre_capa = "Custom Marker Layer"):
+        vl = QgsVectorLayer("Point?crs=EPSG:4326", nombre_capa, "memory")
+        pr = vl.dataProvider()
+        vl.startEditing()
+        # Crear una característica (feature) en el punto inicial
+        feat = QgsFeature()
+        feat.setGeometry(QgsGeometry.fromPointXY(point))
+        pr.addFeatures([feat])
+        vl.updateExtents()
+        # Crear un símbolo SVG personalizado
+        symbol = QgsMarkerSymbol.createSimple({'name': 'circle', 'color': 'black'})
+        svg_layer = QgsSvgMarkerSymbolLayer(icon_path)
+        svg_layer.setSize(10)
+        symbol.changeSymbolLayer(0, svg_layer)
+        
+        # Aplicar el símbolo personalizado a la capa
+        renderer = vl.renderer()
+        renderer.setSymbol(symbol)
+        QgsProject.instance().addMapLayer(vl)
+        self.canvas.setExtent(vl.extent())
+        self.canvas.refresh()
+        return vl
+
+    def agregarCapa(self, capa):
+        QgsProject.instance().addMapLayer(capa)
+        self.canvas.setExtent(capa.extent())
+        self.canvas.refresh()
+
     def agregar_actualizar_puntos_iniciales(self):
         self.borrar_todos_los_puntos()
         self.vectorRubberBand = QgsRubberBand(self.canvas, QgsWkbTypes.PolygonGeometry)
         self.vectorRubberBand.setColor(QColor("#000000"))
         self.vectorRubberBand.setWidth(4)
-
         self.startRubberBand = QgsRubberBand(self.canvas, QgsWkbTypes.PointGeometry)
         self.startRubberBand.setColor(QColor("#000000"))
         self.startRubberBand.setIconSize(10)
@@ -1014,10 +1052,12 @@ class EmergencyDispatcher:
         self.stopRubberBand.setColor(QColor("#000000"))
         self.stopRubberBand.setIconSize(10)
         self.stopRubberBand.setIcon(QgsRubberBand.ICON_FULL_BOX)
-        self.bombasRubberBand = QgsRubberBand(self.canvas, QgsWkbTypes.PointGeometry)
-        self.bombasRubberBand.setColor(QColor("#ff000"))
-        self.bombasRubberBand.setIconSize(10)
-        self.bombasRubberBand.setIcon(QgsRubberBand.ICON_FULL_BOX)
+
+        # self.bombasRubberBand = QgsRubberBand(self.canvas, QgsWkbTypes.PointGeometry)
+        # self.bombasRubberBand.setColor(QColor("#ff000"))
+        # self.bombasRubberBand.setIconSize(10)
+        # self.bombasRubberBand.setIcon(QgsRubberBand.ICON_FULL_BOX)
+
         registros = select('points')
         i=1
         points = []
@@ -1030,13 +1070,24 @@ class EmergencyDispatcher:
             else:
                 self.startRubberBand.addPoint(QgsPointXY(float(tupla[1]), float(tupla[2])))
             i+=1
+
         registros=select('bomba')
         for tupla in registros:
-            self.bombasRubberBand.addPoint(QgsPointXY(float(tupla[1]), float(tupla[2])))
+            capa = self.agregar_punto_con_icono(QgsPointXY(float(tupla[1]), float(tupla[2])), PATH_IMAGEN_BOMBAS_ICON_SVG, "Bomba")
+            if (capa not in self.capaBombas):
+                self.capaBombas.append(capa)
+        
+        # Punto inicial-cuartel bomberos
+        todasLasCapas = QgsProject.instance().mapLayers().values()
+        if self.capaPuntoInicial not in todasLasCapas:    
+            capa = self.agregar_punto_con_icono(self.startPointXY, PATH_IMAGEN_CUARTEL_ICON_SVG, "Punto Inicial")
+            self.capaPuntoInicial = capa
+        #     self.bombasRubberBand.addPoint()
             
     def run(self):
         self.no = 0
-        self.startPointXY = None
+        punto_part = PUNTO_PARTIDA.split(',')
+        self.startPointXY = QgsPointXY(float(punto_part[0]), float(punto_part[1]))
         self.stopPointXY = None
         createTablePoints()
         createTableBomba()
@@ -1074,11 +1125,11 @@ class EmergencyDispatcher:
         self.stopRubberBand.setColor(QColor("#000000"))
         self.stopRubberBand.setIconSize(10)
         self.stopRubberBand.setIcon(QgsRubberBand.ICON_FULL_BOX)
-        self.bombasRubberBand = QgsRubberBand(self.canvas, QgsWkbTypes.PointGeometry)
-        self.bombasRubberBand.setColor(QColor("#ff000"))
-        self.bombasRubberBand.setIconSize(10)
-        self.bombasRubberBand.setIcon(QgsRubberBand.ICON_FULL_BOX)
-        
+
+        # self.bombasRubberBand = QgsRubberBand(self.canvas, QgsWkbTypes.PointGeometry)
+        # self.bombasRubberBand.setColor(QColor("#ff000"))
+        # self.bombasRubberBand.setIconSize(10)
+        # self.bombasRubberBand.setIcon(QgsRubberBand.ICON_FULL_BOX)
         self.agregar_actualizar_puntos_iniciales()
 
         self.dlg.show()
@@ -1088,8 +1139,14 @@ class EmergencyDispatcher:
         #clear the rubberbands
         self.canvas.scene().removeItem(self.startRubberBand)
         self.canvas.scene().removeItem(self.stopRubberBand)
-        self.canvas.scene().removeItem(self.bombasRubberBand)
         self.canvas.scene().removeItem(self.vectorRubberBand)
+        self.borrarCapaBombas()
+        todasLasCapas = QgsProject.instance().mapLayers().values()
+        if self.capaPuntoInicial in todasLasCapas:
+            QgsProject.instance().removeMapLayer(self.capaPuntoInicial)
+            self.capaPuntoInicial = None
+        # self.canvas.scene().removeItem(self.bombasRubberBand)
+
         
     def closePedidos(self, event):
         capa_pedidos = QgsProject.instance().mapLayersByName("Pedidos")

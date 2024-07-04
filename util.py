@@ -35,22 +35,34 @@ def geocode_address(address):
             return lon, lat
     return None
 
-def report(url):
-    response = urlopen(url).read().decode("utf-8")
-    diccionario = json.loads(response)
-    tiempo_estimado = int(diccionario['routes'][0]['sections'][0]['summary']['duration'])
-    f = open (PATH_REPORTE,'a')
-    f.write('El tiempo estimado de viaje es: '+ str(round(tiempo_estimado/60))+' min\n\n')
+def escribir_instrucciones(diccionario, archivo, titulo):
+    archivo.write(titulo + '\n')
     instrucciones = diccionario['routes'][0]['sections'][0]['actions']
     for instruccion in instrucciones:
-        f.write(str(instruccion['instruction'])+'\n')
+        archivo.write(str(instruccion['instruction']) + '\n')
 
-    registros = select('points')
-    if (len(registros) > 0) :
-        f.write('\nCortes\n')
-        for x in range(0,len(registros),2):
-            f.write(str(registros[x][3]))
-    f.close()
+def obtener_datos_url(url):
+    response = urlopen(url).read().decode("utf-8")
+    return json.loads(response)
+
+def report(urlIda, urlVuelta):
+    diccionario_ida = obtener_datos_url(urlIda)
+    diccionario_vuelta = obtener_datos_url(urlVuelta)
+    with open(PATH_REPORTE, 'a') as f:
+
+        tiempo_estimado = int(diccionario_ida['routes'][0]['sections'][0]['summary']['duration'])
+        f.write('El tiempo estimado de viaje es: '+ str(round(tiempo_estimado/60))+' min\n\n')
+        
+        escribir_instrucciones(diccionario_ida, f, 'Detalle de ruta de ida:')
+        f.write('\n\n')
+        escribir_instrucciones(diccionario_vuelta, f, 'Detalle de ruta de vuelta:')
+
+        registros = select('points')
+        if (len(registros) > 0) :
+            f.write('\nCortes\n')
+            for x in range(0,len(registros),2):
+                f.write(str(registros[x][3]))
+        f.close()
 
 def write_report(descripcion, address, solicitante, telefono):
     f = open (PATH_REPORTE ,'w')
