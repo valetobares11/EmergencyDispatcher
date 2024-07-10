@@ -44,12 +44,12 @@ class EmergencyDispatcherDialog(QtWidgets.QDialog, FORM_CLASS):
         
 
 FORM_CLASS_AG_PEDIDO, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'EmergencyDispatcher_dialog_base_agendar_pedido.ui'))
+    os.path.dirname(__file__), 'EmergencyDispatcher_dialog_place_an_order.ui'))
 
-class EmergencyDispatcherDialogAgPedido(QtWidgets.QDialog, FORM_CLASS_AG_PEDIDO):
+class EmergencyDispatcherDialogPlaceAnOrder(QtWidgets.QDialog, FORM_CLASS_AG_PEDIDO):
     def __init__(self, parent=None):
         """Constructor."""
-        super(EmergencyDispatcherDialogAgPedido, self).__init__(parent)
+        super(EmergencyDispatcherDialogPlaceAnOrder, self).__init__(parent)
         # Set up the user interface from Designer.
         # After setupUI you can access any designer object by doing
         # self.<objectname>, and you can use autoconnect slots - see
@@ -58,12 +58,12 @@ class EmergencyDispatcherDialogAgPedido(QtWidgets.QDialog, FORM_CLASS_AG_PEDIDO)
         self.setupUi(self)
 
 FORM_CLASS_MOD_MAPA, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'EmergencyDispatcher_dialog_base_mod_mapa.ui'))
+    os.path.dirname(__file__), 'EmergencyDispatcher_dialog_modify_map.ui'))
 
-class EmergencyDispatcherDialogModMapa(QtWidgets.QDialog, FORM_CLASS_MOD_MAPA):
+class EmergencyDispatcherDialogModifyMap(QtWidgets.QDialog, FORM_CLASS_MOD_MAPA):
     def __init__(self, parent=None):
         """Constructor."""
-        super(EmergencyDispatcherDialogModMapa, self).__init__(parent)
+        super(EmergencyDispatcherDialogModifyMap, self).__init__(parent)
         # Set up the user interface from Designer.
         # After setupUI you can access any designer object by doing
         # self.<objectname>, and you can use autoconnect slots - see
@@ -71,12 +71,12 @@ class EmergencyDispatcherDialogModMapa(QtWidgets.QDialog, FORM_CLASS_MOD_MAPA):
         # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
 FORM_CLASS_MOD_MAPA, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'EmergencyDispatcher_dialog_base_mod_bombas.ui'))
+    os.path.dirname(__file__), 'EmergencyDispatcher_dialog_modify_pumps.ui'))
 
-class EmergencyDispatcherDialogModBombas(QtWidgets.QDialog, FORM_CLASS_MOD_MAPA):
+class EmergencyDispatcherDialogModifyPump(QtWidgets.QDialog, FORM_CLASS_MOD_MAPA):
     def __init__(self, parent=None):
         """Constructor."""
-        super(EmergencyDispatcherDialogModBombas, self).__init__(parent)
+        super(EmergencyDispatcherDialogModifyPump, self).__init__(parent)
         # Set up the user interface from Designer.
         # After setupUI you can access any designer object by doing
         # self.<objectname>, and you can use autoconnect slots - see
@@ -85,12 +85,12 @@ class EmergencyDispatcherDialogModBombas(QtWidgets.QDialog, FORM_CLASS_MOD_MAPA)
         self.setupUi(self)
 
 FORM_CLASS_VER_PEDIDOS, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'EmergencyDispatcher_dialog_base_ver_pedidos.ui'))
+    os.path.dirname(__file__), 'EmergencyDispatcher_dialog_see_orders.ui'))
 
-class EmergencyDispatcherDialogVerPedidos(QtWidgets.QDialog, FORM_CLASS_VER_PEDIDOS):
+class EmergencyDispatcherDialogSeeOrders(QtWidgets.QDialog, FORM_CLASS_VER_PEDIDOS):
     def __init__(self, parent=None):
         """Constructor."""
-        super(EmergencyDispatcherDialogVerPedidos, self).__init__(parent)
+        super(EmergencyDispatcherDialogSeeOrders, self).__init__(parent)
         # Set up the user interface from Designer.
         # After setupUI you can access any designer object by doing
         # self.<objectname>, and you can use autoconnect slots - see
@@ -99,12 +99,12 @@ class EmergencyDispatcherDialogVerPedidos(QtWidgets.QDialog, FORM_CLASS_VER_PEDI
         self.setupUi(self)
 
 FORM_CLASS_ESTADISTICAS, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'EmergencyDispatcher_dialog_base_estadisticas.ui'))
+    os.path.dirname(__file__), 'EmergencyDispatcher_dialog_statistics.ui'))
 
-class EmergencyDispatcherDialogEstadisticas(QtWidgets.QDialog, FORM_CLASS_ESTADISTICAS):
+class EmergencyDispatcherDialogStatistics(QtWidgets.QDialog, FORM_CLASS_ESTADISTICAS):
     def __init__(self, parent=None):
         """Constructor."""
-        super(EmergencyDispatcherDialogEstadisticas, self).__init__(parent)
+        super(EmergencyDispatcherDialogStatistics, self).__init__(parent)
         # Set up the user interface from Designer.
         # After setupUI you can access any designer object by doing
         # self.<objectname>, and you can use autoconnect slots - see

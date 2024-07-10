@@ -54,7 +54,7 @@ class RouteProvider(object):
         response = urlopen(url).read().decode("utf-8")
         return self.__wktMaker__(response), url
     
-    def here(self, startPoint=str, endPoint=str, listPointsExclusion=[], tipoAutomovil = None):
+    def here(self, startPoint=str, endPoint=str, listPointsExclusion=[], typeAutomovil = None):
         self.__serviceType__ = 1
         now = datetime.datetime.now()
         bingDepartureParameter = str(now.year) + '-' + str('%02d' % now.month) + '-' + str(
@@ -63,12 +63,12 @@ class RouteProvider(object):
             
         
         parameter_movil = "car"
-        if (tipoAutomovil is not None):
-            if (tipoAutomovil == CAMIONETA):
+        if (typeAutomovil is not None):
+            if (typeAutomovil == CAMIONETA):
                 parameter_movil = "car"
-            if (tipoAutomovil == CAMION_LIGERO):
+            if (typeAutomovil == CAMION_LIGERO):
                 parameter_movil = "truck"
-            if (tipoAutomovil == CAMION_PESADO):
+            if (typeAutomovil == CAMION_PESADO):
                 parameter_movil = "truck"
 
         if (len(listPointsExclusion) > 0):
@@ -89,15 +89,15 @@ class RouteProvider(object):
         
         return self.__wktMaker__(response), url
     
-    def here_v8(self, startPoint=str, endPoint=str, listPointsExclusion=[], tipoAutomovil = None):
+    def here_v8(self, startPoint=str, endPoint=str, listPointsExclusion=[], typeAutomovil = None):
         self.__serviceType__ = 7
         parameter_movil = "car"
-        if (tipoAutomovil is not None):
-            if (tipoAutomovil == CAMIONETA):
+        if (typeAutomovil is not None):
+            if (typeAutomovil == CAMIONETA):
                 parameter_movil = "car"
-            if (tipoAutomovil == CAMION_LIGERO):
+            if (typeAutomovil == CAMION_LIGERO):
                 parameter_movil = "truck"
-            if (tipoAutomovil == CAMION_PESADO):
+            if (typeAutomovil == CAMION_PESADO):
                 parameter_movil = "truck"
 
         if (len(listPointsExclusion) > 0):

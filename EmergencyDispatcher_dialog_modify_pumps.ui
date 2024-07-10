@@ -76,7 +76,7 @@
         </property>
         <layout class="QGridLayout" name="gridLayout">
          <item row="3" column="1" colspan="3">
-          <widget class="QLineEdit" name="bombaTxt">
+          <widget class="QLineEdit" name="pumpTxt">
            <property name="enabled">
             <bool>true</bool>
            </property>
@@ -89,7 +89,7 @@
           </widget>
          </item>
          <item row="1" column="0" colspan="4">
-          <widget class="QLineEdit" name="descripcionTxt">
+          <widget class="QLineEdit" name="descriptionTxt">
            <property name="styleSheet">
             <string notr="true">background-color: rgb(255, 255, 255);</string>
            </property>
@@ -109,7 +109,7 @@
             <string notr="true">color: rgb(255, 255, 255);</string>
            </property>
            <property name="text">
-            <string>Ubicación de la bomba</string>
+            <string>Ubicación de la pump</string>
            </property>
           </widget>
          </item>
@@ -124,7 +124,7 @@
             <string notr="true">color: rgb(255, 255, 255);</string>
            </property>
            <property name="text">
-            <string>Listado de bombas</string>
+            <string>Listado de pumps</string>
            </property>
           </widget>
          </item>
@@ -204,7 +204,7 @@ background-color: #FF0000;
         </property>
         <layout class="QHBoxLayout" name="horizontalLayout">
          <item>
-          <widget class="QPushButton" name="volver">
+          <widget class="QPushButton" name="back_to">
            <property name="minimumSize">
             <size>
              <width>30</width>
@@ -262,11 +262,11 @@ background-color: #FF0000;
   </layout>
  </widget>
  <tabstops>
-  <tabstop>descripcionTxt</tabstop>
-  <tabstop>bombaTxt</tabstop>
+  <tabstop>descriptionTxt</tabstop>
+  <tabstop>pumpTxt</tabstop>
   <tabstop>tableWidget</tabstop>
   <tabstop>aceptar</tabstop>
-  <tabstop>volver</tabstop>
+  <tabstop>back_to</tabstop>
   <tabstop>startBtn</tabstop>
  </tabstops>
  <resources/>

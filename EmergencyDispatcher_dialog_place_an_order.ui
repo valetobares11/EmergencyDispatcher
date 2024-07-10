@@ -174,7 +174,7 @@ centralWidget: horizontal;</string>
           </widget>
          </item>
          <item row="0" column="1" colspan="4">
-          <widget class="QLineEdit" name="form_descripcion">
+          <widget class="QLineEdit" name="form_description">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Ignored" vsizetype="Fixed">
              <horstretch>30</horstretch>
@@ -326,7 +326,7 @@ background-color: #2CA02C;
           </widget>
          </item>
          <item row="2" column="1" colspan="4">
-          <widget class="QLineEdit" name="form_solicitante">
+          <widget class="QLineEdit" name="form_applicant">
            <property name="minimumSize">
             <size>
              <width>0</width>
@@ -339,7 +339,7 @@ background-color: #2CA02C;
           </widget>
          </item>
          <item row="3" column="1" colspan="4">
-          <widget class="QLineEdit" name="form_telefono">
+          <widget class="QLineEdit" name="form_phone">
            <property name="minimumSize">
             <size>
              <width>0</width>
@@ -557,7 +557,7 @@ background-color: #FF0000;
            </property>
            <property name="icon">
             <iconset>
-             <normaloff>sonidos/Logos/Logo_emergencias_varias.png</normaloff>sonidos/Logos/Logo_emergencias_varias.png</iconset>
+             <normaloff>sonidos/Logos/Logo_emergencys_varias.png</normaloff>sonidos/Logos/Logo_emergencys_varias.png</iconset>
            </property>
            <property name="iconSize">
             <size>
@@ -715,7 +715,7 @@ background-color: #FF0000;
            </property>
            <layout class="QHBoxLayout" name="horizontalLayout_2">
             <item>
-             <widget class="QPushButton" name="volver">
+             <widget class="QPushButton" name="back_to">
               <property name="minimumSize">
                <size>
                 <width>30</width>
@@ -754,7 +754,7 @@ background-color: #c83737;
              </widget>
             </item>
             <item>
-             <widget class="QPushButton" name="aceptar">
+             <widget class="QPushButton" name="acceptOrder">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                 <horstretch>0</horstretch>
@@ -802,10 +802,10 @@ background-color: #2CA02C;
   </layout>
  </widget>
  <tabstops>
-  <tabstop>form_descripcion</tabstop>
+  <tabstop>form_description</tabstop>
   <tabstop>form_direccion</tabstop>
-  <tabstop>form_solicitante</tabstop>
-  <tabstop>form_telefono</tabstop>
+  <tabstop>form_applicant</tabstop>
+  <tabstop>form_phone</tabstop>
   <tabstop>comboBox_2</tabstop>
   <tabstop>comboBox</tabstop>
   <tabstop>buttonIncendioForestal</tabstop>
@@ -816,8 +816,8 @@ background-color: #2CA02C;
   <tabstop>buttonIncendioRural</tabstop>
   <tabstop>buttonAccidenteVehicular</tabstop>
   <tabstop>buttonEmergVarias</tabstop>
-  <tabstop>volver</tabstop>
-  <tabstop>aceptar</tabstop>
+  <tabstop>back_to</tabstop>
+  <tabstop>acceptOrder</tabstop>
   <tabstop>buscarPunto</tabstop>
  </tabstops>
  <resources/>

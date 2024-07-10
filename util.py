@@ -50,8 +50,8 @@ def report(urlIda, urlVuelta):
     diccionario_vuelta = obtener_datos_url(urlVuelta)
     with open(PATH_REPORTE, 'a') as f:
 
-        tiempo_estimado = int(diccionario_ida['routes'][0]['sections'][0]['summary']['duration'])
-        f.write('El tiempo estimado de viaje es: '+ str(round(tiempo_estimado/60))+' min\n\n')
+        estimatedTime = int(diccionario_ida['routes'][0]['sections'][0]['summary']['duration'])
+        f.write('El tiempo estimado de viaje es: '+ str(round(estimatedTime/60))+' min\n\n')
         
         escribir_instrucciones(diccionario_ida, f, 'Detalle de ruta de ida:')
         f.write('\n\n')
@@ -64,15 +64,15 @@ def report(urlIda, urlVuelta):
                 f.write(str(registros[x][3]))
         f.close()
 
-def write_report(descripcion, address, solicitante, telefono):
+def writeReport(description, address, applicant, phone):
     f = open (PATH_REPORTE ,'w')
-    f.write('Descripcion Emergencia: '+descripcion)
+    f.write('Descripcion Emergencia: '+description)
     f.write('\n\nDireccion: '+address)
-    f.write('\n\nSolicitante: '+solicitante)
-    f.write('\n\nTelefono: '+telefono+'\n\n')
+    f.write('\n\nSolicitante: '+applicant)
+    f.write('\n\nTelefono: '+phone+'\n\n')
     f.close()
 
-def obtener_direccion(longitud, latitud):
+def getAddress(longitud, latitud):
     url = f" https://maps.googleapis.com/maps/api/geocode/json?latlng={latitud},{longitud}&key={APIKEY}"
     response = requests.get(url)
     if response.status_code == 200:
@@ -84,20 +84,13 @@ def obtener_direccion(longitud, latitud):
             return "No se encontró ninguna dirección para las coordenadas proporcionadas."
     else:
         return f"Error al realizar la solicitud: {response.status_code}"
-    
-def agregar_texto_con_saltos_de_linea(c, x, y, texto):
-    lineas = texto.split('\n')
-    for linea in lineas:
-        c.drawString(x, y, linea)
-        y -= 15  # Espacio vertical entre líneas
 
-
-def insertar_punto(start_point, stop_point, description):
+def insertPoint(start_point, stop_point, description):
     valores = "{}, {}, '{}'".format(start_point, stop_point, description)
     insert('points', 'startPoint, stopPoint, description', valores)
 
 
-def obtener_coordenada(address):
+def getCoordinate(address):
     base_url = "https://maps.googleapis.com/maps/api/geocode/json?"
     
     params = {
@@ -115,7 +108,7 @@ def obtener_coordenada(address):
             return lon, lat
     return None
 
-def cargar_pedidos(archivo_ods):
+def loadOrders(archivo_ods):
     try:
         # Lee el archivo ODS
         data = get_data(archivo_ods)
@@ -136,14 +129,14 @@ def cargar_pedidos(archivo_ods):
         consulta_insercion = ''
         
         for i, fila in df_filtrado.iterrows():
-            for columna, valor in fila.items():
-                if (columna == 'startpoint'): startpoint = valor
-                if (columna == 'stoppoint'): stoppoint = valor
-                if (columna == 'direccion'): direccion = valor
-                if (columna == 'tiempo'): tiempo = valor
+            for column, valor in fila.items():
+                if (column == 'startpoint'): startpoint = valor
+                if (column == 'stoppoint'): stoppoint = valor
+                if (column == 'direccion'): direccion = valor
+                if (column == 'tiempo'): tiempo = valor
             x,y = obtener_coordenada(direccion+' rio cuarto cordoba')
             stoppoint = '{},{}'.format(x,y)
-            consulta_insercion += ("INSERT INTO pedido (direccion, startpoint, stoppoint, tiempo) VALUES ('{}', '{}', '{}', CURRENT_DATE + INTERVAL '{}' HOUR TO MINUTE); \n".format(direccion, startpoint, stoppoint,tiempo))
+            consulta_insercion += ("INSERT INTO order (direccion, startpoint, stoppoint, tiempo) VALUES ('{}', '{}', '{}', CURRENT_DATE + INTERVAL '{}' HOUR TO MINUTE); \n".format(direccion, startpoint, stoppoint,tiempo))
 
         cursor.execute(consulta_insercion)
         # Guardar los cambios y cerrar la conexión
@@ -155,11 +148,11 @@ def cargar_pedidos(archivo_ods):
     except Exception as e:
         print(f"Error al procesar el archivo {archivo_ods}: {str(e)}")
 
-def create_and_download_ods():
+def createAndDownloadOds():
     data = [
-        ["direccion", "solicitante", "telefono", "operador", "startpoint", "stoppoint", "descripcion", "tiempo"]
+        ["direccion", "applicant", "phone", "operador", "startpoint", "stoppoint", "description", "tiempo"]
     ]
-    registros = select("pedido")
+    registros = select("order")
     for tupla in registros:
         data.append([tupla[1], tupla[2], tupla[3], tupla[4], tupla[5], tupla[6], tupla[7],tupla[8].strftime("%Y-%m-%d %H:%M:%S")])
 
@@ -169,22 +162,22 @@ def create_and_download_ods():
     # Guardar el libro de trabajo como un archivo ODS
     sheet.save_as(PATH_RUTA_EXPORT)
     
-def getIdTipoEmergencia(emergencia):
-    if (emergencia == 'Incendio forestal'):
+def getIdTypeEmergency(emergency):
+    if (emergency == 'Incendio forestal'):
         return "INCENDIO FORESTAL"
-    if (emergencia == 'Incendio rural'):
+    if (emergency == 'Incendio rural'):
         return "INCENDIO RURAL"
-    if (emergencia == 'Incendio vehicular'):
+    if (emergency == 'Incendio vehicular'):
         return "INCENDIO VEHICULAR"
-    if (emergencia == 'Incendio estructural'):
+    if (emergency == 'Incendio estructural'):
         return "INCENDIO ESTRUCTURAL"
-    if (emergencia == 'Accidente'):
+    if (emergency == 'Accidente'):
         return "ACCIDENTE"
-    if (emergencia == 'Material peligroso'):
+    if (emergency == 'Material peligroso'):
         return "MATERIAL PELIGROSO"
-    if (emergencia == 'Varios'):
+    if (emergency == 'Varios'):
         return "VARIOS"
-    if (emergencia == 'Rescate altura'):
+    if (emergency == 'Rescate altura'):
         return "RESCATE DE ALTURA"
     
     return "DESCONOCIDO"

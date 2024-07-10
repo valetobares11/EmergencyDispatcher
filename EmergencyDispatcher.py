@@ -29,7 +29,7 @@ from qgis.PyQt.QtCore import Qt
 # Initialize Qt resources from file resources.py
 from .resources import *
 # Import the code for the dialog
-from .EmergencyDispatcher_dialog import EmergencyDispatcherDialog, EmergencyDispatcherDialogAgPedido, EmergencyDispatcherDialogModMapa, EmergencyDispatcherDialogModBombas, EmergencyDispatcherDialogVerPedidos, EmergencyDispatcherDialogEstadisticas
+from .EmergencyDispatcher_dialog import * 
 import os.path
 from urllib.request import urlopen
 
@@ -51,22 +51,22 @@ from matplotlib.ticker import MaxNLocator
 
 
 class CustomMapTool(QgsMapToolIdentifyFeature):
-    def __init__(self, canvas, capas_puntos):
+    def __init__(self, canvas, layersPoints):
         QgsMapToolIdentifyFeature.__init__(self, canvas)
         self.canvas = canvas
-        self.capas_puntos = capas_puntos  # Lista de capas de puntos
+        self.layersPoints = layersPoints  # Lista de layers de points
 
     def canvasReleaseEvent(self, event):
-        # Identificar características en todas las capas de puntos
+        # Identificar características en todas las layers de points
         attribute_text = ""
-        for capa_puntos in self.capas_puntos:
-            results = self.identify(event.x(), event.y(), [capa_puntos], QgsMapToolIdentify.TopDownStopAtFirst)
+        for layer_points in self.layersPoints:
+            results = self.identify(event.x(), event.y(), [layer_points], QgsMapToolIdentify.TopDownStopAtFirst)
             if results:
                 feature = results[0].mFeature
                 fields = feature.fields()
                 
                 for field, attribute in zip(fields, feature.attributes()):
-                    if field.name() not in ['columna_x', 'columna_y']:
+                    if field.name() not in ['column_x', 'column_y']:
                         attribute_text += f"{field.name()} {attribute}\n"
         
         if attribute_text:  # Solo mostrar el diálogo si hay atributos encontrados
@@ -106,18 +106,19 @@ class EmergencyDispatcher:
         # TODO: We are going to let the user set this up in a future iteration
         self.toolbar = self.iface.addToolBar(u'Emergency Dispatcher')
         self.toolbar.setObjectName(u'Emergency Dispatcher')
-        self.dlg_back = None
+        self.dlgBack = None
         self.listPointsExclution = []
-        self.tipoAutomovil = None
-        self.path_planilla_carga = None
-        #variable necesaria para saber que tipo de emergencia es
-        self.type_emergency = 0
+        self.typeAutomovil = None
+        self.pathLoadTemplate = None
+        
+        #variable necesaria para saber que type de emergency es
+        self.typeEmergency = 0
         self.address = ""
-        self.telefono =""
-        self.solicitante = ""
-        self.descripcion = ""
-        self.capaPuntoInicial = None
-        self.capaBombas = []
+        self.phone =""
+        self.applicant = ""
+        self.description = ""
+        self.layerStartPoint = None
+        self.layerPumps = []
 
     # noinspection PyMethodMayBeStatic
     def tr(self, message):
@@ -256,13 +257,13 @@ class EmergencyDispatcher:
     def toolActivator(self, no):
         self.no = no
         self.dlg.showMinimized()
-        self.dlg_back.showMinimized()
+        self.dlgBack.showMinimized()
         self.clickTool.canvasClicked.connect(self.clickHandler)
         self.canvas.setMapTool(self.clickTool)  # clickTool is activated
 
     def clickHandlerStart(self, pointXY):
         point = QgsPointXY(pointXY)
-        self.address = obtener_direccion(point.x(),point.y())
+        self.address = getAddress(point.x(),point.y())
         self.stopRubberBand.addPoint(point)
         self.dlg.hide()
 
@@ -275,32 +276,26 @@ class EmergencyDispatcher:
 
     def toolActivatorStartPoints(self):
         self.dlg.showMinimized()
-        self.dlg_back.showMinimized()
+        self.dlgBack.showMinimized()
         self.clickTool.canvasClicked.connect(self.clickHandlerStart)
         self.canvas.setMapTool(self.clickTool)  # clickTool is activated
         
 
-    def clickHandlerBombas(self, pointXY):
+    def clickHandlerPump(self, pointXY):
         pointXY = QgsPointXY(pointXY)
-        capa = self.agregar_punto_con_icono(pointXY, PATH_IMAGEN_BOMBAS_ICON_SVG, "Bomba")
-        if (capa not in self.capaBombas):
-            self.capaBombas.append(capa)
-        # self.bombasRubberBand.addPoint(pointXY)
-        self.dlg.bombaTxt.setText(str(pointXY.x()) + ',' + str(pointXY.y()))
-       
-        # Ocultar la ventana emergente temporalmente
+        layer = self.addPointWithcon(pointXY, PATH_IMAGEN_BOMBAS_ICON_SVG, "Bomba")
+        if (layer not in self.layerPumps):
+            self.layerPumps.append(layer)
+
+        self.dlg.pumpTxt.setText(str(pointXY.x()) + ',' + str(pointXY.y()))
         self.dlg.hide()
-
-        # Liberar la herramienta de mapa para que se pueda hacer clic nuevamente
         self.canvas.unsetMapTool(self.clickTool)
-
-        # Volver a mostrar la ventana emergente
         self.dlg.show()
         
-    def toolActivatorBombas(self):
+    def toolActivatorPump(self):
         self.dlg.showMinimized()
-        self.dlg_back.showMinimized()
-        self.clickTool.canvasClicked.connect(self.clickHandlerBombas)
+        self.dlgBack.showMinimized()
+        self.clickTool.canvasClicked.connect(self.clickHandlerPump)
         self.canvas.setMapTool(self.clickTool)  # clickTool is activatedr)
         
 
@@ -353,36 +348,27 @@ class EmergencyDispatcher:
     def runAnalysis(self):
         # if len(self.dlg.startTxt.text()) > 0 and len(self.dlg.stopTxt.text()) > 0:
         if self.startPointXY is not None and self.stopPointXY is not None:
-            juridiccion = QgsProject.instance().mapLayersByName('Jurisdicción')
-            if len(juridiccion) > 0:
-                polygon = juridiccion[0]
+            jurisdiction = QgsProject.instance().mapLayersByName('Jurisdicción')
+            if len(jurisdiction) > 0:
+                polygon = jurisdiction[0]
                 if not polygon.getFeature(1).geometry().contains(self.stopPointXY):
-                    QMessageBox.warning(self.dlg, 'Calculate routes bombas',"El punto esta fuera de la juridiccion")
+                    QMessageBox.warning(self.dlg, 'Calculate routes pumps',"El point esta fuera de la juridiccion")
             if self.checkNetConnection():  
                 startPoint = self.crsTransform(self.startPointXY)
                 stopPoint = self.crsTransform(self.stopPointXY)   
                 # index = self.dlg.serviceCombo.currentIndex()
                 try:
-                    service = self.services[list(self.services)[TIPO_SERVICIO_HERE_V8]]
-                    self.cargar_puntos_lista()
-                    # wkt, url = service(startPoint, stopPoint, self.listPointsExclution, self.tipoAutomovil)
-                    wkt, url = service(startPoint, stopPoint, self.listPointsExclution, self.tipoAutomovil)
-                    wkt2, url2 = service(stopPoint, startPoint, self.listPointsExclution, self.tipoAutomovil)
-
+                    service = self.services[list(self.services)[TYPE_SERVICIO_HERE_V8]]
+                    self.loadListPoints()
+                    wkt, url = service(startPoint, stopPoint, self.listPointsExclution, self.typeAutomovil)
+                    wkt2, url2 = service(stopPoint, startPoint, self.listPointsExclution, self.typeAutomovil)
                     report(url, url2)
-                    self.persistir_pedido(url)
-                    if self.type_emergency in (1,2,3,4):
-                        # si es incendio
-                        print(str(stopPoint))
-                        self.calculate_routes_a_bombas(stopPoint)
+                    self.persistOrder(url)
+                    if self.typeEmergency in (1,2,3,4):
+                        self.calculateRoutesPumps(stopPoint)
 
                     self.routeMaker(wkt)
                     self.dlg.showMinimized()
-                    # clear rubberbands Esto ver si se saca
-                    # self.startRubberBand.removeLastPoint()
-                    # self.stopRubberBand.removeLastPoint()
-                    # self.startRubberBand.removeLastPoint()
-                    # self.stopRubberBand.removeLastPoint()
                     self.listPointsExclution=[]
                 except Exception as err:
                     print(err)
@@ -395,15 +381,15 @@ class EmergencyDispatcher:
             QMessageBox.information(self.dlg, 'Warning', 'Please choose Start Location and Stop Location.')
     
     
-    def persistir_pedido(self, url):
+    def persistOrder(self, url):
         try:
             response = urlopen(url).read().decode("utf-8")
             diccionario = json.loads(response)
-            tiempo_estimado = round(int(diccionario['routes'][0]['sections'][0]['summary']['duration'])/60)
-            descripcion = self.descripcion
+            estimatedTime = round(int(diccionario['routes'][0]['sections'][0]['summary']['duration'])/60)
+            description = self.description
             direccion = self.address
-            solicitante = self.solicitante
-            telefono = self.telefono
+            applicant = self.applicant
+            phone = self.phone
             categoria={
                 '1':'INCENDIO FORESTAL',
                 '2':'INCENDIO RURAL',
@@ -413,50 +399,50 @@ class EmergencyDispatcher:
                 '6':'MATERIAL PELIGRO',
                 '7':'VARIOS',
                 '8':'RESCATE DE ALTURA'
-            }.get(str(self.type_emergency),'Desconocido')
-            valores = "'{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}','{}', now()".format(direccion, solicitante, telefono, "Pedro", self.crsTransformPedido(self.startPointXY),self.crsTransformPedido(self.stopPointXY), descripcion, tiempo_estimado, categoria, tiempo_estimado)
-            insert('pedido', 'direccion, solicitante, telefono, operador, startpoint, stoppoint, description, tiempo_estimado,tipo, tiempo_real, fecha', valores)
+            }.get(str(self.typeEmergency),'Desconocido')
+            valores = "'{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}','{}', now()".format(direccion, applicant, phone, "Pedro", self.crsTransformPedido(self.startPointXY),self.crsTransformPedido(self.stopPointXY), description, estimatedTime, categoria, estimatedTime)
+            insert('order', 'direccion, applicant, phone, operador, startpoint, stoppoint, description, estimatedTime,type, estimatedActual, fecha', valores)
                 
         except Exception as e:
             QgsMessageLog.logMessage(str(e))
-            QMessageBox.warning(self.dlg, 'persistir_pedido', "Error al intentar guardar el pedido")
+            QMessageBox.warning(self.dlg, 'persistOrder', "Error al intentar guardar el order")
             
-    def calculate_routes_a_bombas(self, startPoint):
+    def calculateRoutesPumps(self, startPoint):
         try:
-            bombas = select('bomba')
-            if (len(bombas)!=0):
-                service = self.services[list(self.services)[TIPO_SERVICIO_HERE_V8]]
+            pumps = select('pump')
+            if (len(pumps)!=0):
+                service = self.services[list(self.services)[TYPE_SERVICIO_HERE_V8]]
                 distances = []
-                for tupla in bombas:
-                    if (tupla[4] == 'A'):
-                        wkt, url = service(startPoint, self.crsTransform(QgsPointXY(float(tupla[1]), float(tupla[2]))))
+                for tuple in pumps:
+                    if (tuple[4] == 'A'):
+                        wkt, url = service(startPoint, self.crsTransform(QgsPointXY(float(tuple[1]), float(tuple[2]))))
                         response = urlopen(url).read().decode("utf-8")
                         diccionario = json.loads(response)
                         d = int(diccionario['routes'][0]['sections'][0]['summary']['length'])
-                        distances.append([d,tupla[3]])
+                        distances.append([d,tuple[3]])
 
                 list_distances = sorted(distances, key=lambda x: x[0])
                 f = open (PATH_REPORTE,'a')
                 f.write('\nLas Bombas de agua más cercanas de menor a mayor:\n')
-                for tupla in list_distances:
-                    f.write(str(tupla[1])+ ", distancia :"+ str(tupla[0])+'\n')
+                for tuple in list_distances:
+                    f.write(str(tuple[1])+ ", distancia :"+ str(tuple[0])+'\n')
                 f.close()
         except Exception as err:
             QgsMessageLog.logMessage(str(err))
-            QMessageBox.warning(self.dlg, 'Calculate routes bombas',"Hubo un error al calcular las bombas mas cercanas")
+            QMessageBox.warning(self.dlg, 'Calculate routes pumps',"Hubo un error al calcular las pumps mas cercanas")
 
-    def calculate_points(self):
+    def calculatePoints(self):
         try:
             address = self.dlg.form_direccion.text()+ " " + CIUDAD + " " + PROVINCIA
-            x, y = obtener_coordenada(address)
+            x, y = getCoordinate(address)
             self.stopPointXY = QgsPointXY(x,y)
             self.address = address
         except Exception as e:
             QgsMessageLog.logMessage(str(e))
-            QMessageBox.warning(self.dlg, 'calculate_points', "Error al obtener coordenada o direccion")
+            QMessageBox.warning(self.dlg, 'calculatePoints', "Error al obtener coordenada o direccion")
     
-    def call_sound(self, path_sound, emergency):
-        self.type_emergency = emergency
+    def callSound(self, path_sound, emergency):
+        self.typeEmergency = emergency
         pygame.init()
 
         # Configura el sistema de sonido
@@ -469,76 +455,69 @@ class EmergencyDispatcher:
         sonido.play()
 
 
-    def changeScreenAgPedido(self):
-        self.dlg = EmergencyDispatcherDialogAgPedido()
-        #hace que el cursor aparezca en el primer linea del form
-        self.dlg.form_descripcion.setFocus()
-        
+    def changeScreenPlaceAnOrder(self):
+        self.dlg = EmergencyDispatcherDialogPlaceAnOrder()
+        self.dlg.form_description.setFocus()        
         self.dlg.setFixedSize(self.dlg.size())
         self.dlg.show()
-        
-        self.dlg.comboBox_2.addItems(OPERADORES)
-
-        opciones = [CAMIONETA, CAMION_LIGERO, CAMION_PESADO]
-        self.dlg.comboBox.addItems(opciones)
-
-        self.dlg.buttonIncendioForestal.clicked.connect(lambda: self.call_sound(SONIDO_ALARMA_INCENDIO_FORESTAL, 1))
-        self.dlg.buttonIncendioRural.clicked.connect(lambda: self.call_sound(SONIDO_ALARMA_INCENDIO_RURAL, 2))
-        self.dlg.buttonIncendioVehicular.clicked.connect(lambda: self.call_sound(SONIDO_ALARMA_INCENDIO_VEHICULAR, 3))
-        self.dlg.buttonIncendioEstructura.clicked.connect(lambda: self.call_sound(SONIDO_ALARMA_RESCATE_ESTRUCTURA, 4))
-        self.dlg.buttonAccidenteVehicular.clicked.connect(lambda: self.call_sound(SONIDO_ALARMA_ACCIDENTE_VEHICULAR, 5))
-        self.dlg.buttonAccidenteMatPel.clicked.connect(lambda: self.call_sound(SONIDO_ALARMA_ACCIDENTE_MAT_PEL, 6))
-        self.dlg.buttonEmergVarias.clicked.connect(lambda: self.call_sound(SONIDO_ALARMA_EMERGENCIAS_VARIAS, 7))
-        self.dlg.buttonRescateDeAltura.clicked.connect(lambda: self.call_sound(SONIDO_ALARMA_RESCATE_DE_ALTURA, 8))
-
+        self.dlg.comboBox_2.addItems(OPERATORS)
+        options = [TRUCK, LIGHT_TRUCK, HEAVY_TRUCK]
+        self.dlg.comboBox.addItems(options)
+        self.dlg.buttonIncendioForestal.clicked.connect(lambda: self.callSound(SONIDO_ALARMA_INCENDIO_FORESTAL, 1))
+        self.dlg.buttonIncendioRural.clicked.connect(lambda: self.callSound(SONIDO_ALARMA_INCENDIO_RURAL, 2))
+        self.dlg.buttonIncendioVehicular.clicked.connect(lambda: self.callSound(SONIDO_ALARMA_INCENDIO_VEHICULAR, 3))
+        self.dlg.buttonIncendioEstructura.clicked.connect(lambda: self.callSound(SONIDO_ALARMA_RESCATE_ESTRUCTURA, 4))
+        self.dlg.buttonAccidenteVehicular.clicked.connect(lambda: self.callSound(SONIDO_ALARMA_ACCIDENTE_VEHICULAR, 5))
+        self.dlg.buttonAccidenteMatPel.clicked.connect(lambda: self.callSound(SONIDO_ALARMA_ACCIDENTE_MAT_PEL, 6))
+        self.dlg.buttonEmergVarias.clicked.connect(lambda: self.callSound(SONIDO_ALARMA_EMERGENCIAS_VARIAS, 7))
+        self.dlg.buttonRescateDeAltura.clicked.connect(lambda: self.callSound(SONIDO_ALARMA_RESCATE_DE_ALTURA, 8))
         self.canvas = self.iface.mapCanvas()
         self.clickTool = QgsMapToolEmitPoint(self.canvas)
         self.dlg.buscarPunto.clicked.connect(lambda: self.toolActivatorStartPoints())
-        
-        self.dlg.volver.clicked.connect(lambda: self.backScreen())
-        self.dlg.aceptar.clicked.connect(lambda: self.press_btn_acept())
+        self.dlg.back_to.clicked.connect(lambda: self.backScreen())
+        self.dlg.acceptOrder.clicked.connect(lambda: self.accept())
 
 
-    def press_btn_acept(self):
-        direccion = self.dlg.form_direccion.text()
-        descripcion=self.dlg.form_descripcion.text()
-        solicitante=self.dlg.form_solicitante.text()
-        telefono=self.dlg.form_telefono.text()
-        if ((direccion and direccion.strip()) or (self.stopPointXY is not None)):
-            self.tipoAutomovil = self.dlg.comboBox.currentText()
+    def accept(self):
+        address = self.dlg.form_direccion.text()
+        description=self.dlg.form_description.text()
+        applicant=self.dlg.form_applicant.text()
+        phone=self.dlg.form_phone.text()
+        if ((address and address.strip()) or (self.stopPointXY is not None)):
+            self.typeAutomovil = self.dlg.comboBox.currentText()
             self.savePoints()
-            self.dlg = self.dlg_back
+            self.dlg = self.dlgBack
             self.dlg.show()
-            write_report(descripcion, direccion, solicitante, telefono)
+            writeReport(description, address, applicant, phone)
             self.runAnalysis()
         else : QMessageBox.warning(self.dlg, 'Aviso', "Ingresa al menos una direccion")
         
-    def add_table_item(self, row, column, text):
-        # Método para agregar un elemento a la tabla
-        item = QTableWidgetItem(text)
-        self.dlg.tableWidget.setItem(row, column, item)
+    # def add_table_item(self, row, column, text):
+    #     # Método para agregar un elemento a la tabla
+    #     item = QTableWidgetItem(text)
+    #     self.dlg.tableWidget.setItem(row, column, item)
     
-    def borrar_todos_los_puntos(self):
-        # Itera sobre todos los puntos y los elimina uno por uno
+    def deleteAllPoints(self):
+        # Itera sobre todos los points y los elimina uno por uno
         while self.stopRubberBand.numberOfVertices() > 0:
             self.stopRubberBand.removeLastPoint()
         
         while self.startRubberBand.numberOfVertices() > 0:
             self.startRubberBand.removeLastPoint()
 
-        self.borrarCapaBombas()
+        self.deleteLayerPumps()
         self.vectorRubberBand.reset()
     
-    def borrarCapaBombas(self):
-        if (len(self.capaBombas)>0):
-            todasLasCapas = QgsProject.instance().mapLayers().values()
-            for capa in self.capaBombas:
-                # if capa in todasLasCapas:
-                QgsProject.instance().removeMapLayer(capa)
-                self.capaBombas.remove(capa)
+    def deleteLayerPumps(self):
+        if (len(self.layerPumps)>0):
+            allLayers = QgsProject.instance().mapLayers().values()
+            for layer in self.layerPumps:
+                # if layer in allLayers:
+                QgsProject.instance().removeMapLayer(layer)
+                self.layerPumps.remove(layer)
 
 
-    def remove_bomba(self, id):
+    def removePump(self, id):
         # Borrar en la tabla interface
         i=0
         while i < self.dlg.tableWidget.rowCount():
@@ -547,90 +526,85 @@ class EmergencyDispatcher:
             i += 1
 
         # Borrar en la BD
-        delete('bomba', id)
-        self.agregar_actualizar_puntos_iniciales()
+        delete('pump', id)
+        self.addUpdateInitialPoints()
 
-    def update_bomba(self, id):
+    def updatePump(self, id):
         try:
-            i=0
             found = False
-            while i < self.dlg.tableWidget.rowCount() and not found:
-                if int(self.dlg.tableWidget.item(i,0).text()) == id:
+            for i in range(self.dlg.tableWidget.rowCount()):
+                if int(self.dlg.tableWidget.item(i, 0).text()) == id:
                     found = True
-                i += 1
+                    break
 
-            i = i-1
+            i -= 1
             if found:
-                # Actualizar en la BD
-                descripcion = self.dlg.tableWidget.item(i,1).text()
-                estado = self.dlg.tableWidget.item(i,2).text()
-                seters = " description = '{}', estado = '{}'".format(descripcion, estado)
-                update('bomba', seters, id)
-                QMessageBox.information(self.dlg, 'actualizar_bomba', "Actualizacion exitosa")
+                description = self.dlg.tableWidget.item(i,1).text()
+                state = self.dlg.tableWidget.item(i,2).text()
+                seters = " description = '{}', estado = '{}'".format(description, state)
+                update('pump', seters, id)
+                QMessageBox.information(self.dlg, 'actualizar_pump', "Actualizacion exitosa")
         except Exception as e:
             QgsMessageLog.logMessage(str(e))
-            QMessageBox.warning(self.dlg, 'actualizar_bomba', "No se puede modificar el valor")
+            QMessageBox.warning(self.dlg, 'updatePump', "No se puede modificar el valor")
 
-    def add_bombas(self, id, descripcion, estado):
+    def addPump(self, id, description, state):
         rowPosition = self.dlg.tableWidget.rowCount()
         self.dlg.tableWidget.insertRow(rowPosition)
-
         id_row = QTableWidgetItem(str(id))
-        id_row.setTextAlignment(Qt.AlignCenter)  # Centrar el contenido
+        id_row.setTextAlignment(Qt.AlignCenter)
         self.dlg.tableWidget.setItem(rowPosition, 0, id_row)
+        descriptionRow =  QTableWidgetItem(description)
+        descriptionRow.setTextAlignment(Qt.AlignCenter)
+        self.dlg.tableWidget.setItem(rowPosition, 1, descriptionRow)
+        stateRow =  QTableWidgetItem(state)
+        stateRow.setTextAlignment(Qt.AlignCenter)
+        self.dlg.tableWidget.setItem(rowPosition, 2, stateRow)
+        deleteButton = QPushButton("X")
+        deleteButton.clicked.connect(lambda: self.removePump(id))
+        self.dlg.tableWidget.setCellWidget(rowPosition, 3, deleteButton)
+        updatePump = QPushButton("Actualizar")
+        updatePump.clicked.connect(lambda: self.updatePump(id))
+        self.dlg.tableWidget.setCellWidget(rowPosition, 4, updatePump)
 
-        descripcion_row =  QTableWidgetItem(descripcion)
-        descripcion_row.setTextAlignment(Qt.AlignCenter)  # Centrar el contenido
-        self.dlg.tableWidget.setItem(rowPosition, 1, descripcion_row)
-        
-        estado_row =  QTableWidgetItem(estado)
-        estado_row.setTextAlignment(Qt.AlignCenter)  # Centrar el contenido
-        self.dlg.tableWidget.setItem(rowPosition, 2, estado_row)
-
-        delete_button = QPushButton("X")
-        delete_button.clicked.connect(lambda: self.remove_bomba(id))
-        self.dlg.tableWidget.setCellWidget(rowPosition, 3, delete_button)
-        update_bomba = QPushButton("Actualizar")
-        update_bomba.clicked.connect(lambda: self.update_bomba(id))
-        self.dlg.tableWidget.setCellWidget(rowPosition, 4, update_bomba)
-
-    def changeScreenModBombas(self):
-        self.dlg = EmergencyDispatcherDialogModBombas()
+    def changeScreenModifyPump(self):
+        self.dlg = EmergencyDispatcherDialogModifyPump()
         self.dlg.setFixedSize(self.dlg.size())
         self.dlg.show()
         self.dlg.tableWidget.setColumnCount(5)
         self.dlg.tableWidget.setHorizontalHeaderLabels(["ID", "Descripción", "Estado", "Borrar", "Modificar"])
-        registros = select('bomba')
-        for tupla in registros:
-            self.add_bombas(tupla[0], tupla[3], tupla[4])
+        
+        records = select('pump')
+        for tuple in records:
+            self.addPump(tuple[0], tuple[3], tuple[4])
         
         self.canvas = self.iface.mapCanvas()
         self.clickTool = QgsMapToolEmitPoint(self.canvas)
-        self.dlg.startBtn.clicked.connect(lambda: self.toolActivatorBombas())
-        self.dlg.volver.clicked.connect(lambda: self.backScreen())
-        self.dlg.aceptar.clicked.connect(lambda: self.saveBomba())
+        self.dlg.startBtn.clicked.connect(lambda: self.toolActivatorPump())
+        self.dlg.back_to.clicked.connect(lambda: self.backScreen())
+        self.dlg.aceptar.clicked.connect(lambda: self.savePump())
         self.dlg.closeEvent = self.closeUpdate
         
-    def saveBomba(self):
-        if len(self.dlg.bombaTxt.text()) > 0:
+    def savePump(self):
+        if len(self.dlg.pumpTxt.text()) > 0:
             if platform.system() == 'Windows':
-                point = self.dlg.bombaTxt.text()
+                point = self.dlg.pumpTxt.text()
             else:
-                pointsStart = self.dlg.bombaTxt.text().split(',')
+                pointsStart = self.dlg.pumpTxt.text().split(',')
                 point = pointsStart[1]+','+pointsStart[0]
                 
-            #Inserta los puntos en la BD 
+            #Inserta los points en la BD 
             startPoint = point.split(',')
-            valores = "{}, {}, '{}'".format(startPoint[1], startPoint[0], self.dlg.descripcionTxt.text())
-            insert('bomba', 'startPoint, stopPoint, description', valores)
-        self.dlg = self.dlg_back
+            valores = "{}, {}, '{}'".format(startPoint[1], startPoint[0], self.dlg.descriptionTxt.text())
+            insert('pump', 'startPoint, stopPoint, description', valores)
+        self.dlg = self.dlgBack
         if self.dlg.close():
-            self.agregar_actualizar_puntos_iniciales()  
+            self.addUpdateInitialPoints()  
             self.dlg.showNormal()
             
 
 
-    #tupla esta de mas?
+    #tuple esta de mas?
     def remove_points(self, id):
         # Borrar en la tabla interface
         i=0
@@ -642,194 +616,191 @@ class EmergencyDispatcher:
         # Borrar en la BD
         delete('points', id)
         delete('points', id-1)
-        self.agregar_actualizar_puntos_iniciales()
+        self.addUpdateInitialPoints()
 
-    def add_point(self, id, descripcion):
+    def addPoint(self, id, description):
         rowPosition = self.dlg.tableWidget.rowCount()
         self.dlg.tableWidget.insertRow(rowPosition)
         self.dlg.tableWidget.setItem(rowPosition, 0, QTableWidgetItem(str(id)))
-        self.dlg.tableWidget.setItem(rowPosition, 1, QTableWidgetItem(descripcion))
-        delete_button = QPushButton("Eliminar")
-        delete_button.clicked.connect(lambda: self.remove_points(id))
-        self.dlg.tableWidget.setCellWidget(rowPosition, 2, delete_button)
+        self.dlg.tableWidget.setItem(rowPosition, 1, QTableWidgetItem(description))
+        deleteButton = QPushButton("Eliminar")
+        deleteButton.clicked.connect(lambda: self.remove_points(id))
+        self.dlg.tableWidget.setCellWidget(rowPosition, 2, deleteButton)
 
-    def changeScreenModMapa(self):
-        self.dlg = EmergencyDispatcherDialogModMapa()
+    def changeScreenModifyMap(self):
+        self.dlg = EmergencyDispatcherDialogModifyMap()
         self.dlg.setFixedSize(self.dlg.size())
         self.dlg.show()
         self.dlg.tableWidget.setColumnCount(3)
         self.dlg.tableWidget.setHorizontalHeaderLabels(["ID", "Descripcion", "Acción"])
-        registros = select('points')
-        i=1
-        for tupla in registros:
-            if i % 2 == 0:
-                self.add_point(tupla[0], tupla[3])
-            i+=1
+        records = select('points')
         
+        for i, tuple in enumerate(records, start=1):
+            if i % 2 == 0:
+                self.addPoint(tuple[0], tuple[3])
+    
+
         self.canvas = self.iface.mapCanvas()
         self.clickTool = QgsMapToolEmitPoint(self.canvas)
         self.dlg.startBtn.clicked.connect(lambda: self.toolActivator(0))
         self.dlg.stopBtn.clicked.connect(lambda: self.toolActivator(1))
-        self.dlg.volver.clicked.connect(lambda: self.backScreen())
+        self.dlg.back_to.clicked.connect(lambda: self.backScreen())
         self.dlg.aceptar.clicked.connect(lambda: self.savePointsExclution())
         self.dlg.closeEvent = self.closeUpdate
 
-    def crearCapaPuntos(self, registros):
-        # Crea una nueva capa de puntos en memoria
-        tipos = [TIPO1, TIPO2, TIPO3, TIPO4, TIPO5, TIPO6, TIPO7, TIPO8]
-        capas_puntos = []
+    def createLayerPoints(self, records):
+        # Crea una nueva layer de points en memoria
+        types = [TYPE1, TYPE2, TYPE3, TYPE4, TYPE5, TYPE6, TYPE7, TYPE8]
+        layersPoints = []
 
-        for tipo in tipos:
-            capa = QgsVectorLayer("Point?crs=EPSG:4326", tipo, "memory")
-            capas_puntos.append(capa)
+        for type in types:
+            layer = QgsVectorLayer("Point?crs=EPSG:4326", type, "memory")
+            layersPoints.append(layer)
 
-        # Define los campos para la capa de puntos
-        campos = QgsFields()
-        campos.append(QgsField("Numero :", QVariant.String))
-        campos.append(QgsField("columna_x", QVariant.Double))
-        campos.append(QgsField("columna_y", QVariant.Double))
-        campos.append(QgsField("Descripción :", QVariant.String))
-        campos.append(QgsField("Dirección :", QVariant.String))
-        campos.append(QgsField("Solicitante :", QVariant.String))
-        campos.append(QgsField("Tipo :", QVariant.String))
-        campos.append(QgsField("Fecha :", QVariant.String))
-        campos.append(QgsField("Tiempo Estimado :", QVariant.String))
-        campos.append(QgsField("Tiempo Real :", QVariant.String))
-        campos.append(QgsField(" ", QVariant.String))
+        # Define los fields para la layer de points
+        fields = QgsFields()
+        fields.append(QgsField("Numero :", QVariant.String))
+        fields.append(QgsField("column_x", QVariant.Double))
+        fields.append(QgsField("column_y", QVariant.Double))
+        fields.append(QgsField("Descripción :", QVariant.String))
+        fields.append(QgsField("Dirección :", QVariant.String))
+        fields.append(QgsField("Solicitante :", QVariant.String))
+        fields.append(QgsField("Tipo :", QVariant.String))
+        fields.append(QgsField("Fecha :", QVariant.String))
+        fields.append(QgsField("Tiempo Estimado :", QVariant.String))
+        fields.append(QgsField("Tiempo Real :", QVariant.String))
+        fields.append(QgsField(" ", QVariant.String))
 
-        # Asigna los campos a cada capa
-        for capa in capas_puntos:
-            capa.dataProvider().addAttributes(campos)
-            capa.updateFields()
+        # Asigna los fields a cada layer
+        for layer in layersPoints:
+            layer.dataProvider().addAttributes(fields)
+            layer.updateFields()
 
-        for tupla in registros:
-            if tupla[6]!=' ':
-                x, y = tupla[6].split(',')
-                punto = QgsPointXY(float(x), float(y))
-                punto_geom = QgsGeometry.fromPointXY(punto)
+        for tuple in records:
+            if tuple[6]!=' ':
+                x, y = tuple[6].split(',')
+                point = QgsPointXY(float(x), float(y))
+                point_geom = QgsGeometry.fromPointXY(point)
                 # Crea una nueva característica y agrega la geometría y los atributos
                 feature = QgsFeature()
-                feature.setGeometry(punto_geom)
-                feature.setAttributes([tupla[0], x, y, tupla[7], tupla[1],tupla[2],tupla[10], str(tupla[12]), tupla[8], tupla[11], " "])
-                # Crear un diccionario para mapear tipos a índices de capas
-                tipo_a_capa = {
-                    TIPO1: capas_puntos[0],
-                    TIPO2: capas_puntos[1],
-                    TIPO3: capas_puntos[2],
-                    TIPO4: capas_puntos[3],
-                    TIPO5: capas_puntos[4],
-                    TIPO6: capas_puntos[5],
-                    TIPO7: capas_puntos[6],
-                    TIPO8: capas_puntos[7]
+                feature.setGeometry(point_geom)
+                feature.setAttributes([tuple[0], x, y, tuple[7], tuple[1],tuple[2],tuple[10], str(tuple[12]), tuple[8], tuple[11], " "])
+                # Crear un diccionario para mapear types a índices de layers
+                type_a_layer = {
+                    TYPE1: layersPoints[0],
+                    TYPE2: layersPoints[1],
+                    TYPE3: layersPoints[2],
+                    TYPE4: layersPoints[3],
+                    TYPE5: layersPoints[4],
+                    TYPE6: layersPoints[5],
+                    TYPE7: layersPoints[6],
+                    TYPE8: layersPoints[7]
                 }
 
-                # Asignar la característica a la capa correspondiente
-                if tupla[10] in tipo_a_capa:
-                    tipo_a_capa[tupla[10]].dataProvider().addFeature(feature)
+                # Asignar la característica a la layer correspondiente
+                if tuple[10] in type_a_layer:
+                    type_a_layer[tuple[10]].dataProvider().addFeature(feature)
 
-        for capa in capas_puntos:
-            # Agrega la capa al proyecto de QGIS
-            QgsProject.instance().addMapLayer(capa)
+        for layer in layersPoints:
+            # Agrega la layer al proyecto de QGIS
+            QgsProject.instance().addMapLayer(layer)
             # Refresca la interfaz de QGIS
-            self.iface.layerTreeView().refreshLayerSymbology(capa.id())
+            self.iface.layerTreeView().refreshLayerSymbology(layer.id())
             self.canvas = self.iface.mapCanvas()
-        self.clickTool = CustomMapTool(self.canvas,capas_puntos)
+        self.clickTool = CustomMapTool(self.canvas,layersPoints)
         self.canvas.setMapTool(self.clickTool)
 
-    def changeScreenEstadisticas(self):
-        self.dlg = EmergencyDispatcherDialogEstadisticas()
-        self.borrar_todos_los_puntos()
-        # self.dlg_back.showMinimized()
+    def changeScreenStatistics(self):
+        self.dlg = EmergencyDispatcherDialogStatistics()
+        self.deleteAllPoints()
         self.dlg.setFixedSize(self.dlg.size())
         self.dlg.show()
-        # self.dlg.btnMapa.clicked.connect(lambda: (self.dlg_back.showMinimized(), self.dlg.showMinimized()))
-        self.dlg.button_filtrar.clicked.connect(lambda: (self.filtrarEmergencias(FILTRAR_EMERGENCIA)))
-        self.dlg.button_graficos_barra.clicked.connect(lambda: (self.filtrarEmergencias(GRAFICOS_BARRA)))
-        self.dlg.button_graficos_linea.clicked.connect(lambda: (self.filtrarEmergencias(GRAFICOS_LINEA)))
-        self.dlg.combo_tipo.addItems(TIPOS_EMERGENCIA)
-        #self.dlg.tableWidget.sortItems(0)
-        self.dlg.closeEvent = self.closePedidos
-        self.dlg.volver_estadistica.clicked.connect(lambda: self.backScreenEstadistica())
+        self.dlg.button_filter.clicked.connect(lambda: (self.filterEmergencies(FILTRAR_EMERGENCIA)))
+        self.dlg.button_graphics_bar.clicked.connect(lambda: (self.filterEmergencies(GRAFICOS_BARRA)))
+        self.dlg.button_graphics_line.clicked.connect(lambda: (self.filterEmergencies(GRAFICOS_LINEA)))
+        self.dlg.combo_type.addItems(TYPES_EMERGENCIA)
+        self.dlg.closeEvent = self.closeOrder
+        self.dlg.back_to_statistic.clicked.connect(lambda: self.backScreenStatistic())
     
-    def filtrarEmergencias(self, grafico):
+    def filterEmergencies(self, graphic):
         filtro = {}
-        tipo_emergencia = self.dlg.combo_tipo.currentText()
+        type_emergency = self.dlg.combo_type.currentText()
         if (self.dlg.checkBox_fecha.isChecked()):
             fecha_desde = datetime.strptime(self.dlg.form_fecha_desde.text().strip(), "%d/%m/%y")
             fecha_hasta = datetime.strptime(self.dlg.form_fecha_hasta.text().strip(), "%d/%m/%y")
             filtro['fecha_desde'] = fecha_desde.strftime("%Y-%m-%d 00:00:00")
             filtro['fecha_hasta'] = fecha_hasta.strftime("%Y-%m-%d 23:59:59")
 
-        if (tipo_emergencia != 'Todos'):
-            filtro['tipo_emergencia'] = getIdTipoEmergencia(tipo_emergencia)
+        if (type_emergency != 'Todos'):
+            filtro['type_emergency'] = getIdTypeEmergency(type_emergency)
         
         if (self.dlg.checkBox_hora.isChecked()):
             filtro['hours'] = self.dlg.form_hora.text().split(':')[0]
         
-        # Ejecuta la consulta SQL y crea los puntos
-        registros = select("pedido", None, None, filtro)
-        if grafico == FILTRAR_EMERGENCIA:
-            if (len(registros)):
-                self.crearCapaPuntos(registros)
-                self.dlg_back.showMinimized()
+        # Ejecuta la consulta SQL y crea los points
+        records = select("orders", None, None, filtro)
+        if graphic == FILTRAR_EMERGENCIA:
+            if (len(records)):
+                self.createLayerPoints(records)
+                self.dlgBack.showMinimized()
                 self.dlg.showMinimized()
             else:
-                QMessageBox.information(self.dlg, 'filtrarEmergencias', "No se encontraron emergencias")
-        if grafico == GRAFICOS_BARRA:
-            self.graficosBarra(registros)
-        if grafico == GRAFICOS_LINEA:
-            self.graficosLinea(registros)
+                QMessageBox.information(self.dlg, 'filterEmergencies', "No se encontraron emergencys")
+        if graphic == GRAFICOS_BARRA:
+            self.graphicsBar(records)
+        if graphic == GRAFICOS_LINEA:
+            self.graphicsLine(records)
 
 
-    def graficosBarra(self, registros):
-        tipos = [registro[10] for registro in registros]
-        conteo_tipos = Counter(tipos)
-        categories = list(conteo_tipos.keys())
-        values = [int(valor) for valor in conteo_tipos.values()]
+    def graphicsBar(self, records):
+        types = [registro[10] for registro in records]
+        conteo_types = Counter(types)
+        categories = list(conteo_types.keys())
+        values = [int(valor) for valor in conteo_types.values()]
         fig, ax = plt.subplots()
         ax.bar(categories,values)
 
         ax.yaxis.set_major_locator(MaxNLocator(integer=True))
         plt.xlabel('Tipo Emergencia')
         plt.ylabel('Cantidad')
-        plt.title('Cantidad de salidas por tipo')
+        plt.title('Cantidad de salidas por type')
         plt.show()
 
 
-    def graficosLinea(self, registros):
+    def graphicsLine(self, records):
         # Procesar los datos para la visualización
-        data_by_tipo = defaultdict(lambda: defaultdict(int))
+        data_by_type = defaultdict(lambda: defaultdict(int))
 
-        # Ordenar y acumular los datos por tipo y fecha
-        for registro in registros:
-            tipo = registro[10]  # Acceder al campo 'tipo'
+        # Ordenar y acumular los datos por type y fecha
+        for registro in records:
+            type = registro[10]  # Acceder al campo 'type'
             fecha = str(registro[12]).split(' ')[0]  # Acceder al campo 'fecha'
-            cantidad = 1  # Supongamos que cada registro cuenta como 1 emergencia
-            data_by_tipo[tipo][fecha] += cantidad
+            cantidad = 1  # Supongamos que cada registro cuenta como 1 emergency
+            data_by_type[type][fecha] += cantidad
 
         # Organizar y ordenar las fechas únicas
-        fechas = sorted(set(fecha for tipo_data in data_by_tipo.values() for fecha in tipo_data.keys()))
+        fechas = sorted(set(fecha for type_data in data_by_type.values() for fecha in type_data.keys()))
 
         # Crear el gráfico
         fig, ax = plt.subplots()
 
-        # Graficar cada tipo de emergencia como una línea separada
-        for tipo, data in data_by_tipo.items():
-            cantidades_por_tipo = []
+        # Graficar cada type de emergency como una línea separada
+        for type, data in data_by_type.items():
+            cantidades_por_type = []
             valor_anterior = 0
             
             for fecha in fechas:
                 if fecha in data:
                     valor_anterior = data[fecha]
-                cantidades_por_tipo.append(valor_anterior)
+                cantidades_por_type.append(valor_anterior)
             
-            ax.plot(fechas, cantidades_por_tipo, marker='o', linestyle='-', label=tipo)
+            ax.plot(fechas, cantidades_por_type, marker='o', linestyle='-', label=type)
 
         # Configurar etiquetas y leyenda
         ax.yaxis.set_major_locator(MaxNLocator(integer=True))
         ax.set_xlabel('Fecha')
-        ax.set_ylabel('Cantidad de emergencias')
-        ax.set_title('Cantidad de emergencias por tipo a lo largo del tiempo')
+        ax.set_ylabel('Cantidad de emergencys')
+        ax.set_title('Cantidad de emergencys por type a lo largo del tiempo')
         ax.legend()
 
         # Configurar el eje x para mostrar solo valores enteros
@@ -840,43 +811,42 @@ class EmergencyDispatcher:
         plt.tight_layout()
         plt.show()
             
-    def backScreenEstadistica(self):
-        self.closePedidos(None)
+    def backScreenStatistic(self):
+        self.closeOrder(None)
         self.dlg.hide()
-        self.dlg = self.dlg_back
+        self.dlg = self.dlgBack
          
-    def update_pedido(self, id):
+    def updateOrder(self, id):
         try:
-            i=0
             found = False
-            while i < self.dlg.tableWidget.rowCount() and not found:
-                if int(self.dlg.tableWidget.item(i,0).text()) == id:
+            for i in range(self.dlg.tableWidget.rowCount()):
+                if int(self.dlg.tableWidget.item(i, 0).text()) == id:
                     found = True
-                i += 1
+                    break
 
-            i = i-1
+            i -= 1
             if found:
                 # Actualizar en la BD
-                direccion = self.dlg.tableWidget.item(i,1).text()
-                solicitante = self.dlg.tableWidget.item(i,2).text()
-                telefono = self.dlg.tableWidget.item(i,3).text()
-                operador = self.dlg.tableWidget.item(i,4).text()
+                address = self.dlg.tableWidget.item(i,1).text()
+                applicant = self.dlg.tableWidget.item(i,2).text()
+                phone = self.dlg.tableWidget.item(i,3).text()
+                operator = self.dlg.tableWidget.item(i,4).text()
                 startPoint = self.dlg.tableWidget.item(i,5).text()
                 stopPoint = self.dlg.tableWidget.item(i,6).text()
-                descripcion = self.dlg.tableWidget.item(i,7).text()
-                tiempo_estimado = self.dlg.tableWidget.item(i,8).text()
-                tiempo_real = self.dlg.tableWidget.item(i,9).text()
-                tipo = self.dlg.tableWidget.item(i,10).text()
+                description = self.dlg.tableWidget.item(i,7).text()
+                estimatedTime = self.dlg.tableWidget.item(i,8).text()
+                estimatedActual = self.dlg.tableWidget.item(i,9).text()
+                type = self.dlg.tableWidget.item(i,10).text()
                 fecha = self.dlg.tableWidget.item(i,11).text()
 
-                seters = "direccion = '{}', solicitante = '{}', telefono = '{}', operador = '{}', startPoint = '{}', stopPoint = '{}', description = '{}', tiempo_estimado = '{}', tiempo_real = '{}', tipo = '{}'".format(direccion, solicitante, telefono, operador, startPoint, stopPoint ,descripcion,tiempo_estimado, tiempo_real, tipo)
+                seters = "address = '{}', applicant = '{}', phone = '{}', operator = '{}', startPoint = '{}', stopPoint = '{}', description = '{}', estimatedTime = '{}', estimatedActual = '{}', type = '{}'".format(address, applicant, phone, operator, startPoint, stopPoint ,description,estimatedTime, estimatedActual, type)
             
-                update('pedido', seters, id)
+                update('orders', seters, id)
         except Exception as e:
             QgsMessageLog.logMessage(str(e))
-            QMessageBox.warning(self.dlg, 'actualizar_pedido', "No se puede modificar el valor por exceder de caracteres o tipo incorrecto")
+            QMessageBox.warning(self.dlg, 'updateOrder', "No se puede modificar el valor por exceder de caracteres o type incorrecto")
 
-    def add_pedido(self, id, direccion, solicitante, telefono, operador, coordenada_partida, coordenada_lugar, descripcion, tiempo_estimado, tiempo_real, tipo, fecha):
+    def addOrder(self, id, direccion, applicant, phone, operador, coordenada_partida, coordenada_lugar, description, estimatedTime, estimatedActual, type, fecha):
         rowPosition = self.dlg.tableWidget.rowCount()
         self.dlg.tableWidget.insertRow(rowPosition)
         item = QTableWidgetItem(str(id))
@@ -885,55 +855,50 @@ class EmergencyDispatcher:
         item2.setFlags(item2.flags() & ~Qt.ItemIsEditable)
         self.dlg.tableWidget.setItem(rowPosition, 0, item)
         self.dlg.tableWidget.setItem(rowPosition, 1, QTableWidgetItem(str(direccion)))
-        self.dlg.tableWidget.setItem(rowPosition, 2, QTableWidgetItem(str(solicitante)))
-        self.dlg.tableWidget.setItem(rowPosition, 3, QTableWidgetItem(str(telefono)))
+        self.dlg.tableWidget.setItem(rowPosition, 2, QTableWidgetItem(str(applicant)))
+        self.dlg.tableWidget.setItem(rowPosition, 3, QTableWidgetItem(str(phone)))
         self.dlg.tableWidget.setItem(rowPosition, 4, QTableWidgetItem(str(operador)))
         self.dlg.tableWidget.setItem(rowPosition, 5, QTableWidgetItem(coordenada_partida))
         self.dlg.tableWidget.setItem(rowPosition, 6, QTableWidgetItem(str(coordenada_lugar)))
-        self.dlg.tableWidget.setItem(rowPosition, 7, QTableWidgetItem(descripcion))
-        self.dlg.tableWidget.setItem(rowPosition, 8, QTableWidgetItem(str(tiempo_estimado)))
-        self.dlg.tableWidget.setItem(rowPosition, 9, QTableWidgetItem(str(tiempo_real)))
-        self.dlg.tableWidget.setItem(rowPosition, 10, QTableWidgetItem(tipo))
+        self.dlg.tableWidget.setItem(rowPosition, 7, QTableWidgetItem(description))
+        self.dlg.tableWidget.setItem(rowPosition, 8, QTableWidgetItem(str(estimatedTime)))
+        self.dlg.tableWidget.setItem(rowPosition, 9, QTableWidgetItem(str(estimatedActual)))
+        self.dlg.tableWidget.setItem(rowPosition, 10, QTableWidgetItem(type))
         self.dlg.tableWidget.setItem(rowPosition, 11, QTableWidgetItem(item2))
-        update_button = QPushButton("Modificar")
-        update_button.clicked.connect(lambda: self.update_pedido(id))
-        self.dlg.tableWidget.setCellWidget(rowPosition, 12, update_button)
+        updateButton = QPushButton("Modificar")
+        updateButton.clicked.connect(lambda: self.updateOrder(id))
+        self.dlg.tableWidget.setCellWidget(rowPosition, 12, updateButton)
         
 
-    def changeScreenVerPedidos(self):
-        self.dlg = EmergencyDispatcherDialogVerPedidos()
+    def changeScreenSeeOrders(self):
+        self.dlg = EmergencyDispatcherDialogSeeOrders()
         self.dlg.setFixedSize(self.dlg.size())
         self.dlg.show()
         self.dlg.tableWidget.setColumnCount(13)
         self.dlg.tableWidget.setHorizontalHeaderLabels(["Numero ID", "Direccion", "Solicitante", "Telefono", "Operador", "Coordenada de partida", "Coordenada del lugar", "Descripcion", "Tiempo Estimado", "Tiempo Real", "Tipo", "Fecha", "Modificar"])
-        #self.dlg.tableWidget.sortItems(0)
-        
-        self.cargar_pedidos_tabla()
-        
+        self.loadOrdersTable()
         self.canvas = self.iface.mapCanvas()
         self.clickTool = QgsMapToolEmitPoint(self.canvas)
-        #self.dlg.buscarPunto.clicked.connect(lambda: self.toolActivatorStartPoints())
-
-        self.dlg.volver.clicked.connect(lambda: self.backScreen())
+        self.dlg.back_to.clicked.connect(lambda: self.backScreen())
         self.dlg.aceptar.clicked.connect(lambda: self.backScreen())
-        self.dlg.cargar_planilla.clicked.connect(lambda: self.seleccionar_pedidos())
-        self.dlg.cargar.clicked.connect(lambda: self.cargar_pedidos())
-        self.dlg.exportar.clicked.connect(lambda: self.exportar_pedidos_tabla())
+        self.dlg.cargar_planilla.clicked.connect(lambda: self.selectOrders())
+        self.dlg.cargar.clicked.connect(lambda: self.loadOrders())
+        self.dlg.exportar.clicked.connect(lambda: self.exportar_orders_tabla())
     
-    def cargar_pedidos_tabla(self):
-        registros = select("pedido")
-        for tupla in registros:
-            self.add_pedido(tupla[0], tupla[1], tupla[2], tupla[3], tupla[4], tupla[5], tupla[6], tupla[7], tupla[8], tupla[11], tupla[10], tupla[12])
+    def loadOrdersTable(self):
+        records = select("orders")
+        for tuple in records:
+            self.addOrder(tuple[0], tuple[1], tuple[2], tuple[3], tuple[4], tuple[5], tuple[6], tuple[7], tuple[8], tuple[11], tuple[10], tuple[12])
 
-    def exportar_pedidos_tabla(self):
+    def exportar_orders_tabla(self):
         try:
-            create_and_download_ods()
-            QMessageBox.information(self.dlg, 'exportar_pedidos_tabla', "Se exportó el archivo en "+PATH_RUTA_EXPORT)
+            createAndDownloadOds()
+            QMessageBox.information(self.dlg, 'exportar_orders_tabla', "Se exportó el archivo en "+PATH_RUTA_EXPORT)
         except Exception as e:
             QgsMessageLog.logMessage(str(e))
-            QMessageBox.warning(self.dlg, 'exportar_pedidos_tabla', "Ocurrio un error al exportar el archivo.")
+            QMessageBox.warning(self.dlg, 'exportar_orders_tabla', "Ocurrio un error al exportar el archivo.")
 
-    def seleccionar_pedidos(self):
+    def selectOrders(self):
         file_dialog = QFileDialog()
         file_dialog.setNameFilter("Archivos ODS (*.ods)")
         file_dialog.setFileMode(QFileDialog.ExistingFile)
@@ -941,32 +906,30 @@ class EmergencyDispatcher:
             file_paths = file_dialog.selectedFiles()
             selected_file_path = file_paths[0]
             self.dlg.cargar_planilla.setText(selected_file_path)
-            self.path_planilla_carga = selected_file_path
+            self.pathLoadTemplate = selected_file_path
             
             
-    def cargar_pedidos(self):
-        if self.path_planilla_carga is not None:
-            cargar_pedidos(self.path_planilla_carga)
-            self.cargar_pedidos_tabla()
-            self.path_planilla_carga = None
+    def loadOrders(self):
+        if self.pathLoadTemplate is not None:
+            loadOrders(self.pathLoadTemplate)
+            self.loadOrdersTable()
+            self.pathLoadTemplate = None
             self.dlg.cargar_planilla.setText("Seleccionar archivo")
         else:
-            QMessageBox.warning(self.dlg, 'cargar_pedidos', "Seleccione un archio .ods para cargar los pedidos")
+            QMessageBox.warning(self.dlg, 'loadOrders', "Seleccione un archio .ods para cargar los orders")
 
 
 
-    def cargar_puntos_lista(self):
-        registros = select('points')
+    def loadListPoints(self):
+        records = select('points')
         i=1
-        if (len(registros) > 0) :
-            for tupla in registros:
+        if (len(records) > 0) :
+            for tuple in records:
                 if i % 2 == 0:
-                    # stop
-                    stopPointExclution = tupla[2]+','+tupla[1]
+                    stopPointExclution = tuple[2]+','+tuple[1]
                     self.listPointsExclution.append((startPointExclution, stopPointExclution, stopPointExclution))
                 else:
-                    # start
-                    startPointExclution = tupla[2]+','+tupla[1]
+                    startPointExclution = tuple[2]+','+tuple[1]
                 i+=1
         
 
@@ -981,41 +944,36 @@ class EmergencyDispatcher:
                 pointsStop = self.dlg.stopTxt.text().split(',')
                 stopPointExclution = pointsStop[1]+','+pointsStop[0]
             
-            #Inserta los puntos en la BD 
+            #Inserta los points en la BD 
             startPoint = startPointExclution.split(',')
             stopPoint = stopPointExclution.split(',')
 
-            insertar_punto(startPoint[1], startPoint[0], self.dlg.descripcionTxt.text())
-            insertar_punto(stopPoint[1], stopPoint[0], self.dlg.descripcionTxt.text())
+            insertPoint(startPoint[1], startPoint[0], self.dlg.descriptionTxt.text())
+            insertPoint(stopPoint[1], stopPoint[0], self.dlg.descriptionTxt.text())
 
-        self.agregar_actualizar_puntos_iniciales()
-        self.dlg = self.dlg_back
+        self.addUpdateInitialPoints()
+        self.dlg = self.dlgBack
         if self.dlg.close():
-            self.agregar_actualizar_puntos_iniciales()  
+            self.addUpdateInitialPoints()  
             self.dlg.showNormal()
 
     def savePoints(self):
         try:
-            self.calculate_points()    
-            
-            # if(self.dlg.close()):
-            #     self.dlg.showNormal()
+            self.calculatePoints()    
         except Exception as e:
             QgsMessageLog.logMessage(str(e))
-            QMessageBox.warning(self.dlg, 'savePoints', "Error al intentar guardar los puntos")
+            QMessageBox.warning(self.dlg, 'savePoints', "Error al intentar guardar los points")
 
     def backScreen(self):
-        self.dlg = self.dlg_back
+        self.dlg = self.dlgBack
         self.dlg.show()
-        # if (self.dlg.close()):
-        #     self.dlg.showNormal()
-        self.agregar_actualizar_puntos_iniciales()
+        self.addUpdateInitialPoints()
 
-    def agregar_punto_con_icono(self, point, icon_path, nombre_capa = "Custom Marker Layer"):
-        vl = QgsVectorLayer("Point?crs=EPSG:4326", nombre_capa, "memory")
+    def addPointWithcon(self, point, icon_path, nombre_layer = "Custom Marker Layer"):
+        vl = QgsVectorLayer("Point?crs=EPSG:4326", nombre_layer, "memory")
         pr = vl.dataProvider()
         vl.startEditing()
-        # Crear una característica (feature) en el punto inicial
+        # Crear una característica (feature) en el point inicial
         feat = QgsFeature()
         feat.setGeometry(QgsGeometry.fromPointXY(point))
         pr.addFeatures([feat])
@@ -1026,7 +984,7 @@ class EmergencyDispatcher:
         svg_layer.setSize(10)
         symbol.changeSymbolLayer(0, svg_layer)
         
-        # Aplicar el símbolo personalizado a la capa
+        # Aplicar el símbolo personalizado a la layer
         renderer = vl.renderer()
         renderer.setSymbol(symbol)
         QgsProject.instance().addMapLayer(vl)
@@ -1034,13 +992,8 @@ class EmergencyDispatcher:
         self.canvas.refresh()
         return vl
 
-    def agregarCapa(self, capa):
-        QgsProject.instance().addMapLayer(capa)
-        self.canvas.setExtent(capa.extent())
-        self.canvas.refresh()
-
-    def agregar_actualizar_puntos_iniciales(self):
-        self.borrar_todos_los_puntos()
+    def addUpdateInitialPoints(self):
+        self.deleteAllPoints()
         self.vectorRubberBand = QgsRubberBand(self.canvas, QgsWkbTypes.PolygonGeometry)
         self.vectorRubberBand.setColor(QColor("#000000"))
         self.vectorRubberBand.setWidth(4)
@@ -1052,71 +1005,56 @@ class EmergencyDispatcher:
         self.stopRubberBand.setColor(QColor("#000000"))
         self.stopRubberBand.setIconSize(10)
         self.stopRubberBand.setIcon(QgsRubberBand.ICON_FULL_BOX)
-
-        # self.bombasRubberBand = QgsRubberBand(self.canvas, QgsWkbTypes.PointGeometry)
-        # self.bombasRubberBand.setColor(QColor("#ff000"))
-        # self.bombasRubberBand.setIconSize(10)
-        # self.bombasRubberBand.setIcon(QgsRubberBand.ICON_FULL_BOX)
-
-        registros = select('points')
-        i=1
+        records = select('points')
         points = []
-        for tupla in registros:
-            points.append(QgsPointXY(float(tupla[1]), float(tupla[2])))
+        for i, record in enumerate(records, start=1):
+            point = QgsPointXY(float(record[1]), float(record[2]))
+            points.append(point)
+
             if i % 2 == 0:
                 self.vectorRubberBand.addGeometry(QgsGeometry.fromPolygonXY([points]), None)
                 points = []
-                self.stopRubberBand.addPoint(QgsPointXY(float(tupla[1]), float(tupla[2])))
+                self.stopRubberBand.addPoint(point)
             else:
-                self.startRubberBand.addPoint(QgsPointXY(float(tupla[1]), float(tupla[2])))
-            i+=1
+                self.startRubberBand.addPoint(point)
 
-        registros=select('bomba')
-        for tupla in registros:
-            capa = self.agregar_punto_con_icono(QgsPointXY(float(tupla[1]), float(tupla[2])), PATH_IMAGEN_BOMBAS_ICON_SVG, "Bomba")
-            if (capa not in self.capaBombas):
-                self.capaBombas.append(capa)
-        
-        # Punto inicial-cuartel bomberos
-        todasLasCapas = QgsProject.instance().mapLayers().values()
-        if self.capaPuntoInicial not in todasLasCapas:    
-            capa = self.agregar_punto_con_icono(self.startPointXY, PATH_IMAGEN_CUARTEL_ICON_SVG, "Punto Inicial")
-            self.capaPuntoInicial = capa
-        #     self.bombasRubberBand.addPoint()
+        records=select('pump')
+        for tuple in records:
+            layer = self.addPointWithcon(QgsPointXY(float(tuple[1]), float(tuple[2])), PATH_IMAGEN_BOMBAS_ICON_SVG, "Bomba")
+            if (layer not in self.layerPumps):
+                self.layerPumps.append(layer)
+
+        allLayers = QgsProject.instance().mapLayers().values()
+        if self.layerStartPoint not in allLayers:    
+            layer = self.addPointWithcon(self.startPointXY, PATH_IMAGEN_CUARTEL_ICON_SVG, "Punto Inicial")
+            self.layerStartPoint = layer
             
     def run(self):
         self.no = 0
-        punto_part = PUNTO_PARTIDA.split(',')
-        self.startPointXY = QgsPointXY(float(punto_part[0]), float(punto_part[1]))
+        startingPoint = STARTING_POINT.split(',')
+        self.startPointXY = QgsPointXY(float(startingPoint[0]), float(startingPoint[1]))
         self.stopPointXY = None
-        createTablePoints()
-        createTableBomba()
-        createTablePedido()
+        createTablePoint()
+        createTablePump()
+        createTableOrder()
         self.dlg = EmergencyDispatcherDialog()
         
         self.dlg.setFixedSize(self.dlg.size())
 
         self.services = RouteProvider().services()
-        # self.dlg.serviceCombo.addItems(list(self.services))
 
         self.canvas = self.iface.mapCanvas()
         self.clickTool = QgsMapToolEmitPoint(self.canvas)  # clicktool instance generated in here.
-        # self.dlg.startBtn.clicked.connect(lambda: self.toolActivator(0))
-        # self.dlg.stopBtn.clicked.connect(lambda: self.toolActivator(1))
-       
         
-        self.dlg_back = self.dlg
-        self.dlg.btnAgPedido.clicked.connect(lambda: self.changeScreenAgPedido())
-        self.dlg.btnModMapa.clicked.connect(lambda: self.changeScreenModMapa())
-        self.dlg.btnModBombas.clicked.connect(lambda: self.changeScreenModBombas())
-        self.dlg.btn_ver_pedidos.clicked.connect(lambda: self.changeScreenVerPedidos())
-        
-        self.dlg.btnEstadisticas.clicked.connect(lambda: self.changeScreenEstadisticas())
-         
+        self.dlgBack = self.dlg
+        self.dlg.btnAgPedido.clicked.connect(lambda: self.changeScreenPlaceAnOrder())
+        self.dlg.btnModMapa.clicked.connect(lambda: self.changeScreenModifyMap())
+        self.dlg.btnModBombas.clicked.connect(lambda: self.changeScreenModifyPump())
+        self.dlg.btn_ver_orders.clicked.connect(lambda: self.changeScreenSeeOrders())
+        self.dlg.btnStatistics.clicked.connect(lambda: self.changeScreenStatistics())
         self.vectorRubberBand = QgsRubberBand(self.canvas, QgsWkbTypes.PolygonGeometry)
         self.vectorRubberBand.setColor(QColor("#000000"))
         self.vectorRubberBand.setWidth(4)
-
         self.startRubberBand = QgsRubberBand(self.canvas, QgsWkbTypes.PointGeometry)
         self.startRubberBand.setColor(QColor("#000000"))
         self.startRubberBand.setIconSize(10)
@@ -1125,13 +1063,7 @@ class EmergencyDispatcher:
         self.stopRubberBand.setColor(QColor("#000000"))
         self.stopRubberBand.setIconSize(10)
         self.stopRubberBand.setIcon(QgsRubberBand.ICON_FULL_BOX)
-
-        # self.bombasRubberBand = QgsRubberBand(self.canvas, QgsWkbTypes.PointGeometry)
-        # self.bombasRubberBand.setColor(QColor("#ff000"))
-        # self.bombasRubberBand.setIconSize(10)
-        # self.bombasRubberBand.setIcon(QgsRubberBand.ICON_FULL_BOX)
-        self.agregar_actualizar_puntos_iniciales()
-
+        self.addUpdateInitialPoints()
         self.dlg.show()
         self.dlg.closeEvent = self.close
 
@@ -1140,27 +1072,23 @@ class EmergencyDispatcher:
         self.canvas.scene().removeItem(self.startRubberBand)
         self.canvas.scene().removeItem(self.stopRubberBand)
         self.canvas.scene().removeItem(self.vectorRubberBand)
-        self.borrarCapaBombas()
-        todasLasCapas = QgsProject.instance().mapLayers().values()
-        if self.capaPuntoInicial in todasLasCapas:
-            QgsProject.instance().removeMapLayer(self.capaPuntoInicial)
-            self.capaPuntoInicial = None
-        # self.canvas.scene().removeItem(self.bombasRubberBand)
+        self.deleteLayerPumps()
+        allLayers = QgsProject.instance().mapLayers().values()
+        if self.layerStartPoint in allLayers:
+            QgsProject.instance().removeMapLayer(self.layerStartPoint)
+            self.layerStartPoint = None
 
         
-    def closePedidos(self, event):
-        capa_pedidos = QgsProject.instance().mapLayersByName("Pedidos")
-        if capa_pedidos:
-            # Obtener la instancia de la capa
-            for capa in capa_pedidos:
-            # Eliminar todas las características de la capa
-                with edit(capa):
-                    capa.dataProvider().deleteFeatures([f.id() for f in capa.getFeatures()])
-                # Remover la capa del proyecto
-                QgsProject.instance().removeMapLayer(capa.id())
-        self.agregar_actualizar_puntos_iniciales()
+    def closeOrder(self, event):
+        layerOrder = QgsProject.instance().mapLayersByName("Pedidos")
+        if layerOrder:
+            for layer in layerOrder:
+                with edit(layer):
+                    layer.dataProvider().deleteFeatures([f.id() for f in layer.getFeatures()])
+                QgsProject.instance().removeMapLayer(layer.id())
+        self.addUpdateInitialPoints()
         self.canvas.unsetMapTool(self.clickTool)
 
     def closeUpdate(self, event):
-        self.dlg_back.closeEvent = self.close
-        self.agregar_actualizar_puntos_iniciales()
+        self.dlgBack.closeEvent = self.close
+        self.addUpdateInitialPoints()

@@ -158,12 +158,12 @@ background-color: #FF0000;
 }</string>
            </property>
            <property name="text">
-            <string>Agendar pedido</string>
+            <string>Agendar order</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="btn_ver_pedidos">
+          <widget class="QPushButton" name="btn_ver_orders">
            <property name="minimumSize">
             <size>
              <width>0</width>
@@ -195,7 +195,7 @@ background-color: #FF0000;
 }</string>
            </property>
            <property name="text">
-            <string>Ver pedidos</string>
+            <string>Ver orders</string>
            </property>
           </widget>
          </item>
@@ -232,7 +232,7 @@ background-color: #FF0000;
 }</string>
            </property>
            <property name="text">
-            <string>Modificar bombas</string>
+            <string>Modificar pumps</string>
            </property>
           </widget>
          </item>
@@ -274,7 +274,7 @@ background-color: #FF0000;
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="btnEstadisticas">
+          <widget class="QPushButton" name="btnStatistics">
            <property name="minimumSize">
             <size>
              <width>200</width>
@@ -306,7 +306,7 @@ background-color: #FF0000;
 }</string>
            </property>
            <property name="text">
-            <string>Estadisticas</string>
+            <string>Statistics</string>
            </property>
           </widget>
          </item>
@@ -330,10 +330,10 @@ background-color: #FF0000;
  </widget>
  <tabstops>
   <tabstop>btnAgPedido</tabstop>
-  <tabstop>btn_ver_pedidos</tabstop>
+  <tabstop>btn_ver_orders</tabstop>
   <tabstop>btnModBombas</tabstop>
   <tabstop>btnModMapa</tabstop>
-  <tabstop>btnEstadisticas</tabstop>
+  <tabstop>btnStatistics</tabstop>
  </tabstops>
  <resources/>
  <connections/>

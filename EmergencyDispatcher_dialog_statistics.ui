@@ -1225,7 +1225,7 @@ QCheckBox::indicator:disabled {
               </property>
               <layout class="QHBoxLayout" name="horizontalLayout_4">
                <item>
-                <widget class="QComboBox" name="combo_tipo">
+                <widget class="QComboBox" name="combo_type">
                  <property name="styleSheet">
                   <string notr="true">color: white;</string>
                  </property>
@@ -1235,7 +1235,7 @@ QCheckBox::indicator:disabled {
              </widget>
             </item>
             <item>
-             <widget class="QPushButton" name="button_filtrar">
+             <widget class="QPushButton" name="button_filter">
               <property name="minimumSize">
                <size>
                 <width>50</width>
@@ -1284,7 +1284,7 @@ background-color: #FF0000;
            </property>
            <layout class="QHBoxLayout" name="horizontalLayout_7">
             <item>
-             <widget class="QPushButton" name="button_graficos_barra">
+             <widget class="QPushButton" name="button_graphics_bar">
               <property name="minimumSize">
                <size>
                 <width>50</width>
@@ -1316,12 +1316,12 @@ background-color: #FF0000;
 }</string>
               </property>
               <property name="text">
-               <string>Gráfico de barras</string>
+               <string>Gráfico de bars</string>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QPushButton" name="button_graficos_linea">
+             <widget class="QPushButton" name="button_graphics_line">
               <property name="minimumSize">
                <size>
                 <width>50</width>
@@ -1376,7 +1376,7 @@ background-color: #FF0000;
            </property>
            <layout class="QHBoxLayout" name="horizontalLayout_2">
             <item>
-             <widget class="QPushButton" name="volver_estadistica">
+             <widget class="QPushButton" name="back_to_statistic">
               <property name="minimumSize">
                <size>
                 <width>30</width>
@@ -1425,7 +1425,7 @@ background-color: #c83737;
   </customwidget>
  </customwidgets>
  <tabstops>
-  <tabstop>volver_estadistica</tabstop>
+  <tabstop>back_to_statistic</tabstop>
  </tabstops>
  <resources/>
  <connections/>

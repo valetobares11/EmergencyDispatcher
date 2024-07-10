@@ -13,12 +13,12 @@ def connectBD():
     )
     return conexion
 
-def createTablePoints():
+def createTablePoint():
     conexion = connectBD()
     cursor = conexion.cursor()
 
     # Crear una tabla si no existe
-    consulta_creacion_tabla = """
+    queryCreation = """
         CREATE TABLE IF NOT EXISTS points (
             id SERIAL PRIMARY KEY,
             startPoint VARCHAR(40),
@@ -26,7 +26,7 @@ def createTablePoints():
             description VARCHAR(255)
         )
     """
-    cursor.execute(consulta_creacion_tabla)
+    cursor.execute(queryCreation)
 
     # Guardar los cambios y cerrar la conexión
     conexion.commit()
@@ -62,8 +62,8 @@ def select(table = '', id = None, limit = None, filtro = {}):
     if 'fecha_hasta' in filtro:
         query += " AND fecha <= '{}'".format(filtro['fecha_hasta'])
 
-    if 'tipo_emergencia' in filtro:
-        query += " AND tipo = '{}'".format(filtro['tipo_emergencia'])
+    if 'type_emergency' in filtro:
+        query += " AND type = '{}'".format(filtro['type_emergency'])
     
     if 'hours' in filtro:
         query+= " AND EXTRACT(HOUR FROM fecha) = '{}'".format(filtro['hours'])
@@ -119,22 +119,22 @@ def update_file(table = '',nombre='', contenido = '', id = None):
 
 
 
-#tabla para tener registro de las bombas de aguas que pueden ser utilizadas en un incendio
-def createTableBomba():
+#tabla para tener registro de las pumps de aguas que pueden ser utilizadas en un incendio
+def createTablePump():
     conexion = connectBD()
     cursor = conexion.cursor()
 
     # Crear una tabla si no existe
-    consulta_creacion_tabla_bomba = """
-        CREATE TABLE IF NOT EXISTS bomba (
+    queryCreation = """
+        CREATE TABLE IF NOT EXISTS pump (
             id SERIAL PRIMARY KEY,
             startPoint VARCHAR(40),
             stopPoint VARCHAR(40),
             description VARCHAR(255),
-            estado CHAR(1) CHECK (estado IN ('I', 'A')) DEFAULT 'A'
+            state CHAR(1) CHECK (state IN ('I', 'A')) DEFAULT 'A'
         )
     """
-    cursor.execute(consulta_creacion_tabla_bomba)
+    cursor.execute(queryCreation)
 
     # Guardar los cambios y cerrar la conexión
     conexion.commit()
@@ -145,9 +145,9 @@ def insertarBomba(startPoint,stopPoint, description=""):
     conexion = connectBD()
     cursor = conexion.cursor()
 
-    consulta_insercion_bomba = sql.SQL("INSERT INTO bomba (startpoint, stoppoint, description) VALUES (%s, %s, %s)")
-    datos_bomba = (startPoint, stopPoint, description)
-    cursor.execute(consulta_insercion_bomba, datos_bomba)
+    consulta_insercion_pump = sql.SQL("INSERT INTO pump (startpoint, stoppoint, description) VALUES (%s, %s, %s)")
+    datos_pump = (startPoint, stopPoint, description)
+    cursor.execute(consulta_insercion_pump, datos_pump)
 
 
     # Guardar los cambios y cerrar la conexión
@@ -159,9 +159,9 @@ def seleccionarBomba():
     conexion = connectBD()
     cursor = conexion.cursor()
 
-    consulta_seleccion_bomba = "SELECT * FROM bomba"
+    consulta_seleccion_pump = "SELECT * FROM pump"
 
-    cursor.execute(consulta_seleccion_bomba)
+    cursor.execute(consulta_seleccion_pump)
 
     resultados = cursor.fetchall()
     conexion.close()
@@ -172,9 +172,9 @@ def seleccionarBomba(id):
     conexion = connectBD()
     cursor = conexion.cursor()
 
-    consulta_seleccion_bomba = "SELECT * FROM bomba WHERE id = {}".format(id)
+    consulta_seleccion_pump = "SELECT * FROM pump WHERE id = {}".format(id)
 
-    cursor.execute(consulta_seleccion_bomba)
+    cursor.execute(consulta_seleccion_pump)
 
     resultado = cursor.fetchall()
     conexion.close()
@@ -184,54 +184,54 @@ def seleccionarBomba(id):
 def borrarBomba(id):
     conexion = connectBD()
     cursor = conexion.cursor()
-    consulta_delete_bomba = sql.SQL("DELETE FROM bomba WHERE id = {}".format(id))
-    cursor.execute(consulta_delete_bomba)
+    consulta_delete_pump = sql.SQL("DELETE FROM pump WHERE id = {}".format(id))
+    cursor.execute(consulta_delete_pump)
     conexion.commit()
     conexion.close()
 
-def createTablePedido():
+def createTableOrder():
     conexion = connectBD()
     cursor = conexion.cursor()
 
     # Crear una tabla si no existe
-    consulta_creacion_tabla_pedido = """
-        CREATE TABLE IF NOT EXISTS archivo (
+    consulta_creacion_tabla_order = """
+        CREATE TABLE IF NOT EXISTS file (
             id SERIAL PRIMARY KEY,
-            nombre_archivo TEXT,
-            contenido BYTEA
+            name TEXT,
+            content BYTEA
         );
 
-        CREATE TABLE IF NOT EXISTS pedido (
+        CREATE TABLE IF NOT EXISTS orders (
             id SERIAL PRIMARY KEY,
-            direccion VARCHAR(100),
-            solicitante VARCHAR(40),
-            telefono VARCHAR(40),
-            operador VARCHAR(40),
+            address VARCHAR(100),
+            applicant VARCHAR(40),
+            phone VARCHAR(40),
+            operator VARCHAR(40),
             startpoint VARCHAR(100),
             stoppoint VARCHAR(100),
             description VARCHAR(255),
-            tiempo_estimado INT,
-            id_archivo INT,
-            tipo VARCHAR(40),
-            tiempo_real INT,
+            estimatedTime INT,
+            idFile INT,
+            type VARCHAR(40),
+            actualTime INT,
             fecha TIMESTAMP,
-            FOREIGN KEY (id_archivo) REFERENCES archivo(id)
+            FOREIGN KEY (idFile) REFERENCES archivo(id)
         );
     """
-    cursor.execute(consulta_creacion_tabla_pedido)
+    cursor.execute(consulta_creacion_tabla_order)
 
     # Guardar los cambios y cerrar la conexión
     conexion.commit()
     conexion.close()
 
 
-def insertarPedido(direccion, solicitante, telefono, operador, startpoint, stoppoint, description, tiempo_estimado, tipo):
+def insertarPedido(address, applicant, phone, operator, startpoint, stoppoint, description, estimatedTime, type):
     conexion = connectBD()
     cursor = conexion.cursor()
     
-    consulta_insercion_pedido = sql.SQL("INSERT INTO pedido (direccion, solicitante, telefono, operador, startpoint, stoppoint, description, tiempo_estimado, tipo,tiempo_real,fecha) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, now())")
-    datos_pedido = (direccion, solicitante, telefono, operador, startpoint, stoppoint, description, tiempo_estimado, tipo,0)
-    cursor.execute(consulta_insercion_pedido, datos_pedido)
+    consulta_insercion_order = sql.SQL("INSERT INTO orders (address, applicant, phone, operator, startpoint, stoppoint, description, estimatedTime, type,actualTime,fecha) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, now())")
+    datos_order = (address, applicant, phone, operator, startpoint, stoppoint, description, estimatedTime, type,0)
+    cursor.execute(consulta_insercion_order, datos_order)
 
 
     # Guardar los cambios y cerrar la conexión
@@ -243,9 +243,9 @@ def seleccionarPedido():
     conexion = connectBD()
     cursor = conexion.cursor()
 
-    consulta_seleccion_pedido = "SELECT * FROM pedido"
+    consulta_seleccion_order = "SELECT * FROM orders"
 
-    cursor.execute(consulta_seleccion_pedido)
+    cursor.execute(consulta_seleccion_order)
 
     resultados = cursor.fetchall()
     conexion.close()
@@ -256,9 +256,9 @@ def seleccionarPedido(id):
     conexion = connectBD()
     cursor = conexion.cursor()
 
-    consulta_seleccion_pedido = "SELECT * FROM pedido WHERE id = {}".format(id)
+    consulta_seleccion_order = "SELECT * FROM orders WHERE id = {}".format(id)
 
-    cursor.execute(consulta_seleccion_pedido)
+    cursor.execute(consulta_seleccion_order)
 
     resultado = cursor.fetchall()
     conexion.close()
@@ -268,8 +268,8 @@ def seleccionarPedido(id):
 def borrarPedido(id):
     conexion = connectBD()
     cursor = conexion.cursor()
-    consulta_delete_pedido = sql.SQL("DELETE FROM pedido WHERE id = {}".format(id))
-    cursor.execute(consulta_delete_pedido)
+    consulta_delete_order = sql.SQL("DELETE FROM orders WHERE id = {}".format(id))
+    cursor.execute(consulta_delete_order)
     conexion.commit()
     conexion.close()
 

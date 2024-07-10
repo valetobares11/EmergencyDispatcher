@@ -31,7 +31,7 @@
   <property name="styleSheet">
    <string notr="true">background-color: rgb(33, 43, 56);</string>
   </property>
-  <widget class="QPushButton" name="volver">
+  <widget class="QPushButton" name="back_to">
    <property name="geometry">
     <rect>
      <x>410</x>
