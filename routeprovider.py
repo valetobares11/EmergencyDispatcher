@@ -64,11 +64,11 @@ class RouteProvider(object):
         
         parameter_movil = "car"
         if (typeAutomovil is not None):
-            if (typeAutomovil == CAMIONETA):
+            if (typeAutomovil == TRUCK):
                 parameter_movil = "car"
-            if (typeAutomovil == CAMION_LIGERO):
+            if (typeAutomovil == LIGHT_TRUCK):
                 parameter_movil = "truck"
-            if (typeAutomovil == CAMION_PESADO):
+            if (typeAutomovil == HEAVY_TRUCK):
                 parameter_movil = "truck"
 
         if (len(listPointsExclusion) > 0):
@@ -93,11 +93,11 @@ class RouteProvider(object):
         self.__serviceType__ = 7
         parameter_movil = "car"
         if (typeAutomovil is not None):
-            if (typeAutomovil == CAMIONETA):
+            if (typeAutomovil == TRUCK):
                 parameter_movil = "car"
-            if (typeAutomovil == CAMION_LIGERO):
+            if (typeAutomovil == LIGHT_TRUCK):
                 parameter_movil = "truck"
-            if (typeAutomovil == CAMION_PESADO):
+            if (typeAutomovil == HEAVY_TRUCK):
                 parameter_movil = "truck"
 
         if (len(listPointsExclusion) > 0):

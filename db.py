@@ -38,11 +38,25 @@ def insert(table = '', columns = '', values = ''):
         conexion = connectBD()
         cursor = conexion.cursor()
         consulta_insercion = sql.SQL("INSERT INTO {} ({}) VALUES ({})".format(table, columns, values))
+        print("SQL {}".format(consulta_insercion))
         cursor.execute(consulta_insercion)
 
         # Guardar los cambios y cerrar la conexión
         conexion.commit()
         conexion.close()
+
+def insertOrder(address, applicant, phone, operator, startpoint, stoppoint, description, estimatedTime, type):
+    conexion = connectBD()
+    cursor = conexion.cursor()
+    
+    consulta_insercion_order = sql.SQL("INSERT INTO orders (address, applicant, phone, operator, startpoint, stoppoint, description, estimated_time, type,actual_time,date) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, now())")
+    datos_order = (address, applicant, phone, operator, startpoint, stoppoint, description, estimatedTime, type,0)
+    cursor.execute(consulta_insercion_order, datos_order)
+
+
+    # Guardar los cambios y cerrar la conexión
+    conexion.commit()
+    conexion.close()
 
 
 def select(table = '', id = None, limit = None, filtro = {}):
@@ -57,16 +71,16 @@ def select(table = '', id = None, limit = None, filtro = {}):
         query+= " AND id = {} ".format(id)
 
     if 'fecha_desde' in filtro:
-        query += " AND fecha >= '{}'".format(filtro['fecha_desde'])
+        query += " AND date >= '{}'".format(filtro['fecha_desde'])
 
     if 'fecha_hasta' in filtro:
-        query += " AND fecha <= '{}'".format(filtro['fecha_hasta'])
+        query += " AND date <= '{}'".format(filtro['fecha_hasta'])
 
     if 'type_emergency' in filtro:
         query += " AND type = '{}'".format(filtro['type_emergency'])
     
     if 'hours' in filtro:
-        query+= " AND EXTRACT(HOUR FROM fecha) = '{}'".format(filtro['hours'])
+        query+= " AND EXTRACT(HOUR FROM date) = '{}'".format(filtro['hours'])
 
     query += "ORDER BY id"
 
@@ -195,7 +209,7 @@ def createTableOrder():
 
     # Crear una tabla si no existe
     consulta_creacion_tabla_order = """
-        CREATE TABLE IF NOT EXISTS file (
+        CREATE TABLE IF NOT EXISTS files (
             id SERIAL PRIMARY KEY,
             name TEXT,
             content BYTEA
@@ -210,12 +224,12 @@ def createTableOrder():
             startpoint VARCHAR(100),
             stoppoint VARCHAR(100),
             description VARCHAR(255),
-            estimatedTime INT,
-            idFile INT,
+            estimated_time INT,
+            id_file INT,
             type VARCHAR(40),
-            actualTime INT,
-            fecha TIMESTAMP,
-            FOREIGN KEY (idFile) REFERENCES archivo(id)
+            actual_time INT,
+            date TIMESTAMP,
+            FOREIGN KEY (id_file) REFERENCES files(id)
         );
     """
     cursor.execute(consulta_creacion_tabla_order)
@@ -225,18 +239,6 @@ def createTableOrder():
     conexion.close()
 
 
-def insertarPedido(address, applicant, phone, operator, startpoint, stoppoint, description, estimatedTime, type):
-    conexion = connectBD()
-    cursor = conexion.cursor()
-    
-    consulta_insercion_order = sql.SQL("INSERT INTO orders (address, applicant, phone, operator, startpoint, stoppoint, description, estimatedTime, type,actualTime,fecha) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, now())")
-    datos_order = (address, applicant, phone, operator, startpoint, stoppoint, description, estimatedTime, type,0)
-    cursor.execute(consulta_insercion_order, datos_order)
-
-
-    # Guardar los cambios y cerrar la conexión
-    conexion.commit()
-    conexion.close()
 
 
 def seleccionarPedido():

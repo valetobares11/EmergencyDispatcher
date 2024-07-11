@@ -387,7 +387,7 @@ class EmergencyDispatcher:
             diccionario = json.loads(response)
             estimatedTime = round(int(diccionario['routes'][0]['sections'][0]['summary']['duration'])/60)
             description = self.description
-            direccion = self.address
+            address = self.address
             applicant = self.applicant
             phone = self.phone
             categoria={
@@ -400,12 +400,12 @@ class EmergencyDispatcher:
                 '7':'VARIOS',
                 '8':'RESCATE DE ALTURA'
             }.get(str(self.typeEmergency),'Desconocido')
-            valores = "'{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}','{}', now()".format(direccion, applicant, phone, "Pedro", self.crsTransformPedido(self.startPointXY),self.crsTransformPedido(self.stopPointXY), description, estimatedTime, categoria, estimatedTime)
-            insert('order', 'direccion, applicant, phone, operador, startpoint, stoppoint, description, estimatedTime,type, estimatedActual, fecha', valores)
+            valores = "'{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}','{}', now()".format(address, applicant, phone, "Pedro", self.crsTransformPedido(self.startPointXY),self.crsTransformPedido(self.stopPointXY), description, estimatedTime, categoria, 0)
+            insert('orders', 'address, applicant, phone, operator, startpoint, stoppoint, description, estimated_time,type, actual_time, date', valores)
                 
         except Exception as e:
             QgsMessageLog.logMessage(str(e))
-            QMessageBox.warning(self.dlg, 'persistOrder', "Error al intentar guardar el order")
+            QMessageBox.warning(self.dlg, 'persistOrder', "Error al intentar guardar el pedido")
             
     def calculateRoutesPumps(self, startPoint):
         try:
