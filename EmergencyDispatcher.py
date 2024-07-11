@@ -231,14 +231,10 @@ class EmergencyDispatcher:
     def clickHandler(self, pointXY):
         if self.no == 0:
             startPointXY = QgsPointXY(pointXY)
-            # self.startRubberBand.removeLastPoint()
-            # self.startRubberBand.removeLastPoint()
             self.startRubberBand.addPoint(startPointXY)
             self.dlg.startTxt.setText(str(pointXY.x()) + ',' + str(pointXY.y()))
         else:
             stopPointXY = QgsPointXY(pointXY)
-            # self.stopRubberBand.removeLastPoint()
-            # self.stopRubberBand.removeLastPoint()
             self.stopRubberBand.addPoint(stopPointXY)
             self.dlg.stopTxt.setText(str(pointXY.x()) + ',' + str(pointXY.y()))
         
@@ -266,13 +262,9 @@ class EmergencyDispatcher:
         self.address = getAddress(point.x(),point.y())
         self.stopRubberBand.addPoint(point)
         self.dlg.hide()
-
-        # Liberar la herramienta de mapa para que se pueda hacer clic nuevamente
         self.canvas.unsetMapTool(self.clickTool)
-        # Volver a mostrar la ventana emergente
         self.dlg.show()
-        self.dlg.form_direccion.setText(self.address)
-        # self.clickTool.canvasClicked.disconnect(self.clickHandler)
+        self.dlg.form_address.setText(self.address)
 
     def toolActivatorStartPoints(self):
         self.dlg.showMinimized()
@@ -346,7 +338,6 @@ class EmergencyDispatcher:
         QMessageBox.information(self.dlg, 'Informacion', 'Ruta calculada con éxito.')
 
     def runAnalysis(self):
-        # if len(self.dlg.startTxt.text()) > 0 and len(self.dlg.stopTxt.text()) > 0:
         if self.startPointXY is not None and self.stopPointXY is not None:
             jurisdiction = QgsProject.instance().mapLayersByName('Jurisdicción')
             if len(jurisdiction) > 0:
@@ -356,7 +347,6 @@ class EmergencyDispatcher:
             if self.checkNetConnection():  
                 startPoint = self.crsTransform(self.startPointXY)
                 stopPoint = self.crsTransform(self.stopPointXY)   
-                # index = self.dlg.serviceCombo.currentIndex()
                 try:
                     service = self.services[list(self.services)[TYPE_SERVICIO_HERE_V8]]
                     self.loadListPoints()
@@ -364,7 +354,8 @@ class EmergencyDispatcher:
                     wkt2, url2 = service(stopPoint, startPoint, self.listPointsExclution, self.typeAutomovil)
                     report(url, url2)
                     self.persistOrder(url)
-                    if self.typeEmergency in (1,2,3,4):
+                    
+                    if self.typeEmergency in (INCENDIO_FORESTAL, INCENDIO_ESTRUCTURAL,INCENDIO_RURAL,INCENDIO_VEHICULAR):
                         self.calculateRoutesPumps(stopPoint)
 
                     self.routeMaker(wkt)
@@ -402,7 +393,6 @@ class EmergencyDispatcher:
             }.get(str(self.typeEmergency),'Desconocido')
             valores = "'{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}','{}', now()".format(address, applicant, phone, "Pedro", self.crsTransformPedido(self.startPointXY),self.crsTransformPedido(self.stopPointXY), description, estimatedTime, categoria, 0)
             insert('orders', 'address, applicant, phone, operator, startpoint, stoppoint, description, estimated_time,type, actual_time, date', valores)
-                
         except Exception as e:
             QgsMessageLog.logMessage(str(e))
             QMessageBox.warning(self.dlg, 'persistOrder', "Error al intentar guardar el pedido")
@@ -433,13 +423,13 @@ class EmergencyDispatcher:
 
     def calculatePoints(self):
         try:
-            address = self.dlg.form_direccion.text()+ " " + CIUDAD + " " + PROVINCIA
+            address = self.dlg.form_address.text()+ " " + CIUDAD + " " + PROVINCIA
             x, y = getCoordinate(address)
             self.stopPointXY = QgsPointXY(x,y)
             self.address = address
         except Exception as e:
             QgsMessageLog.logMessage(str(e))
-            QMessageBox.warning(self.dlg, 'calculatePoints', "Error al obtener coordenada o direccion")
+            QMessageBox.warning(self.dlg, 'calculatePoints', "Error al obtener coordenada o address")
     
     def callSound(self, path_sound, emergency):
         self.typeEmergency = emergency
@@ -479,7 +469,7 @@ class EmergencyDispatcher:
 
 
     def accept(self):
-        address = self.dlg.form_direccion.text()
+        address = self.dlg.form_address.text()
         description=self.dlg.form_description.text()
         applicant=self.dlg.form_applicant.text()
         phone=self.dlg.form_phone.text()
@@ -490,12 +480,7 @@ class EmergencyDispatcher:
             self.dlg.show()
             writeReport(description, address, applicant, phone)
             self.runAnalysis()
-        else : QMessageBox.warning(self.dlg, 'Aviso', "Ingresa al menos una direccion")
-        
-    # def add_table_item(self, row, column, text):
-    #     # Método para agregar un elemento a la tabla
-    #     item = QTableWidgetItem(text)
-    #     self.dlg.tableWidget.setItem(row, column, item)
+        else : QMessageBox.warning(self.dlg, 'Aviso', "Ingresa al menos una address")
     
     def deleteAllPoints(self):
         # Itera sobre todos los points y los elimina uno por uno
@@ -510,7 +495,7 @@ class EmergencyDispatcher:
     
     def deleteLayerPumps(self):
         if (len(self.layerPumps)>0):
-            allLayers = QgsProject.instance().mapLayers().values()
+            # allLayers = QgsProject.instance().mapLayers().values()
             for layer in self.layerPumps:
                 # if layer in allLayers:
                 QgsProject.instance().removeMapLayer(layer)
@@ -518,32 +503,19 @@ class EmergencyDispatcher:
 
 
     def removePump(self, id):
-        # Borrar en la tabla interface
-        i=0
-        while i < self.dlg.tableWidget.rowCount():
-            if int(self.dlg.tableWidget.item(i,0).text()) == id:
-                self.dlg.tableWidget.removeRow(i)
-            i += 1
-
-        # Borrar en la BD
+        self.removeRowsTable(id)
         delete('pump', id)
         self.addUpdateInitialPoints()
 
     def updatePump(self, id):
         try:
-            found = False
-            for i in range(self.dlg.tableWidget.rowCount()):
-                if int(self.dlg.tableWidget.item(i, 0).text()) == id:
-                    found = True
-                    break
-
-            i -= 1
+            i, found = self.findIdTable(id)   
             if found:
                 description = self.dlg.tableWidget.item(i,1).text()
                 state = self.dlg.tableWidget.item(i,2).text()
-                seters = " description = '{}', estado = '{}'".format(description, state)
+                seters = " description = '{}', state = '{}'".format(description, state)
                 update('pump', seters, id)
-                QMessageBox.information(self.dlg, 'actualizar_pump', "Actualizacion exitosa")
+                QMessageBox.information(self.dlg, 'updatePump', "Actualizacion exitosa")
         except Exception as e:
             QgsMessageLog.logMessage(str(e))
             QMessageBox.warning(self.dlg, 'updatePump', "No se puede modificar el valor")
@@ -602,37 +574,66 @@ class EmergencyDispatcher:
             self.addUpdateInitialPoints()  
             self.dlg.showNormal()
             
-
-
-    #tuple esta de mas?
-    def remove_points(self, id):
-        # Borrar en la tabla interface
+    def removeRowsTable(self, id =None):
         i=0
         while i < self.dlg.tableWidget.rowCount():
-            if int(self.dlg.tableWidget.item(i,0).text()) == id:
+            if id != None:
+                if int(self.dlg.tableWidget.item(i,0).text()) == id:
+                    self.dlg.tableWidget.removeRow(i)
+            else:
                 self.dlg.tableWidget.removeRow(i)
             i += 1
 
-        # Borrar en la BD
+    def removePoints(self, id):
+        self.removeRowsTable(id)
         delete('points', id)
         delete('points', id-1)
         self.addUpdateInitialPoints()
+
+    def findIdTable(self, id):
+        found = False
+        i=0
+        while i < self.dlg.tableWidget.rowCount() and not found:
+            if int(self.dlg.tableWidget.item(i,0).text()) == id:
+                found = True
+            i+=1
+        i -= 1
+        return i, found
+    
+    def updatePoints(self, id):
+        try:
+            i, found = self.findIdTable(id)       
+            if found:
+                # Actualizar en la BD
+                description = self.dlg.tableWidget.item(i,1).text()
+                seters = "description = '{}'".format(description)
+                update('points', seters, id)
+            QMessageBox.information(self.dlg, 'updatePoints', "Actualizacion exitosa")
+        except Exception as e:
+            QgsMessageLog.logMessage(str(e))
+            QMessageBox.warning(self.dlg, 'updateOrder', "No se puede modificar el valor por exceder de caracteres o type incorrecto")
+
+
 
     def addPoint(self, id, description):
         rowPosition = self.dlg.tableWidget.rowCount()
         self.dlg.tableWidget.insertRow(rowPosition)
         self.dlg.tableWidget.setItem(rowPosition, 0, QTableWidgetItem(str(id)))
         self.dlg.tableWidget.setItem(rowPosition, 1, QTableWidgetItem(description))
-        deleteButton = QPushButton("Eliminar")
-        deleteButton.clicked.connect(lambda: self.remove_points(id))
+        deleteButton = QPushButton("X")
+        deleteButton.clicked.connect(lambda: self.removePoints(id))
         self.dlg.tableWidget.setCellWidget(rowPosition, 2, deleteButton)
+        updateButton = QPushButton("Modificar")
+        updateButton.clicked.connect(lambda: self.updatePoints(id))
+        self.dlg.tableWidget.setCellWidget(rowPosition, 3, updateButton)
+
 
     def changeScreenModifyMap(self):
         self.dlg = EmergencyDispatcherDialogModifyMap()
         self.dlg.setFixedSize(self.dlg.size())
         self.dlg.show()
-        self.dlg.tableWidget.setColumnCount(3)
-        self.dlg.tableWidget.setHorizontalHeaderLabels(["ID", "Descripcion", "Acción"])
+        self.dlg.tableWidget.setColumnCount(4)
+        self.dlg.tableWidget.setHorizontalHeaderLabels(["ID", "Descripcion", "Borrar", "Modificar"])
         records = select('points')
         
         for i, tuple in enumerate(records, start=1):
@@ -696,7 +697,6 @@ class EmergencyDispatcher:
                     TYPE7: layersPoints[6],
                     TYPE8: layersPoints[7]
                 }
-
                 # Asignar la característica a la layer correspondiente
                 if tuple[10] in type_a_layer:
                     type_a_layer[tuple[10]].dataProvider().addFeature(feature)
@@ -759,11 +759,10 @@ class EmergencyDispatcher:
         values = [int(valor) for valor in conteo_types.values()]
         fig, ax = plt.subplots()
         ax.bar(categories,values)
-
         ax.yaxis.set_major_locator(MaxNLocator(integer=True))
         plt.xlabel('Tipo Emergencia')
         plt.ylabel('Cantidad')
-        plt.title('Cantidad de salidas por type')
+        plt.title('Cantidad de salidas por tipo')
         plt.show()
 
 
@@ -799,8 +798,8 @@ class EmergencyDispatcher:
         # Configurar etiquetas y leyenda
         ax.yaxis.set_major_locator(MaxNLocator(integer=True))
         ax.set_xlabel('Fecha')
-        ax.set_ylabel('Cantidad de emergencys')
-        ax.set_title('Cantidad de emergencys por type a lo largo del tiempo')
+        ax.set_ylabel('Cantidad de emergencias')
+        ax.set_title('Cantidad de emergencias por type a lo largo del time')
         ax.legend()
 
         # Configurar el eje x para mostrar solo valores enteros
@@ -818,13 +817,7 @@ class EmergencyDispatcher:
          
     def updateOrder(self, id):
         try:
-            found = False
-            for i in range(self.dlg.tableWidget.rowCount()):
-                if int(self.dlg.tableWidget.item(i, 0).text()) == id:
-                    found = True
-                    break
-
-            i -= 1
+            i, found = self.findIdTable(id)
             if found:
                 # Actualizar en la BD
                 address = self.dlg.tableWidget.item(i,1).text()
@@ -837,16 +830,14 @@ class EmergencyDispatcher:
                 estimatedTime = self.dlg.tableWidget.item(i,8).text()
                 estimatedActual = self.dlg.tableWidget.item(i,9).text()
                 type = self.dlg.tableWidget.item(i,10).text()
-                fecha = self.dlg.tableWidget.item(i,11).text()
-
-                seters = "address = '{}', applicant = '{}', phone = '{}', operator = '{}', startPoint = '{}', stopPoint = '{}', description = '{}', estimatedTime = '{}', estimatedActual = '{}', type = '{}'".format(address, applicant, phone, operator, startPoint, stopPoint ,description,estimatedTime, estimatedActual, type)
-            
+                seters = "address = '{}', applicant = '{}', phone = '{}', operator = '{}', startpoint = '{}', stoppoint = '{}', description = '{}', estimated_time = '{}', actual_time = '{}', type = '{}',date=now()".format(address, applicant, phone, operator, startPoint, stopPoint ,description,estimatedTime, estimatedActual, type)
                 update('orders', seters, id)
+                QMessageBox.information(self.dlg, 'updateOrder', "Actualizacion exitosa")
         except Exception as e:
             QgsMessageLog.logMessage(str(e))
             QMessageBox.warning(self.dlg, 'updateOrder', "No se puede modificar el valor por exceder de caracteres o type incorrecto")
 
-    def addOrder(self, id, direccion, applicant, phone, operador, coordenada_partida, coordenada_lugar, description, estimatedTime, estimatedActual, type, fecha):
+    def addOrder(self, id, address, applicant, phone, operador, coordenada_partida, coordenada_lugar, description, estimatedTime, estimatedActual, type, fecha):
         rowPosition = self.dlg.tableWidget.rowCount()
         self.dlg.tableWidget.insertRow(rowPosition)
         item = QTableWidgetItem(str(id))
@@ -854,7 +845,7 @@ class EmergencyDispatcher:
         item2 = QTableWidgetItem(str(fecha))
         item2.setFlags(item2.flags() & ~Qt.ItemIsEditable)
         self.dlg.tableWidget.setItem(rowPosition, 0, item)
-        self.dlg.tableWidget.setItem(rowPosition, 1, QTableWidgetItem(str(direccion)))
+        self.dlg.tableWidget.setItem(rowPosition, 1, QTableWidgetItem(str(address)))
         self.dlg.tableWidget.setItem(rowPosition, 2, QTableWidgetItem(str(applicant)))
         self.dlg.tableWidget.setItem(rowPosition, 3, QTableWidgetItem(str(phone)))
         self.dlg.tableWidget.setItem(rowPosition, 4, QTableWidgetItem(str(operador)))
@@ -881,32 +872,33 @@ class EmergencyDispatcher:
         self.clickTool = QgsMapToolEmitPoint(self.canvas)
         self.dlg.back_to.clicked.connect(lambda: self.backScreen())
         self.dlg.aceptar.clicked.connect(lambda: self.backScreen())
-        self.dlg.cargar_planilla.clicked.connect(lambda: self.selectOrders())
+        self.dlg.load_sheet.clicked.connect(lambda: self.selectOrders())
         self.dlg.cargar.clicked.connect(lambda: self.loadOrders())
-        self.dlg.exportar.clicked.connect(lambda: self.exportar_orders_tabla())
+        self.dlg.exportar.clicked.connect(lambda: self.exportOrdersTable())
     
     def loadOrdersTable(self):
+        self.removeRowsTable
         records = select("orders")
         for tuple in records:
             self.addOrder(tuple[0], tuple[1], tuple[2], tuple[3], tuple[4], tuple[5], tuple[6], tuple[7], tuple[8], tuple[11], tuple[10], tuple[12])
 
-    def exportar_orders_tabla(self):
+    def exportOrdersTable(self):
         try:
             createAndDownloadOds()
-            QMessageBox.information(self.dlg, 'exportar_orders_tabla', "Se exportó el archivo en "+PATH_RUTA_EXPORT)
+            QMessageBox.information(self.dlg, 'exportOrdersTable', "Se exportó el archivo en "+PATH_RUTA_EXPORT)
         except Exception as e:
             QgsMessageLog.logMessage(str(e))
-            QMessageBox.warning(self.dlg, 'exportar_orders_tabla', "Ocurrio un error al exportar el archivo.")
+            QMessageBox.warning(self.dlg, 'exportOrdersTable', "Ocurrio un error al exportar el archivo.")
 
     def selectOrders(self):
-        file_dialog = QFileDialog()
-        file_dialog.setNameFilter("Archivos ODS (*.ods)")
-        file_dialog.setFileMode(QFileDialog.ExistingFile)
-        if file_dialog.exec_():
-            file_paths = file_dialog.selectedFiles()
-            selected_file_path = file_paths[0]
-            self.dlg.cargar_planilla.setText(selected_file_path)
-            self.pathLoadTemplate = selected_file_path
+        fileDialog = QFileDialog()
+        fileDialog.setNameFilter("Archivos ODS (*.ods)")
+        fileDialog.setFileMode(QFileDialog.ExistingFile)
+        if fileDialog.exec_():
+            filePaths = fileDialog.selectedFiles()
+            selectedFilePath = filePaths[0]
+            self.dlg.load_sheet.setText(selectedFilePath)
+            self.pathLoadTemplate = selectedFilePath
             
             
     def loadOrders(self):
@@ -914,7 +906,7 @@ class EmergencyDispatcher:
             loadOrders(self.pathLoadTemplate)
             self.loadOrdersTable()
             self.pathLoadTemplate = None
-            self.dlg.cargar_planilla.setText("Seleccionar archivo")
+            self.dlg.load_sheet.setText("Seleccionar archivo")
         else:
             QMessageBox.warning(self.dlg, 'loadOrders', "Seleccione un archio .ods para cargar los orders")
 

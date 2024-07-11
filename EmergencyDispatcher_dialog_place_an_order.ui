@@ -252,7 +252,7 @@ centralWidget: horizontal;</string>
           </widget>
          </item>
          <item row="1" column="1" colspan="3">
-          <widget class="QLineEdit" name="form_direccion">
+          <widget class="QLineEdit" name="form_address">
            <property name="minimumSize">
             <size>
              <width>0</width>
@@ -803,7 +803,7 @@ background-color: #2CA02C;
  </widget>
  <tabstops>
   <tabstop>form_description</tabstop>
-  <tabstop>form_direccion</tabstop>
+  <tabstop>form_address</tabstop>
   <tabstop>form_applicant</tabstop>
   <tabstop>form_phone</tabstop>
   <tabstop>comboBox_2</tabstop>

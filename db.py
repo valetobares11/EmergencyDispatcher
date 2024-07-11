@@ -38,7 +38,6 @@ def insert(table = '', columns = '', values = ''):
         conexion = connectBD()
         cursor = conexion.cursor()
         consulta_insercion = sql.SQL("INSERT INTO {} ({}) VALUES ({})".format(table, columns, values))
-        print("SQL {}".format(consulta_insercion))
         cursor.execute(consulta_insercion)
 
         # Guardar los cambios y cerrar la conexión
@@ -49,9 +48,9 @@ def insertOrder(address, applicant, phone, operator, startpoint, stoppoint, desc
     conexion = connectBD()
     cursor = conexion.cursor()
     
-    consulta_insercion_order = sql.SQL("INSERT INTO orders (address, applicant, phone, operator, startpoint, stoppoint, description, estimated_time, type,actual_time,date) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, now())")
-    datos_order = (address, applicant, phone, operator, startpoint, stoppoint, description, estimatedTime, type,0)
-    cursor.execute(consulta_insercion_order, datos_order)
+    queryInsertionOrder = sql.SQL("INSERT INTO orders (address, applicant, phone, operator, startpoint, stoppoint, description, estimated_time, type,actual_time,date) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, now())")
+    datosOrder = (address, applicant, phone, operator, startpoint, stoppoint, description, estimatedTime, type,0)
+    cursor.execute(queryInsertionOrder, datosOrder)
 
 
     # Guardar los cambios y cerrar la conexión
@@ -110,25 +109,24 @@ def update(table = '', seters = '', id = None):
     if (table != '' and seters != ''):
         conexion = connectBD()
         cursor = conexion.cursor()
-        query = "UPDATE {} SET {} WHERE 1 = 1 AND id = {} ;".format(table,seters,id)
-
+        query = "UPDATE {} SET {} WHERE 1 = 1 AND id = {} ;".format(table ,seters,id)
         cursor.execute(sql.SQL(query))
         conexion.commit()
         conexion.close()
 
-def update_file(table = '',nombre='', contenido = '', id = None):
-    if (table != '' and contenido != ''):
-        conexion = connectBD()
-        cursor = conexion.cursor()
+# def update_file(table = '',nombre='', contenido = '', id = None):
+#     if (table != '' and contenido != ''):
+#         conexion = connectBD()
+#         cursor = conexion.cursor()
         
-        # Prepara la consulta SQL con un parámetro para el contenido binario
-        query = sql.SQL("UPDATE archivo SET nombre_archivo = %s, contenido = %s WHERE id = %s")
+#         # Prepara la consulta SQL con un parámetro para el contenido binario
+#         query = sql.SQL("UPDATE archivo SET nombre_archivo = %s, contenido = %s WHERE id = %s")
     
-        # Ejecuta la consulta SQL pasando los datos binarios como parámetros
-        cursor.execute(query, (nombre, psycopg2.Binary(contenido), id))
+#         # Ejecuta la consulta SQL pasando los datos binarios como parámetros
+#         cursor.execute(query, (nombre, psycopg2.Binary(contenido), id))
         
-        conexion.commit()
-        conexion.close()
+#         conexion.commit()
+#         conexion.close()
 
 
 
@@ -155,13 +153,13 @@ def createTablePump():
     conexion.close()
 
 
-def insertarBomba(startPoint,stopPoint, description=""):
+def insertPump(startPoint,stopPoint, description=""):
     conexion = connectBD()
     cursor = conexion.cursor()
 
-    consulta_insercion_pump = sql.SQL("INSERT INTO pump (startpoint, stoppoint, description) VALUES (%s, %s, %s)")
-    datos_pump = (startPoint, stopPoint, description)
-    cursor.execute(consulta_insercion_pump, datos_pump)
+    queryInsertPump = sql.SQL("INSERT INTO pump (startpoint, stoppoint, description) VALUES (%s, %s, %s)")
+    datosPump = (startPoint, stopPoint, description)
+    cursor.execute(queryInsertPump, datosPump)
 
 
     # Guardar los cambios y cerrar la conexión
@@ -169,37 +167,37 @@ def insertarBomba(startPoint,stopPoint, description=""):
     conexion.close()
 
 
-def seleccionarBomba():
+def selectPump():
     conexion = connectBD()
     cursor = conexion.cursor()
 
-    consulta_seleccion_pump = "SELECT * FROM pump"
+    querySelectPump = "SELECT * FROM pump"
 
-    cursor.execute(consulta_seleccion_pump)
+    cursor.execute(querySelectPump)
 
     resultados = cursor.fetchall()
     conexion.close()
 
     return resultados
 
-def seleccionarBomba(id):
+def selectPump(id):
     conexion = connectBD()
     cursor = conexion.cursor()
 
-    consulta_seleccion_pump = "SELECT * FROM pump WHERE id = {}".format(id)
+    querySelectPump = "SELECT * FROM pump WHERE id = {}".format(id)
 
-    cursor.execute(consulta_seleccion_pump)
+    cursor.execute(querySelectPump)
 
     resultado = cursor.fetchall()
     conexion.close()
     
     return resultado[0]
 
-def borrarBomba(id):
+def deletePump(id):
     conexion = connectBD()
     cursor = conexion.cursor()
-    consulta_delete_pump = sql.SQL("DELETE FROM pump WHERE id = {}".format(id))
-    cursor.execute(consulta_delete_pump)
+    queryDeletePump = sql.SQL("DELETE FROM pump WHERE id = {}".format(id))
+    cursor.execute(queryDeletePump)
     conexion.commit()
     conexion.close()
 
@@ -208,7 +206,7 @@ def createTableOrder():
     cursor = conexion.cursor()
 
     # Crear una tabla si no existe
-    consulta_creacion_tabla_order = """
+    queryCreationTable = """
         CREATE TABLE IF NOT EXISTS files (
             id SERIAL PRIMARY KEY,
             name TEXT,
@@ -232,7 +230,7 @@ def createTableOrder():
             FOREIGN KEY (id_file) REFERENCES files(id)
         );
     """
-    cursor.execute(consulta_creacion_tabla_order)
+    cursor.execute(queryCreationTable)
 
     # Guardar los cambios y cerrar la conexión
     conexion.commit()
@@ -241,37 +239,34 @@ def createTableOrder():
 
 
 
-def seleccionarPedido():
+def selectOrder():
     conexion = connectBD()
     cursor = conexion.cursor()
 
-    consulta_seleccion_order = "SELECT * FROM orders"
+    querySelectOrders = "SELECT * FROM orders"
 
-    cursor.execute(consulta_seleccion_order)
+    cursor.execute(querySelectOrders)
 
     resultados = cursor.fetchall()
     conexion.close()
 
     return resultados
 
-def seleccionarPedido(id):
+def selectOrder(id):
     conexion = connectBD()
     cursor = conexion.cursor()
-
-    consulta_seleccion_order = "SELECT * FROM orders WHERE id = {}".format(id)
-
-    cursor.execute(consulta_seleccion_order)
-
+    querySelectOrders = "SELECT * FROM orders WHERE id = {}".format(id)
+    cursor.execute(querySelectOrders)
     resultado = cursor.fetchall()
     conexion.close()
     
     return resultado[0]
 
-def borrarPedido(id):
+def deleteOrder(id):
     conexion = connectBD()
     cursor = conexion.cursor()
-    consulta_delete_order = sql.SQL("DELETE FROM orders WHERE id = {}".format(id))
-    cursor.execute(consulta_delete_order)
+    queryDeleteOrder = sql.SQL("DELETE FROM orders WHERE id = {}".format(id))
+    cursor.execute(queryDeleteOrder)
     conexion.commit()
     conexion.close()
 

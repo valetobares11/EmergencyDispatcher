@@ -19,7 +19,7 @@ from datetime import datetime
 from .apikey import *
 
 
-def geocode_address(address):
+def geocodeAddress(address):
     base_url = "https://nominatim.openstreetmap.org/search"
     params = {
         "q": address,
@@ -35,33 +35,33 @@ def geocode_address(address):
             return lon, lat
     return None
 
-def escribir_instrucciones(diccionario, archivo, titulo):
-    archivo.write(titulo + '\n')
-    instrucciones = diccionario['routes'][0]['sections'][0]['actions']
-    for instruccion in instrucciones:
-        archivo.write(str(instruccion['instruction']) + '\n')
+def writeInstructions(diccionario, file, title):
+    file.write(title + '\n')
+    instructions = diccionario['routes'][0]['sections'][0]['actions']
+    for instruction in instructions:
+        file.write(str(instruction['instruction']) + '\n')
 
-def obtener_datos_url(url):
+def getDataUrl(url):
     response = urlopen(url).read().decode("utf-8")
     return json.loads(response)
 
 def report(urlIda, urlVuelta):
-    diccionario_ida = obtener_datos_url(urlIda)
-    diccionario_vuelta = obtener_datos_url(urlVuelta)
+    dictionary1 = getDataUrl(urlIda)
+    dictionary2 = getDataUrl(urlVuelta)
     with open(PATH_REPORTE, 'a') as f:
 
-        estimatedTime = int(diccionario_ida['routes'][0]['sections'][0]['summary']['duration'])
-        f.write('El tiempo estimado de viaje es: '+ str(round(estimatedTime/60))+' min\n\n')
+        estimatedTime = int(dictionary1['routes'][0]['sections'][0]['summary']['duration'])
+        f.write('El time estimado de viaje es: '+ str(round(estimatedTime/60))+' min\n\n')
         
-        escribir_instrucciones(diccionario_ida, f, 'Detalle de ruta de ida:')
+        writeInstructions(dictionary1, f, 'Detalle de ruta de ida:')
         f.write('\n\n')
-        escribir_instrucciones(diccionario_vuelta, f, 'Detalle de ruta de vuelta:')
+        writeInstructions(dictionary2, f, 'Detalle de ruta de vuelta:')
 
-        registros = select('points')
-        if (len(registros) > 0) :
+        records = select('points')
+        if (len(records) > 0) :
             f.write('\nCortes\n')
-            for x in range(0,len(registros),2):
-                f.write(str(registros[x][3]))
+            for x in range(0,len(records),2):
+                f.write(str(records[x][3]))
         f.close()
 
 def writeReport(description, address, applicant, phone):
@@ -78,8 +78,8 @@ def getAddress(longitud, latitud):
     if response.status_code == 200:
         data = response.json()
         if data:
-            direccion = data['results'][0]['formatted_address']
-            return direccion
+            address = data['results'][0]['formatted_address']
+            return address
         else:
             return "No se encontró ninguna dirección para las coordenadas proporcionadas."
     else:
@@ -108,12 +108,12 @@ def getCoordinate(address):
             return lon, lat
     return None
 
-def loadOrders(archivo_ods):
+def loadOrders(fileOds):
     try:
-        # Lee el archivo ODS
-        data = get_data(archivo_ods)
+        # Lee el file ODS
+        data = get_data(fileOds)
         
-        # Extrae los datos de la primera hoja del archivo ODS
+        # Extrae los datos de la primera hoja del file ODS
         sheet_name = list(data.keys())[0]
         datos = data[sheet_name]
         
@@ -122,44 +122,57 @@ def loadOrders(archivo_ods):
         df_filtrado = df.dropna()
         conexion = connectBD()
         cursor = conexion.cursor()
-        direccion =''
+        address =''
         startpoint= ''
         stoppoint = ''
-        tiempo = ''
-        consulta_insercion = ''
+        actual_time = 0
+        applicant=''
+        operator = ''
+        phone=''
+        description=''
+        type=''
+        estimatedTime=0
+        queryInsertion = ''
         
         for i, fila in df_filtrado.iterrows():
             for column, valor in fila.items():
-                if (column == 'startpoint'): startpoint = valor
-                if (column == 'stoppoint'): stoppoint = valor
-                if (column == 'direccion'): direccion = valor
-                if (column == 'tiempo'): tiempo = valor
-            x,y = obtener_coordenada(direccion+' rio cuarto cordoba')
-            stoppoint = '{},{}'.format(x,y)
-            consulta_insercion += ("INSERT INTO order (direccion, startpoint, stoppoint, tiempo) VALUES ('{}', '{}', '{}', CURRENT_DATE + INTERVAL '{}' HOUR TO MINUTE); \n".format(direccion, startpoint, stoppoint,tiempo))
+                if (valor!=''):
+                    if (column == 'startpoint'): startpoint = valor
+                    if (column == 'stoppoint'): stoppoint = valor
+                    if (column == 'direccion'): address = valor
+                    if (column == 'tiempo'): actual_time = valor
+                    if (column == 'operador'): operator = valor
+                    if (column == 'solicitante'): applicant = valor
+                    if (column == 'telefono'): phone = valor
+                    if (column == 'decripcion'): description = valor
+                    if (column == 'tipo'): type = valor
+                    if (column == 'tiempo_estimado'):estimatedTime = valor
 
-        cursor.execute(consulta_insercion)
+            x,y = getCoordinate(address+' rio cuarto cordoba')
+            stoppoint = '{},{}'.format(x,y)
+            queryInsertion += ("INSERT INTO orders (address,applicant, phone, operator, startpoint, stoppoint,description,estimated_time,type, actual_time) VALUES ('{}','{}','{}', '{}', '{}','{}','{}','{}','{}','{}'); \n".format(address,applicant,phone, operator,startpoint,stoppoint,description,estimatedTime,type,actual_time))
+        cursor.execute(queryInsertion)
         # Guardar los cambios y cerrar la conexión
         conexion.commit()
         conexion.close()
 
     except FileNotFoundError:
-        print(f"El archivo {archivo_ods} no fue encontrado.")
+        print(f"El file {fileOds} no fue encontrado.")
     except Exception as e:
-        print(f"Error al procesar el archivo {archivo_ods}: {str(e)}")
+        print(f"Error al procesar el archivo {fileOds}: {str(e)}")
 
 def createAndDownloadOds():
     data = [
-        ["direccion", "applicant", "phone", "operador", "startpoint", "stoppoint", "description", "tiempo"]
+        ["direccion", "solicitante", "telefono", "operador", "startpoint", "stoppoint", "descripcion", "tiempo_estimado","tipo", "tiempo_real", "fecha"]
     ]
-    registros = select("order")
+    registros = select("orders")
     for tupla in registros:
-        data.append([tupla[1], tupla[2], tupla[3], tupla[4], tupla[5], tupla[6], tupla[7],tupla[8].strftime("%Y-%m-%d %H:%M:%S")])
+        data.append([tupla[1], tupla[2], tupla[3], tupla[4], tupla[5], tupla[6], tupla[7],tupla[8],tupla[10],tupla[11],tupla[12].strftime("%Y-%m-%d %H:%M:%S")])
 
     # Crear un libro de trabajo con pyexcel
     sheet = pe.Sheet(data)
 
-    # Guardar el libro de trabajo como un archivo ODS
+    # Guardar el libro de trabajo como un file ODS
     sheet.save_as(PATH_RUTA_EXPORT)
     
 def getIdTypeEmergency(emergency):

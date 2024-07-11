@@ -112,7 +112,7 @@ background-color: #FF0000;
     </rect>
    </property>
   </widget>
-  <widget class="QPushButton" name="cargar_planilla">
+  <widget class="QPushButton" name="load_sheet">
    <property name="geometry">
     <rect>
      <x>40</x>
