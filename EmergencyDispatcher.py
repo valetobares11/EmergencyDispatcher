@@ -400,23 +400,23 @@ class EmergencyDispatcher:
     def calculateRoutesPumps(self, startPoint):
         try:
             pumps = select('pump')
-            if (len(pumps)!=0):
+            if (len(pumps) > 0):
                 service = self.services[list(self.services)[TYPE_SERVICIO_HERE_V8]]
                 distances = []
                 for tuple in pumps:
                     if (tuple[4] == 'A'):
-                        wkt, url = service(startPoint, self.crsTransform(QgsPointXY(float(tuple[1]), float(tuple[2]))))
+                        wkt, url = service(startPoint, self.crsTransform(QgsPointXY(float(tuple[1]), float(tuple[2]))), self.listPointsExclution)
                         response = urlopen(url).read().decode("utf-8")
                         diccionario = json.loads(response)
                         d = int(diccionario['routes'][0]['sections'][0]['summary']['length'])
                         distances.append([d,tuple[3]])
-
-                list_distances = sorted(distances, key=lambda x: x[0])
-                f = open (PATH_REPORTE,'a')
-                f.write('\nLas Bombas de agua más cercanas de menor a mayor:\n')
-                for tuple in list_distances:
-                    f.write(str(tuple[1])+ ", distancia :"+ str(tuple[0])+'\n')
-                f.close()
+                if (len(distances)>0):
+                    list_distances = sorted(distances, key=lambda x: x[0])
+                    f = open (PATH_REPORTE,'a')
+                    f.write('\nLas Bombas de agua más cercanas de menor a mayor:\n')
+                    for tuple in list_distances:
+                        f.write(str(tuple[1])+ ", distancia :"+ str(tuple[0])+'\n')
+                    f.close()
         except Exception as err:
             QgsMessageLog.logMessage(str(err))
             QMessageBox.warning(self.dlg, 'Calculate routes pumps',"Hubo un error al calcular las pumps mas cercanas")
@@ -745,7 +745,7 @@ class EmergencyDispatcher:
                 self.dlgBack.showMinimized()
                 self.dlg.showMinimized()
             else:
-                QMessageBox.information(self.dlg, 'filterEmergencies', "No se encontraron emergencys")
+                QMessageBox.information(self.dlg, 'filterEmergencies', "No se encontraron emergencias")
         if graphic == GRAFICOS_BARRA:
             self.graphicsBar(records)
         if graphic == GRAFICOS_LINEA:
@@ -799,7 +799,7 @@ class EmergencyDispatcher:
         ax.yaxis.set_major_locator(MaxNLocator(integer=True))
         ax.set_xlabel('Fecha')
         ax.set_ylabel('Cantidad de emergencias')
-        ax.set_title('Cantidad de emergencias por type a lo largo del time')
+        ax.set_title('Cantidad de emergencias por type a lo largo del tiempo')
         ax.legend()
 
         # Configurar el eje x para mostrar solo valores enteros

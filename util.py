@@ -51,7 +51,7 @@ def report(urlIda, urlVuelta):
     with open(PATH_REPORTE, 'a') as f:
 
         estimatedTime = int(dictionary1['routes'][0]['sections'][0]['summary']['duration'])
-        f.write('El time estimado de viaje es: '+ str(round(estimatedTime/60))+' min\n\n')
+        f.write('El tiempo estimado de viaje es: '+ str(round(estimatedTime/60))+' min\n\n')
         
         writeInstructions(dictionary1, f, 'Detalle de ruta de ida:')
         f.write('\n\n')
