@@ -352,12 +352,12 @@ class EmergencyDispatcher:
                     self.loadListPoints()
                     wkt, url = service(startPoint, stopPoint, self.listPointsExclution, self.typeAutomovil)
                     wkt2, url2 = service(stopPoint, startPoint, self.listPointsExclution, self.typeAutomovil)
-                    report(url, url2)
-                    self.persistOrder(url)
-                    
+                    list_distances = []
                     if self.typeEmergency in (INCENDIO_FORESTAL, INCENDIO_ESTRUCTURAL,INCENDIO_RURAL,INCENDIO_VEHICULAR):
-                        self.calculateRoutesPumps(stopPoint)
-
+                        list_distances = self.calculateRoutesPumps(stopPoint)
+                    
+                    report(url, url2, list_distances)
+                    self.persistOrder(url)
                     self.routeMaker(wkt)
                     self.dlg.showMinimized()
                     self.listPointsExclution=[]
@@ -412,14 +412,13 @@ class EmergencyDispatcher:
                         distances.append([d,tuple[3]])
                 if (len(distances)>0):
                     list_distances = sorted(distances, key=lambda x: x[0])
-                    f = open (PATH_REPORTE,'a')
-                    f.write('\nLas Bombas de agua más cercanas de menor a mayor:\n')
-                    for tuple in list_distances:
-                        f.write(str(tuple[1])+ ", distancia :"+ str(tuple[0])+'\n')
-                    f.close()
+                    
+                    return list_distances
         except Exception as err:
             QgsMessageLog.logMessage(str(err))
             QMessageBox.warning(self.dlg, 'Calculate routes pumps',"Hubo un error al calcular las pumps mas cercanas")
+        
+        return []
 
     def calculatePoints(self):
         try:
@@ -939,7 +938,6 @@ class EmergencyDispatcher:
             #Inserta los points en la BD 
             startPoint = startPointExclution.split(',')
             stopPoint = stopPointExclution.split(',')
-
             insertPoint(startPoint[1], startPoint[0], self.dlg.descriptionTxt.text())
             insertPoint(stopPoint[1], stopPoint[0], self.dlg.descriptionTxt.text())
 

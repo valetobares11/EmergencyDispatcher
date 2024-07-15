@@ -45,7 +45,7 @@ def getDataUrl(url):
     response = urlopen(url).read().decode("utf-8")
     return json.loads(response)
 
-def report(urlIda, urlVuelta):
+def report(urlIda, urlVuelta, list_distances = []):
     dictionary1 = getDataUrl(urlIda)
     dictionary2 = getDataUrl(urlVuelta)
     with open(PATH_REPORTE, 'a') as f:
@@ -55,13 +55,21 @@ def report(urlIda, urlVuelta):
         
         writeInstructions(dictionary1, f, 'Detalle de ruta de ida:')
         f.write('\n\n')
-        writeInstructions(dictionary2, f, 'Detalle de ruta de vuelta:')
 
         records = select('points')
         if (len(records) > 0) :
             f.write('\nCortes\n')
             for x in range(0,len(records),2):
                 f.write(str(records[x][3]))
+        
+        f.write('\n\n')
+        if(len(list_distances)>0):
+            f.write('\nLas Bombas de agua más cercanas de menor a mayor:\n')
+            for tuple in list_distances:
+                f.write(str(tuple[1])+ ", distancia :"+ str(tuple[0])+'\n')
+        
+        f.write('\n\n')
+        writeInstructions(dictionary2, f, 'Detalle de ruta de vuelta:')
         f.close()
 
 def writeReport(description, address, applicant, phone):
