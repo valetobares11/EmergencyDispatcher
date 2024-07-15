@@ -39,8 +39,8 @@ class RouteProvider(object):
         self.__yourNavigationBaseURL__ = 'http://www.yournavigation.org/api/dev/route.php?flat=%s&flon=%s&tlat=%s&tlon=%s&v=motorcar&fast=0&layer=mapnik&instructions=0'
         self.__hereBaseURLExclusion__ = 'https://route.api.here.com/routing/7.2/calculateroute.json?alternatives=0&app_code=djPZyynKsbTjIUDOBcHZ2g&app_id=xWVIueSv6JL0aJ5xqTxb&departure=%s&jsonAttributes=41&language=es&legattributes=all&linkattributes=none,sh,ds,rn,ro,nl,pt,ns,le&maneuverattributes=all&metricSystem=metric&mode=fastest;%s;traffic:enabled;&routeattributes=none,sh,wp,sm,bb,lg,no,li,tx&avoidareas=%s&transportModeType=%s&waypoint0=geo!%s&waypoint1=geo!%s'
         self.__hereBaseURL__ = 'https://route.api.here.com/routing/7.2/calculateroute.json?alternatives=0&app_code=djPZyynKsbTjIUDOBcHZ2g&app_id=xWVIueSv6JL0aJ5xqTxb&departure=%s&jsonAttributes=41&language=es&legattributes=all&linkattributes=none,sh,ds,rn,ro,nl,pt,ns,le&maneuverattributes=all&metricSystem=metric&mode=fastest;%s;traffic:enabled;&routeattributes=none,sh,wp,sm,bb,lg,no,li,tx&transportModeType=%s&waypoint0=geo!%s&waypoint1=geo!%s'
-        self.__hereBaseURL_V8_Exclusion = 'https://router.hereapi.com/v8/routes?origin=%s&destination=%s&transportMode=%s&avoid[areas]=polygon:%s&return=polyline,actions,instructions,summary,typicalDuration&apiKey=%s&lang=es'
-        self.__hereBaseURL_V8 = 'https://router.hereapi.com/v8/routes?origin=%s&destination=%s&transportMode=%s&return=polyline,actions,instructions,summary,typicalDuration&apiKey=%s&lang=es'
+        self.__hereBaseURL_V8_Exclusion = 'https://router.hereapi.com/v8/routes?origin=%s&destination=%s&transportMode=%s&avoid[areas]=polygon:%s&return=polyline,actions,instructions,summary,typicalDuration&apiKey=%s&lang=es&mode=fastest;%s;traffic:enabled;'
+        self.__hereBaseURL_V8 = 'https://router.hereapi.com/v8/routes?origin=%s&destination=%s&transportMode=%s&return=polyline,actions,instructions,summary,typicalDuration&apiKey=%s&lang=es&mode=fastest;%s;traffic:enabled;'
         self.__googleBaseURL__ = 'https://maps.googleapis.com/maps/api/directions/json?origin=%s&destination=%s&key=%s'
         self.__graphHopperBaseURL__ = 'https://graphhopper.com/api/1/route?point=%s&point=%s&type=json&key=28cffa38-92cf-4404-8fa1-5a19717bac74&locale=en-US&vehicle=car&weighting=fastest&elevation=false'
         self.__tomtomBaseURL__ = 'https://api.tomtom.com/routing/1/calculateRoute/%s:%s/jsonp?key=hpygzp67548xfpk69qsfwqng&traffic=false'
@@ -54,7 +54,7 @@ class RouteProvider(object):
         response = urlopen(url).read().decode("utf-8")
         return self.__wktMaker__(response), url
     
-    def here(self, startPoint=str, endPoint=str, listPointsExclusion=[], typeAutomovil = None):
+    def here(self, startPoint=str, endPoint=str, listPointsExclusion=[], typeAutomobile = None):
         self.__serviceType__ = 1
         now = datetime.datetime.now()
         bingDepartureParameter = str(now.year) + '-' + str('%02d' % now.month) + '-' + str(
@@ -62,14 +62,14 @@ class RouteProvider(object):
             '%02d' % now.second)
             
         
-        parameter_movil = "car"
-        if (typeAutomovil is not None):
-            if (typeAutomovil == TRUCK):
-                parameter_movil = "car"
-            if (typeAutomovil == LIGHT_TRUCK):
-                parameter_movil = "truck"
-            if (typeAutomovil == HEAVY_TRUCK):
-                parameter_movil = "truck"
+        parameterAutomobile = "car"
+        if (typeAutomobile is not None):
+            if (typeAutomobile == TRUCK):
+                parameterAutomobile = "car"
+            if (typeAutomobile == LIGHT_TRUCK):
+                parameterAutomobile = "truck"
+            if (typeAutomobile == HEAVY_TRUCK):
+                parameterAutomobile = "truck"
 
         if (len(listPointsExclusion) > 0):
             points = ""
@@ -82,23 +82,23 @@ class RouteProvider(object):
                     points+= str(elemento[0])+';'+str(elemento[1])
                 if(i+1 < len(listPointsExclusion)):
                     points+='!'
-            url = self.__hereBaseURLExclusion__ % (bingDepartureParameter,parameter_movil, points,parameter_movil, startPoint, endPoint)
+            url = self.__hereBaseURLExclusion__ % (bingDepartureParameter,parameterAutomobile, points,parameterAutomobile, startPoint, endPoint)
         else:
-            url = self.__hereBaseURL__ % (bingDepartureParameter, parameter_movil, parameter_movil,startPoint, endPoint)
+            url = self.__hereBaseURL__ % (bingDepartureParameter, parameterAutomobile, parameterAutomobile,startPoint, endPoint)
         response = urlopen(url).read().decode("utf-8")
         
         return self.__wktMaker__(response), url
     
-    def here_v8(self, startPoint=str, endPoint=str, listPointsExclusion=[], typeAutomovil = None):
+    def here_v8(self, startPoint=str, endPoint=str, listPointsExclusion=[], typeAutomobile = None):
         self.__serviceType__ = 7
-        parameter_movil = "car"
-        if (typeAutomovil is not None):
-            if (typeAutomovil == TRUCK):
-                parameter_movil = "car"
-            if (typeAutomovil == LIGHT_TRUCK):
-                parameter_movil = "truck"
-            if (typeAutomovil == HEAVY_TRUCK):
-                parameter_movil = "truck"
+        parameterAutomobile = "car"
+        if (typeAutomobile is not None):
+            if (typeAutomobile == TRUCK):
+                parameterAutomobile = "car"
+            if (typeAutomobile == LIGHT_TRUCK):
+                parameterAutomobile = "truck"
+            if (typeAutomobile == HEAVY_TRUCK):
+                parameterAutomobile = "truck"
 
         if (len(listPointsExclusion) > 0):
             points = ""
@@ -111,9 +111,9 @@ class RouteProvider(object):
                     points+= str(elemento[0])+';'+str(elemento[1])+";"+str(elemento[2])
                 if(i+1 < len(listPointsExclusion)):
                     points+='|polygon:'
-            url = self.__hereBaseURL_V8_Exclusion % (startPoint, endPoint, parameter_movil, points, APIKEY_HERE)
+            url = self.__hereBaseURL_V8_Exclusion % (startPoint, endPoint, parameterAutomobile, points, APIKEY_HERE, parameterAutomobile)
         else:
-           url = self.__hereBaseURL_V8 %(startPoint, endPoint, parameter_movil, APIKEY_HERE)
+           url = self.__hereBaseURL_V8 %(startPoint, endPoint, parameterAutomobile, APIKEY_HERE, parameterAutomobile)
         
         response = urlopen(url).read().decode("utf-8")
         return self.__wktMaker__(response), url

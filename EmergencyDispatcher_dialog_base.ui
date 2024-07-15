@@ -158,7 +158,7 @@ background-color: #FF0000;
 }</string>
            </property>
            <property name="text">
-            <string>Agendar order</string>
+            <string>Agendar pedido</string>
            </property>
           </widget>
          </item>
@@ -195,7 +195,7 @@ background-color: #FF0000;
 }</string>
            </property>
            <property name="text">
-            <string>Ver orders</string>
+            <string>Ver pedidos</string>
            </property>
           </widget>
          </item>
@@ -232,7 +232,7 @@ background-color: #FF0000;
 }</string>
            </property>
            <property name="text">
-            <string>Modificar pumps</string>
+            <string>Modificar bombas</string>
            </property>
           </widget>
          </item>
@@ -306,7 +306,7 @@ background-color: #FF0000;
 }</string>
            </property>
            <property name="text">
-            <string>Statistics</string>
+            <string>Estadisticas</string>
            </property>
           </widget>
          </item>

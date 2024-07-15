@@ -109,7 +109,7 @@
             <string notr="true">color: rgb(255, 255, 255);</string>
            </property>
            <property name="text">
-            <string>Ubicación de la pump</string>
+            <string>Ubicación de la bomba</string>
            </property>
           </widget>
          </item>
@@ -124,7 +124,7 @@
             <string notr="true">color: rgb(255, 255, 255);</string>
            </property>
            <property name="text">
-            <string>Listado de pumps</string>
+            <string>Listado de bombas</string>
            </property>
           </widget>
          </item>

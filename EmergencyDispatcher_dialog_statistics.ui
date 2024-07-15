@@ -124,9 +124,9 @@
            <colorrole role="Base">
             <brush brushstyle="SolidPattern">
              <color alpha="255">
-              <red>255</red>
-              <green>255</green>
-              <blue>255</blue>
+              <red>33</red>
+              <green>43</green>
+              <blue>56</blue>
              </color>
             </brush>
            </colorrole>
@@ -153,9 +153,9 @@
            <colorrole role="Base">
             <brush brushstyle="SolidPattern">
              <color alpha="255">
-              <red>255</red>
-              <green>255</green>
-              <blue>255</blue>
+              <red>33</red>
+              <green>43</green>
+              <blue>56</blue>
              </color>
             </brush>
            </colorrole>
@@ -1267,7 +1267,7 @@ background-color: #FF0000;
 }</string>
               </property>
               <property name="text">
-               <string>Filtrar</string>
+               <string>Visualizar</string>
               </property>
              </widget>
             </item>
@@ -1316,7 +1316,7 @@ background-color: #FF0000;
 }</string>
               </property>
               <property name="text">
-               <string>Gráfico de bars</string>
+               <string>Gráfico de barra</string>
               </property>
              </widget>
             </item>
