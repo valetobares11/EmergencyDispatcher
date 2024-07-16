@@ -13,7 +13,7 @@ STARTING_POINT = "-64.3451616313023,-33.12684997058952"
 
 CIUDAD = "rio cuarto"
 PROVINCIA = "cordoba"
-PATH_REPORTE = f"/home/{userName}/Descargas/reporte.txt"
+PATH_REPORT = f"/home/{userName}/Descargas/reporte"
 PATH_IMAGEN_CUARTEL_ICON_SVG = f"/home/{userName}/.local/share/QGIS/QGIS3/profiles/default/python/plugins/OnlineRoutingMapper/icon2.svg"
 PATH_IMAGEN_BOMBAS_ICON_SVG = f"/home/{userName}/.local/share/QGIS/QGIS3/profiles/default/python/plugins/OnlineRoutingMapper/icon3.svg"
 SONIDO_ALARMA_INCENDIO_FORESTAL = f"/home/{userName}/.local/share/QGIS/QGIS3/profiles/default/python/plugins/OnlineRoutingMapper/sonidos/iforestal.mp3"

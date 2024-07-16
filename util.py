@@ -14,8 +14,8 @@ import psycopg2
 from psycopg2 import sql
 import pyexcel as pe
 from datetime import datetime
-
-
+from fpdf import FPDF #pip install fpdf
+import os
 from .apikey import *
 
 
@@ -45,11 +45,15 @@ def getDataUrl(url):
     response = urlopen(url).read().decode("utf-8")
     return json.loads(response)
 
-def report(urlIda, urlVuelta, list_distances = []):
+def report(urlIda, urlVuelta, list_distances = [], idOrder=None, description='', address ='',applicant='',phone=''):
+    filePaths = "{}_{}.txt".format(PATH_REPORT, idOrder)
     dictionary1 = getDataUrl(urlIda)
     dictionary2 = getDataUrl(urlVuelta)
-    with open(PATH_REPORTE, 'a') as f:
-
+    with open(filePaths, 'w') as f:
+        f.write('Descripcion Emergencia: '+description)
+        f.write('\n\nDireccion: '+address)
+        f.write('\n\nSolicitante: '+applicant)
+        f.write('\n\nTelefono: '+phone+'\n\n')
         estimatedTime = int(dictionary1['routes'][0]['sections'][0]['summary']['duration'])
         f.write('El tiempo estimado de viaje es: '+ str(round(estimatedTime/60))+' min\n\n')
         
@@ -58,12 +62,12 @@ def report(urlIda, urlVuelta, list_distances = []):
 
         records = select('points')
         if (len(records) > 0) :
-            f.write('\nCortes\n')
+            f.write('\nCortes:\n')
             for x in range(0,len(records),2):
                 f.write(str(records[x][3]))
         
         f.write('\n\n')
-        if(len(list_distances)>0):
+        if(len(list_distances)>0):  
             f.write('\nLas Bombas de agua más cercanas de menor a mayor:\n')
             for tuple in list_distances:
                 f.write(str(tuple[1])+ ", distancia :"+ str(tuple[0])+'\n')
@@ -72,13 +76,20 @@ def report(urlIda, urlVuelta, list_distances = []):
         writeInstructions(dictionary2, f, 'Detalle de ruta de vuelta:')
         f.close()
 
-def writeReport(description, address, applicant, phone):
-    f = open (PATH_REPORTE ,'w')
-    f.write('Descripcion Emergencia: '+description)
-    f.write('\n\nDireccion: '+address)
-    f.write('\n\nSolicitante: '+applicant)
-    f.write('\n\nTelefono: '+phone+'\n\n')
-    f.close()
+    crear_pdf(filePaths, "{}_{}.pdf".format(PATH_REPORT, idOrder))
+    os.remove(filePaths)
+
+def crear_pdf(archivoTxt, archivoPdf):
+    pdf = FPDF()
+    pdf.add_page()
+    pdf.set_font("Arial", size=12)
+    
+    with open(archivoTxt, 'r') as f:
+        for linea in f:
+            pdf.cell(200, 10, txt=linea, ln=True)
+
+    pdf.output(archivoPdf)
+
 
 def getAddress(longitud, latitud):
     url = f" https://maps.googleapis.com/maps/api/geocode/json?latlng={latitud},{longitud}&key={APIKEY}"

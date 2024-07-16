@@ -355,9 +355,8 @@ class EmergencyDispatcher:
                     list_distances = []
                     if self.typeEmergency in (INCENDIO_FORESTAL, INCENDIO_ESTRUCTURAL,INCENDIO_RURAL,INCENDIO_VEHICULAR):
                         list_distances = self.calculateRoutesPumps(stopPoint)
-                    
-                    report(url, url2, list_distances)
-                    self.persistOrder(url)
+                    idOrder = self.persistOrder(url)
+                    report(url, url2, list_distances, idOrder, self.description,self.address,self.applicant,self.phone)
                     self.routeMaker(wkt)
                     self.dlg.showMinimized()
                     self.listPointsExclution=[]
@@ -373,6 +372,7 @@ class EmergencyDispatcher:
     
     
     def persistOrder(self, url):
+        idOrder = -1
         try:
             response = urlopen(url).read().decode("utf-8")
             diccionario = json.loads(response)
@@ -393,10 +393,15 @@ class EmergencyDispatcher:
             }.get(str(self.typeEmergency),'Desconocido')
             valores = "'{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}','{}', now()".format(address, applicant, phone, "Pedro", self.crsTransformPedido(self.startPointXY),self.crsTransformPedido(self.stopPointXY), description, estimatedTime, categoria, 0)
             insert('orders', 'address, applicant, phone, operator, startpoint, stoppoint, description, estimated_time,type, actual_time, date', valores)
+            res = select('orders', None, 1)
+            return int(res[0])
         except Exception as e:
             QgsMessageLog.logMessage(str(e))
             QMessageBox.warning(self.dlg, 'persistOrder', "Error al intentar guardar el pedido")
-            
+        
+        return idOrder
+    
+    
     def calculateRoutesPumps(self, startPoint):
         try:
             pumps = select('pump')
@@ -477,7 +482,6 @@ class EmergencyDispatcher:
             self.savePoints()
             self.dlg = self.dlgBack
             self.dlg.show()
-            writeReport(description, address, applicant, phone)
             self.runAnalysis()
         else : QMessageBox.warning(self.dlg, 'Aviso', "Ingresa al menos una address")
     
@@ -879,7 +883,7 @@ class EmergencyDispatcher:
         self.removeRowsTable
         records = select("orders")
         for tuple in records:
-            self.addOrder(tuple[0], tuple[1], tuple[2], tuple[3], tuple[4], tuple[5], tuple[6], tuple[7], tuple[8], tuple[11], tuple[10], tuple[12])
+            self.addOrder(tuple[0], tuple[1], tuple[2], tuple[3], tuple[4], tuple[5], tuple[6], tuple[7], tuple[8], tuple[10], tuple[9], tuple[11])
 
     def exportOrdersTable(self):
         try:

@@ -90,7 +90,7 @@ def select(table = '', id = None, limit = None, filtro = {}):
     result = cursor.fetchall()
     conexion.close()
 
-    return result[0] if id is not None else result
+    return result[0] if (id is not None or limit==1) else result
 
 def delete(table = '', id = None):
     if (table != ''):
@@ -114,19 +114,6 @@ def update(table = '', seters = '', id = None):
         conexion.commit()
         conexion.close()
 
-# def update_file(table = '',nombre='', contenido = '', id = None):
-#     if (table != '' and contenido != ''):
-#         conexion = connectBD()
-#         cursor = conexion.cursor()
-        
-#         # Prepara la consulta SQL con un parámetro para el contenido binario
-#         query = sql.SQL("UPDATE archivo SET nombre_archivo = %s, contenido = %s WHERE id = %s")
-    
-#         # Ejecuta la consulta SQL pasando los datos binarios como parámetros
-#         cursor.execute(query, (nombre, psycopg2.Binary(contenido), id))
-        
-#         conexion.commit()
-#         conexion.close()
 
 
 
@@ -207,12 +194,6 @@ def createTableOrder():
 
     # Crear una tabla si no existe
     queryCreationTable = """
-        CREATE TABLE IF NOT EXISTS files (
-            id SERIAL PRIMARY KEY,
-            name TEXT,
-            content BYTEA
-        );
-
         CREATE TABLE IF NOT EXISTS orders (
             id SERIAL PRIMARY KEY,
             address VARCHAR(100),
@@ -223,11 +204,9 @@ def createTableOrder():
             stoppoint VARCHAR(100),
             description VARCHAR(255),
             estimated_time INT,
-            id_file INT,
             type VARCHAR(40),
             actual_time INT,
-            date TIMESTAMP,
-            FOREIGN KEY (id_file) REFERENCES files(id)
+            date TIMESTAMP
         );
     """
     cursor.execute(queryCreationTable)
