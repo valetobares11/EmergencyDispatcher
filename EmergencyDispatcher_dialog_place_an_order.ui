@@ -557,7 +557,7 @@ background-color: #FF0000;
            </property>
            <property name="icon">
             <iconset>
-             <normaloff>sonidos/Logos/Logo_emergencys_varias.png</normaloff>sonidos/Logos/Logo_emergencys_varias.png</iconset>
+             <normaloff>sonidos/Logos/Logo_emergencias_varias.png</normaloff>sonidos/Logos/Logo_emergencias_varias.png</iconset>
            </property>
            <property name="iconSize">
             <size>
