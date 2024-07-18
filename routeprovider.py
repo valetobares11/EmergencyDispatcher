@@ -30,6 +30,7 @@ from xml.dom import minidom
 from urllib.request import urlopen
 from urllib.parse import quote
 from .config import *
+from .constants import *
 from .apikey import *
 import flexpolyline
 from datetime import datetime

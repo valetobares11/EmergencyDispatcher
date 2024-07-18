@@ -1,6 +1,7 @@
 import psycopg2
 from psycopg2 import sql
 from .config import *
+from .constants import *
 import datetime
                 
 def connectBD():

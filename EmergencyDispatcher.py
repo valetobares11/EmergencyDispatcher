@@ -41,6 +41,7 @@ from qgis.core import *
 
 import platform
 from .config import *
+from .constants import *
 from .apikey import *
 from qgis.PyQt.QtWidgets import QTableWidgetItem,QPushButton,QFileDialog
 import pygame
