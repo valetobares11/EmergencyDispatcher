@@ -313,7 +313,7 @@ background-color: #FF0000;
            </property>
            <property name="icon">
             <iconset>
-             <normaloff>../../../../../../../../../.designer/backup/sonidos/Logos/coordenada.png</normaloff>../../../../../../../../../.designer/backup/sonidos/Logos/coordenada.png</iconset>
+             <normaloff>sonidos/Logos/coordenada.png</normaloff>sonidos/Logos/coordenada.png</iconset>
            </property>
           </widget>
          </item>
@@ -341,7 +341,7 @@ background-color: #FF0000;
            </property>
            <property name="icon">
             <iconset>
-             <normaloff>../../../../../../../../../.designer/backup/sonidos/Logos/coordenada.png</normaloff>../../../../../../../../../.designer/backup/sonidos/Logos/coordenada.png</iconset>
+             <normaloff>sonidos/Logos/coordenada.png</normaloff>sonidos/Logos/coordenada.png</iconset>
            </property>
           </widget>
          </item>
