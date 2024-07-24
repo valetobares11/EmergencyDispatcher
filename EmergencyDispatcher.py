@@ -689,9 +689,9 @@ class EmergencyDispatcher:
                 # Crea una nueva característica y agrega la geometría y los atributos
                 feature = QgsFeature()
                 feature.setGeometry(point_geom)
-                feature.setAttributes([tuple[0], x, y, tuple[7], tuple[1],tuple[2],tuple[10], str(tuple[12]), tuple[8], tuple[11], " "])
+                feature.setAttributes([tuple[0], x, y, tuple[7], tuple[1],tuple[2],tuple[9], str(tuple[11]), tuple[8], tuple[10], " "])
                 # Crear un diccionario para mapear types a índices de layers
-                type_a_layer = {
+                typeLayer = {
                     TYPE1: layersPoints[0],
                     TYPE2: layersPoints[1],
                     TYPE3: layersPoints[2],
@@ -702,8 +702,8 @@ class EmergencyDispatcher:
                     TYPE8: layersPoints[7]
                 }
                 # Asignar la característica a la layer correspondiente
-                if tuple[10] in type_a_layer:
-                    type_a_layer[tuple[10]].dataProvider().addFeature(feature)
+                if tuple[9] in typeLayer:
+                    typeLayer[tuple[9]].dataProvider().addFeature(feature)
 
         for layer in layersPoints:
             # Agrega la layer al proyecto de QGIS
@@ -757,10 +757,10 @@ class EmergencyDispatcher:
 
 
     def graphicsBar(self, records):
-        types = [registro[10] for registro in records]
-        conteo_types = Counter(types)
-        categories = list(conteo_types.keys())
-        values = [int(valor) for valor in conteo_types.values()]
+        types = [registro[9] for registro in records]
+        conteoTypes = Counter(types)
+        categories = list(conteoTypes.keys()) 
+        values = [int(valor) for valor in conteoTypes.values()]
         fig, ax = plt.subplots()
         ax.bar(categories,values)
         ax.yaxis.set_major_locator(MaxNLocator(integer=True))
@@ -776,8 +776,8 @@ class EmergencyDispatcher:
 
         # Ordenar y acumular los datos por type y fecha
         for registro in records:
-            type = registro[10]  # Acceder al campo 'type'
-            fecha = str(registro[12]).split(' ')[0]  # Acceder al campo 'fecha'
+            type = registro[9]  # Acceder al campo 'type'
+            fecha = str(registro[11]).split(' ')[0]  # Acceder al campo 'fecha'
             cantidad = 1  # Supongamos que cada registro cuenta como 1 emergency
             data_by_type[type][fecha] += cantidad
 
@@ -803,7 +803,7 @@ class EmergencyDispatcher:
         ax.yaxis.set_major_locator(MaxNLocator(integer=True))
         ax.set_xlabel('Fecha')
         ax.set_ylabel('Cantidad de emergencias')
-        ax.set_title('Cantidad de emergencias por type a lo largo del tiempo')
+        ax.set_title('Cantidad de emergencias por tipo a lo largo del tiempo')
         ax.legend()
 
         # Configurar el eje x para mostrar solo valores enteros
