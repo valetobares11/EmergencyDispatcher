@@ -212,7 +212,7 @@ class EmergencyDispatcher:
     def initGui(self):
         """Create the menu entries and toolbar icons inside the QGIS GUI."""
 
-        icon_path = ':/plugins/OnlineRoutingMapper/icon.png'
+        icon_path = ':/plugins/DispatcherEmergency/icon.png'
         self.add_action(
             icon_path,
             text=self.tr(u''),
